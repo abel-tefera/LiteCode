@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import startService from "./plugins/startService";
+import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 
 const App = () => {
   const [input, setInput] = useState("");
@@ -18,13 +19,20 @@ const App = () => {
   const onClick = () => {
     if (!ref.current) return;
 
-    ref.current.transform(input, {
-      loader: "jsx",
-      target: "es2015",
-    }).then((result: any) => {
-      setCode(result.code);
-    })
-    
+    ref.current
+      .build({
+        entryPoints: ["index.js"],
+        bundle: true,
+        write: false,
+        plugins: [unpkgPathPlugin()],
+        define: {
+          "process.env.NODE_ENV": '"production"',
+          global: "window",
+        },
+      })
+      .then((result: any) => {
+        setCode(result.outputFiles[0].text);
+      });
   };
 
   return (
