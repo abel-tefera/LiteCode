@@ -12,6 +12,7 @@
     "@types/react-dom": "^18.2.14",
     "axios": "^1.6.0",
     "esbuild-wasm": "^0.19.5",
+    "localforage": "^1.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
