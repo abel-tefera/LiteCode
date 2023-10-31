@@ -5,9 +5,10 @@ import { fetchPlugin } from "./plugins/fetch-plugin";
 
 const App = () => {
   const [input, setInput] = useState("");
-  const [code, setCode] = useState("");
+  // const [code, setCode] = useState("");
 
   const ref = useRef<any>(null);
+  const iframe = useRef<any>(null);
 
   useEffect(() => {
     async function serviceStart() {
@@ -19,6 +20,8 @@ const App = () => {
 
   const onClick = () => {
     if (!ref.current) return;
+
+    iframe.current.srcdoc = preview;
 
     ref.current
       .build({
@@ -32,21 +35,50 @@ const App = () => {
         },
       })
       .then((result: any) => {
-        setCode(result.outputFiles[0].text);
+        // setCode(result.outputFiles[0].text);
+        iframe.current.contentWindow.postMessage(result.outputFiles[0].text, "*");
       });
   };
+
+  const preview = `
+    <html>
+      <head></head>
+      <body>
+        <div id="root"></div>
+        <script>
+          window.addEventListener('message', (e) => {
+            try{
+              eval(e.data);
+            }catch(err){
+              const root = document.querySelector('#root');
+              root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>';
+              console.error(err);
+            }
+          }, false);
+        </script>
+      </body>
+    </html>
+  `;
 
   return (
     <div className="App">
       <h1>XYZ Code</h1>
       <textarea
+        cols={60}
+        rows={10}
         value={input}
         onChange={(e) => setInput(e.target.value)}
       ></textarea>
       <div>
-        <button onClick={onClick}>Subimt</button>
+        <button onClick={onClick}>Submit</button>
       </div>
-      <pre>{code}</pre>
+      {/* <pre>{code}</pre> */}
+      <iframe
+        ref={iframe}
+        srcDoc={preview}
+        title="Code Preview"
+        sandbox="allow-scripts"
+      />
     </div>
   );
 };
