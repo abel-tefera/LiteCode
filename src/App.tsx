@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import startService from "./plugins/startService";
 import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 import { fetchPlugin } from "./plugins/fetch-plugin";
+import CodeEditor from "./components/CodeEditor";
+import { OnChange as MonacoOnChange } from "@monaco-editor/react";
 
 const App = () => {
   const [input, setInput] = useState("");
@@ -36,7 +38,10 @@ const App = () => {
       })
       .then((result: any) => {
         // setCode(result.outputFiles[0].text);
-        iframe.current.contentWindow.postMessage(result.outputFiles[0].text, "*");
+        iframe.current.contentWindow.postMessage(
+          result.outputFiles[0].text,
+          "*"
+        );
       });
   };
 
@@ -60,9 +65,16 @@ const App = () => {
     </html>
   `;
 
+  const onEditorChange: MonacoOnChange = (value: string | undefined, e: any) => {
+    if (value){
+      setInput(value);
+    }
+  };
+
   return (
     <div className="App">
       <h1>XYZ Code</h1>
+      <CodeEditor initialValue="console.log(123);" onChange={onEditorChange} />
       <textarea
         cols={60}
         rows={10}
