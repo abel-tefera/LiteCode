@@ -4,6 +4,7 @@ import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 import { fetchPlugin } from "./plugins/fetch-plugin";
 import CodeEditor from "./components/CodeEditor";
 import { OnChange as MonacoOnChange } from "@monaco-editor/react";
+import { editor } from "monaco-editor";
 
 const App = () => {
   const [input, setInput] = useState("");
@@ -52,21 +53,24 @@ const App = () => {
         <div id="root"></div>
         <script>
           window.addEventListener('message', (e) => {
-            try{
-              eval(e.data);
-            }catch(err){
-              const root = document.querySelector('#root');
-              root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>';
-              console.error(err);
-            }
+          try{
+            eval(e.data);
+          }catch(err){
+            const root = document.querySelector('#root');
+            root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>';
+            console.error(err);
+          }
           }, false);
         </script>
       </body>
     </html>
-  `;
+`;
 
-  const onEditorChange: MonacoOnChange = (value: string | undefined, e: any) => {
-    if (value){
+  const onEditorChange: MonacoOnChange = (
+    value: string | undefined,
+    e: editor.IModelContentChangedEvent
+  ) => {
+    if (value) {
       setInput(value);
     }
   };
