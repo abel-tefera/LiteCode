@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import Monaco, { OnChange } from "@monaco-editor/react";
-import * as prettier from "prettier/standalone"
+import * as prettier from "prettier/standalone";
 import parserBabel from "prettier/plugins/babel";
 import * as prettierPluginEstree from "prettier/plugins/estree";
 
@@ -27,18 +27,24 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
         useTabs: false,
         semi: true,
         singleQuote: true,
-      }).then((formatted) => {
+      })
+      .then((formatted) => {
         formatted.replace(/\n$/, "");
         editorRef.current.setValue(formatted);
-      })
-      // .replace(/\n$/, "");
+      });
+    // .replace(/\n$/, "");
     // editorRef.current.setValue(formatted);
     // onChange(formatted);
   };
 
   return (
     <div>
-      <button onClick={formatCode}>Format</button>
+      <button
+        onClick={formatCode}
+        className="button button-format is-primary is-small"
+      >
+        Format
+      </button>
       <Monaco
         defaultValue={initialValue}
         theme="vs-dark"
