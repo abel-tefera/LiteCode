@@ -1,24 +1,24 @@
 import React, { useEffect, useRef } from "react";
 
 const preview = `
-<html>
-  <head></head>
-  <body>
-    <div id="root"></div>
-    <script>
-      window.addEventListener('message', (e) => {
-      try{
-        console.log("EVALUATING");
-        eval(e.data);
-      }catch(err){
-        const root = document.querySelector('#root');
-        root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>';
-        console.error(err);
-      }
-      }, false);
-    </script>
-  </body>
-</html>
+  <html>
+    <head></head>
+    <body>
+      <div id="root"></div>
+      <script>
+        window.addEventListener('message', (e) => {
+        try{
+          console.log("EVALUATING");
+          eval(e.data);
+        }catch(err){
+          const root = document.querySelector('#root');
+          root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>';
+          console.error(err);
+        }
+        }, false);
+      </script>
+    </body>
+  </html>
 `;
 
 interface CodePreviewProps {
@@ -36,12 +36,14 @@ const CodePreview: React.FC<CodePreviewProps> = ({ code }) => {
   }, [code]);
 
   return (
-    <iframe
-      title="Code Preview"
-      ref={iframe}
-      srcDoc={preview}
-      sandbox="allow-scripts"
-    />
+    <div className="preview-wrapper">
+      <iframe
+        title="Code Preview"
+        ref={iframe}
+        srcDoc={preview}
+        sandbox="allow-scripts"
+      />
+    </div>
   );
 };
 

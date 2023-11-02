@@ -6,6 +6,7 @@ import { OnChange as MonacoOnChange } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import CodePreview from "./CodePreview";
 import bundle from "../bundler";
+import Resizable from "./Resizable";
 
 const CodeCell = () => {
   const [input, setInput] = useState("");
@@ -38,13 +39,20 @@ const CodeCell = () => {
   };
 
   return (
-    <div className="code-cell">
-      <CodeEditor initialValue="console.log(123);" onChange={onEditorChange} />
-      <div>
-        <button onClick={onClick}>Submit</button>
+    <Resizable direction="vertical">
+      <div className="code-cell">
+        <div>
+          <CodeEditor
+            initialValue="console.log(123);"
+            onChange={onEditorChange}
+          />
+          <div>
+            <button onClick={onClick}>Submit</button>
+          </div>
+        </div>
+        <CodePreview code={code} />
       </div>
-      <CodePreview code={code} />
-    </div>
+    </Resizable>
   );
 };
 

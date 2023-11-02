@@ -1,0 +1,8 @@
+.code-cell {
+    display: flex;
+    flex-direction: row;
+}
+
+.preview-wrapper {
+    background-color: white;
+}
