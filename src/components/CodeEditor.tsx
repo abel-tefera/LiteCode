@@ -49,7 +49,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
       <Monaco
         defaultValue={initialValue}
         theme="vs-dark"
-     
         defaultLanguage="javascript"
         options={{
           wordWrap: "on",
