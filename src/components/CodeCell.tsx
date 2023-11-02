@@ -1,17 +1,16 @@
-import { useState, useEffect, useRef } from "react";
-import startService from "../bundler/plugins/startService";
-
-import CodeEditor from "./CodeEditor";
+import React, { useState, useEffect, useRef } from "react";
 import { OnChange as MonacoOnChange } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
+import startService from "../bundler/plugins/startService";
+import CodeEditor from "./CodeEditor";
 import CodePreview from "./CodePreview";
 import bundle from "../bundler";
-import { ResizableBox } from "react-resizable";
 import Resizable from "./Resizable";
 
 const CodeCell = () => {
   const [input, setInput] = useState("");
   const [code, setCode] = useState("");
+  const [err, setErr] = useState('');
 
   const esbuildRef = useRef<any>(null);
 
@@ -23,12 +22,18 @@ const CodeCell = () => {
     serviceStart();
   }, []);
 
-  const onClick = async () => {
-    if (!esbuildRef.current) return;
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (!esbuildRef.current) return;
+      const resCode = await bundle(esbuildRef, input);
+      setCode(resCode.code);
+      setErr(resCode.err);
+    }, 1000);
 
-    const resCode = await bundle(esbuildRef, input);
-    setCode(resCode);
-  };
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [input]);
 
   const onEditorChange: MonacoOnChange = (
     value: string | undefined,
@@ -47,12 +52,7 @@ const CodeCell = () => {
           onChange={onEditorChange}
         />
       </Resizable>
-      {/* <div>
-          <div>
-            <button onClick={onClick}>Submit</button>
-          </div>
-        </div> */}
-      <CodePreview code={code} />
+      <CodePreview code={code} err={err} />
     </div>
   );
 };

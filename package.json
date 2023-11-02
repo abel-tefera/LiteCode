@@ -7,12 +7,6 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.59",
-    "@types/prettier": "^3.0.0",
-    "@types/react": "^18.2.33",
-    "@types/react-dom": "^18.2.14",
-    "@types/react-resizable": "^3.0.6",
     "axios": "^1.6.0",
     "bulmaswatch": "^0.8.1",
     "esbuild-wasm": "^0.19.5",
@@ -49,5 +43,14 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.7",
+    "@types/localforage": "^0.0.34",
+    "@types/node": "^20.8.10",
+    "@types/prettier": "^3.0.0",
+    "@types/react": "^18.2.34",
+    "@types/react-dom": "^18.2.14",
+    "@types/react-resizable": "^3.0.6"
   }
 }

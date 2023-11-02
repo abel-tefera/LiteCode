@@ -1,3 +1,4 @@
+import React from 'react';
 import CodeCell from "./components/CodeCell";
 
 const App = () => {

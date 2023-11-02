@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ResizableBox } from "react-resizable";
-import "./resizable.css";
-import useResizeListener from "../hooks/useResizeListener";
+import "../styles/resizable.css";
+import throttle from "../utils/throttle";
 
 interface ResizableProps {
   direction: "horizontal" | "vertical";
@@ -16,16 +16,19 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
 
   const containerRef = useRef<any>(null);
 
-  const handleResize = (e: any) => {
+  const handleResize = throttle((e: any) => {
     const width = window.innerWidth;
     setInnerWidth(width);
 
     if (window.innerWidth * 0.75 < resizableWidth) {
       setResizableWidth(window.innerWidth * 0.75);
     }
-  };
+  }, 1000);
 
-  useResizeListener(containerRef, handleResize);
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div ref={containerRef}>
