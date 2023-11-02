@@ -7,6 +7,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@uiw/react-md-editor": "^3.25.2",
     "axios": "^1.6.0",
     "bulmaswatch": "^0.8.1",
     "esbuild-wasm": "^0.19.5",
@@ -45,6 +46,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/jest": "^29.5.7",
     "@types/localforage": "^0.0.34",
     "@types/node": "^20.8.10",
