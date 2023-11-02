@@ -10,12 +10,13 @@ interface ResizableProps {
 const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
   return (
     <ResizableBox
-      width={200}
-      height={200}
+      className={`resize-horizontal`}
+      width={window.innerWidth * 0.75}
+      height={600}
       draggableOpts={{}}
-      resizeHandles={["s"]}
-      minConstraints={[100, 100]}
-      maxConstraints={[900, 900]}
+      resizeHandles={["e"]}
+      minConstraints={[window.innerWidth * 0.2, Infinity]} 
+      maxConstraints={[window.innerWidth * 0.75, Infinity]}
     >
       {children}
     </ResizableBox>
