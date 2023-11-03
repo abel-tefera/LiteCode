@@ -10,15 +10,18 @@ interface ResizableProps {
 
 const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
-  const [resizableWidth, setResizableWidth] = useState(
-    window.innerWidth * 0.75
-  );
+  const [innerHeight, setInnerHeight] = useState(window.innerHeight);
+
+  const [resizableWidth, setResizableWidth] = useState(window.innerWidth * 0.5);
 
   const containerRef = useRef<any>(null);
 
   const handleResize = throttle((e: any) => {
     const width = window.innerWidth;
+    const height = window.innerHeight;
+
     setInnerWidth(width);
+    setInnerHeight(height);
 
     if (window.innerWidth * 0.75 < resizableWidth) {
       setResizableWidth(window.innerWidth * 0.75);
@@ -35,7 +38,7 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
       <ResizableBox
         className={`resize-horizontal`}
         width={resizableWidth}
-        height={600}
+        height={innerHeight * 0.85}
         draggableOpts={{}}
         resizeHandles={["e"]}
         minConstraints={[innerWidth * 0.2, Infinity]}
