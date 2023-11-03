@@ -12,7 +12,7 @@ module.exports = {
         'dark-hover': '#2B3245'
       },
       gridTemplateColumns: {
-        sidebar: "300px auto", //for sidebar layout
+        sidebar: "180px auto", //for sidebar layout
         "sidebar-collapsed": "64px auto", //for sidebar layout
       },
 

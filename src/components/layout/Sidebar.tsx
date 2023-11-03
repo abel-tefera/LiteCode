@@ -26,7 +26,7 @@ const Sidebar = ({
       className={classNames({
         "fixed md:static md:translate-x-0 z-20": true,
         "transition-all duration-300 ease-in-out": true,
-        "w-[300px]": !collapsed,
+        "w-[180px]": !collapsed,
         "w-16": collapsed,
         "-translate-x-full": !shown,
       })}
@@ -57,6 +57,8 @@ const Sidebar = ({
             <Structure />
           </div>
         </nav>
+        {!collapsed && <div className="ml-4">Built by <a href="https://www.abeltb.xyz/" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Abel</a> in 2023</div>}
+        
       </div>
     </div>
   );
