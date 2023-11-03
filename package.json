@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@heroicons/react": "^2.0.18",
     "@monaco-editor/react": "^4.6.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -11,6 +12,7 @@
     "@uiw/react-md-editor": "^3.25.2",
     "axios": "^1.6.0",
     "bulmaswatch": "^0.8.1",
+    "classnames": "^2.3.2",
     "esbuild-wasm": "^0.19.5",
     "immer": "^10.0.3",
     "localforage": "^1.10.0",
@@ -58,6 +60,7 @@
     "@types/prettier": "^3.0.0",
     "@types/react": "^18.2.34",
     "@types/react-dom": "^18.2.14",
-    "@types/react-resizable": "^3.0.6"
+    "@types/react-resizable": "^3.0.6",
+    "tailwindcss": "^3.3.5"
   }
 }
