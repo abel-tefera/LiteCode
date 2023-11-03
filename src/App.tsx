@@ -5,12 +5,14 @@ import { Provider } from "react-redux";
 import { store } from "./state";
 import Layout from "./components/layout/Layout";
 import Structure from "./components/fileStructure/Structure";
+import Tabs from "./components/Tabs";
 
 const App = () => {
   return (
     <Provider store={store}>
       <div className="App bg-dark-bg text-white">
         <Layout>
+          <Tabs />
           <CodeCell />
         </Layout>
         {/* <Structure /> */}

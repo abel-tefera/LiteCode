@@ -108,7 +108,7 @@ const Structure = () => {
   };
 
   return (
-    <div className="file-sys-container m-2" ref={fileSysRef} onClick={clickHandler}>
+    <div className="file-sys-container custom-scrollbar m-2" ref={fileSysRef} onClick={clickHandler}>
       {parse(mapObjectRecursively(structureData))}
     </div>
   );

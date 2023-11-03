@@ -44,7 +44,7 @@ const Sidebar = ({
             "py-4 justify-center": collapsed,
           })}
         >
-          {!collapsed && <span className="whitespace-nowrap">My Logo</span>}
+          {!collapsed && <span className="text-2xl">LiteCode IDE</span>}
           <button
             className="grid place-content-center hover:bg-indigo-800 w-10 h-10 rounded-full opacity-0 md:opacity-100"
             onClick={() => setCollapsed(!collapsed)}

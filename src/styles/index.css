@@ -38,6 +38,20 @@
 }
 
 
+.custom-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #4a5575;
+    border-radius: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #0E1525;
+}
+
 
 /* iframe#webpack-dev-server-client-overlay {
     display: none !important
