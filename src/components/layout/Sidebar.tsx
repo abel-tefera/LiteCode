@@ -6,6 +6,7 @@ import {
   ChevronDoubleRightIcon,
 } from "@heroicons/react/24/outline";
 import Structure from "../fileStructure/Structure";
+import FileActions from "../fileStructure/FileActions";
 
 // add NavItem prop to component prop
 type Props = {
@@ -48,7 +49,7 @@ const Sidebar = ({
         {/* logo and collapse button */}
         <div
           className={classNames({
-            "flex items-center border-b border-b-white transition-none": true,
+            "flex items-center mb-[2px] transition-none": true,
             "p-4 justify-between": !collapsed,
             "py-4 justify-center": collapsed,
           })}
@@ -62,14 +63,15 @@ const Sidebar = ({
             </span>
           )}
           <button
-            className="grid place-content-center hover:bg-indigo-800 w-10 h-10 rounded-full opacity-0 md:opacity-100"
+            className="grid place-content-center hover:bg-dark-hover w-10 h-10 rounded-full opacity-0 md:opacity-100"
             onClick={() => setCollapsed(!collapsed)}
           >
             <Icon className="w-5 h-5" />
           </button>
         </div>
-        <nav className="flex-grow">
-          <div className={collapsed ? "display-none" : "block w-full"}>
+        <nav className="flex flex-col flex-grow">
+          <div className={!collapsed && visibility ? "block w-full" : "display-none"}>
+            <FileActions />
             <Structure />
           </div>
         </nav>
