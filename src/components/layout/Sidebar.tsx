@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Structure from "../fileStructure/Structure";
 import FileActions from "../fileStructure/FileActions";
+import logo from "../../assets/logo-2.png";
 
 // add NavItem prop to component prop
 type Props = {
@@ -58,7 +59,7 @@ const Sidebar = ({
             <span className={`text-lg`}>
               {!visibility && <>&nbsp;</>}
               <span className={visibility ? `block` : `hidden`}>
-                LiteCode IDE
+                <img src={logo} alt="Logo" className="w-24" />
               </span>
             </span>
           )}

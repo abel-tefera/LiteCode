@@ -73,15 +73,12 @@ const Structure = () => {
   }
 
   const collapseMeasurables = (measurables: any, max: any) => {
-    console.log("MAX", max);
     for (let i = 0; i < measurables.length; i++) {
       const measurable = measurables[i];
-      // console.log("XXX", measurable)
       if (
         !measurable.classList.contains("not-seen") &&
         !measurable.classList.contains("collapsed-now")
       ) {
-        // console.log("XXX", true)
         if (max > 32) {
           measurable.style.width = `${180 + max - 48}px`;
         } else {
@@ -126,13 +123,10 @@ const Structure = () => {
         const children =
           elem.parentElement.getElementsByClassName("measurable");
         let max = 0;
-        console.log("BBB", elem.parentElement.children);
         // const tX = getTranslateX(transformers[0]);
         if (children.length > 0) {
-          // console.log("Children", children);
           for (let i = 1; i < children.length; i++) {
             const child = children[i];
-            // console.log("CHILD", child);
             if (!isCollapsed) {
               child.classList.add("collapsed-now");
             } else {
@@ -143,26 +137,17 @@ const Structure = () => {
 
         for (let i = 0; i < measurables.length; i++) {
           const measurable = measurables[i];
-          console.log("MAX", max);
 
           const classList = [...measurable.classList];
 
           if (
             !classList.some((el) => el === "not-seen" || el === "collapsed-now")
           ) {
-            // console.log(
-            //   measurable,
-            //   measurable.classList,
-            //   "! NOT SEEN OR COLLAPSED",
-            //   classList.some((el) => el === "not-seen" || el === "collapsed-now"),
-            //   classList
-            // );
             const transformer =
               measurable.getElementsByClassName("transformer")[0];
             const padding = getStyle(transformer, "padding-left");
             const paddingInt = parseInt(padding);
             if (paddingInt > max) {
-              console.log("AAA", transformer, padding, classList);
               max = paddingInt;
             }
           }

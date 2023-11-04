@@ -1,6 +1,7 @@
 import React from "react";
 import Tab from "./Tab";
 import downloadIcon from "../assets/down.jpg";
+import { Tooltip } from "react-tooltip";
 const Tabs = () => {
   const onSelect = (i: any) => {
     alert(`Tab ${i} selected`);
@@ -23,11 +24,14 @@ const Tabs = () => {
           ))}
       </div>
       <div className="flex items-center self-center w-fit justify-end">
-
-        <button>
+        <Tooltip id="download-project" place="left-end" />
+        <button
+          data-tooltip-id="download-project"
+          data-tooltip-content={"Download Project"}
+        >
           <img
             src={downloadIcon}
-            className="h-7 w-7 mx-4 mb-1 rounded-full hover:opacity-40 active:opacity-70 transition-opacity duration-300 ease-in-out"
+            className="h-7 w-7 mx-4 mb-1 border border-white rounded-full hover:opacity-40 active:opacity-70 transition-opacity duration-300 ease-in-out"
             alt="Download Project"
           />
         </button>

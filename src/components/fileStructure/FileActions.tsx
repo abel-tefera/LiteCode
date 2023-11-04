@@ -1,6 +1,8 @@
 import React from "react";
 import downArrowLogo from "../../assets/left-arrow.svg";
 import newFileLogo from "../../assets/new-file.svg";
+import newFolderLogo from "../../assets/new-folder.svg";
+
 import { Tooltip } from "react-tooltip";
 
 const FileActions = () => {
@@ -34,7 +36,7 @@ const FileActions = () => {
               <img
                 data-tooltip-id="new-folder"
                 data-tooltip-content={"New Folder"}
-                src={newFileLogo}
+                src={newFolderLogo}
                 className="w-5 h-5 mr-2 cursor-pointer"
                 alt="New Folder"
               />
