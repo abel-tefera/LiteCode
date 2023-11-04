@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import { defaultNavItems, NavItem } from "./defaultNavItems";
 import {
@@ -20,7 +20,16 @@ const Sidebar = ({
   shown,
   setCollapsed,
 }: Props) => {
+  const [visibility, setVisibility] = useState(collapsed);
   const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setVisibility(!collapsed);
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [collapsed]);
   return (
     <div
       className={classNames({
@@ -44,7 +53,14 @@ const Sidebar = ({
             "py-4 justify-center": collapsed,
           })}
         >
-          {!collapsed && <span className="text-2xl">LiteCode IDE</span>}
+          {!collapsed && (
+            <span className={`text-lg`}>
+              {!visibility && <>&nbsp;</>}
+              <span className={visibility ? `block` : `hidden`}>
+                LiteCode IDE
+              </span>
+            </span>
+          )}
           <button
             className="grid place-content-center hover:bg-indigo-800 w-10 h-10 rounded-full opacity-0 md:opacity-100"
             onClick={() => setCollapsed(!collapsed)}
@@ -53,12 +69,24 @@ const Sidebar = ({
           </button>
         </div>
         <nav className="flex-grow">
-          <div className={collapsed ? 'display-none': 'block w-full'}>
+          <div className={collapsed ? "display-none" : "block w-full"}>
             <Structure />
           </div>
         </nav>
-        {!collapsed && <div className="ml-4">Built by <a href="https://www.abeltb.xyz/" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Abel</a> in 2023</div>}
-        
+        {!collapsed && (
+          <div className="ml-4">
+            <div className={visibility ? `block` : `hidden`}>
+              Built by{" "}
+              <a
+                href="https://www.abeltb.xyz/"
+                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >
+                Abel
+              </a>{" "}
+              in 2023
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
