@@ -5,11 +5,14 @@
     overflow-x: auto;
     text-wrap: nowrap;
     height: 65vh;
+    /* background-color: blue; */
 }
 
 .folder-container {
     display: flex;
     flex-direction: column;
+    /* background-color: yellow; */
+    /* width: 100%; */
 }
 
 .folder:before,
@@ -24,7 +27,13 @@
 .folder,
 .file {
     cursor: pointer;
+    /* background-color: red; */
     /* width: 100%; */
+}
+
+.transformer {
+    display: flex;
+    align-items: center;
 }
 
 .folder:hover,
@@ -72,7 +81,7 @@
 }
 
 .md-logo {
-    background-image: url("../../assets/markdown.svg");
+    background-image: url("../../assets/markdown.png");
 }
 
 .opened-folder {
@@ -86,6 +95,11 @@
 .clickable>* {
     pointer-events: none;
     user-select: none; 
+}
+
+.not-seen {
+    position: absolute;
+    visibility: hidden;
 }
 
 .display-none {

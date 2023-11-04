@@ -3,6 +3,7 @@ import React, { useRef } from "react";
 import "./structure.css";
 import parse from "html-react-parser";
 import structureData from "./structureData";
+import { getTranslateX, getStyle } from "../../utils/getStyle";
 
 const Structure = () => {
   const fileSysRef = useRef<any>(null);
@@ -15,10 +16,12 @@ const Structure = () => {
             index,
             0,
             // @ts-ignore
-            `<div class='folder-container ${
-              index !== 0 ? `display-none`: `flex`
-            }'><span class="folder clickable" data-isexpanded="true">
-              <span class="span-text" style="padding-left: ${index + 1}rem">
+            `<div class='folder-container measurable ${
+              index !== 0 ? `not-seen collapsed-now` : `flex`
+            }'><span class="folder clickable" data-iscollapsed="true">
+              <span class="span-text transformer" style="padding-left: ${
+                index + 1
+              }rem">
                 <span class="span-logo closed-folder">&nbsp;</span>
                 <span class="folder-name">${key}</span>
               </span>
@@ -52,12 +55,13 @@ const Structure = () => {
                   logo = "file-logo";
                   break;
               }
-              return `<span class='file clickable span-text ${
-                index !== 0 && `display-none`
-              }' style="padding-left: ${index + 1}rem; padding-right: 1rem">
+              return `<div class='file clickable measurable span-text ${
+                index !== 0 && `not-seen collapsed-now`
+              }'>
+                <span class="transformer" style="padding-left: ${index + 1}rem">
                     <span class="span-logo ${logo}">&nbsp;</span>
                     <span class="file-name">${file}</span>
-                </span>`;
+                </span></div>`;
             })
             .join("");
           // @ts-ignore
@@ -68,27 +72,35 @@ const Structure = () => {
     return domBuilder.join("");
   }
 
+  const collapseMeasurables = (measurables: any, max: any) => {
+    console.log("MAX", max);
+    for (let i = 0; i < measurables.length; i++) {
+      const measurable = measurables[i];
+      // console.log("XXX", measurable)
+      if (
+        !measurable.classList.contains("not-seen") &&
+        !measurable.classList.contains("collapsed-now")
+      ) {
+        // console.log("XXX", true)
+        if (max > 32) {
+          measurable.style.width = `${180 + max - 48}px`;
+        } else {
+          measurable.style.width = `${180}px`;
+        }
+      }
+    }
+  };
+
   const clickHandler = (event: any) => {
     if (fileSysRef.current == null) return;
-
     const elem = event.target;
-    if (elem.tagName.toLowerCase() === "span" && elem !== event.currentTarget) {
-      const type = elem.classList.contains("folder") ? "folder" : "file";
-      console.log("HERE", type);
+    const type = elem.classList.contains("folder") ? "folder" : "file";
+    if (elem !== event.currentTarget) {
       if (type === "file") {
         alert("File accessed");
       } else if (type === "folder") {
-        const isExpanded = elem.dataset.isexpanded === "true";
-        const folderIcon = elem.querySelector(".span-logo");
+        const isCollapsed = elem.dataset.iscollapsed === "true";
 
-        if (!isExpanded) {
-          folderIcon.classList.remove("opened-folder");
-          folderIcon.classList.add("closed-folder");
-        } else {
-          folderIcon.classList.remove("closed-folder");
-          folderIcon.classList.add("opened-folder");
-        }
-        elem.dataset.isexpanded = !isExpanded;
         const toggleElems = [].slice.call(elem.parentElement.children);
         const classNames = "file,folder-container,noitems".split(",");
         toggleElems.forEach((element: any) => {
@@ -97,18 +109,85 @@ const Structure = () => {
               return element.classList.contains(val);
             })
           )
-            if (!isExpanded) {
-              element.classList.add("display-none");
+            if (!isCollapsed) {
+              element.classList.add("not-seen");
+              element.classList.remove("flex");
             } else {
-              element.classList.remove("display-none");
+              element.classList.remove("not-seen");
+              element.classList.add("flex");
             }
         });
+
+        const folderIcon = elem.querySelector(".span-logo");
+
+        const measurables =
+          fileSysRef.current.getElementsByClassName("measurable");
+
+        const children =
+          elem.parentElement.getElementsByClassName("measurable");
+        let max = 0;
+        console.log("BBB", elem.parentElement.children);
+        // const tX = getTranslateX(transformers[0]);
+        if (children.length > 0) {
+          // console.log("Children", children);
+          for (let i = 1; i < children.length; i++) {
+            const child = children[i];
+            // console.log("CHILD", child);
+            if (!isCollapsed) {
+              child.classList.add("collapsed-now");
+            } else {
+              child.classList.remove("collapsed-now");
+            }
+          }
+        }
+
+        for (let i = 0; i < measurables.length; i++) {
+          const measurable = measurables[i];
+          console.log("MAX", max);
+
+          const classList = [...measurable.classList];
+
+          if (
+            !classList.some((el) => el === "not-seen" || el === "collapsed-now")
+          ) {
+            // console.log(
+            //   measurable,
+            //   measurable.classList,
+            //   "! NOT SEEN OR COLLAPSED",
+            //   classList.some((el) => el === "not-seen" || el === "collapsed-now"),
+            //   classList
+            // );
+            const transformer =
+              measurable.getElementsByClassName("transformer")[0];
+            const padding = getStyle(transformer, "padding-left");
+            const paddingInt = parseInt(padding);
+            if (paddingInt > max) {
+              console.log("AAA", transformer, padding, classList);
+              max = paddingInt;
+            }
+          }
+        }
+        collapseMeasurables(measurables, max);
+
+        if (!isCollapsed) {
+          folderIcon.classList.remove("opened-folder");
+          folderIcon.classList.add("closed-folder");
+        } else {
+          folderIcon.classList.remove("closed-folder");
+          folderIcon.classList.add("opened-folder");
+        }
+
+        elem.dataset.iscollapsed = !isCollapsed;
       }
     }
   };
 
   return (
-    <div className="file-sys-container custom-scrollbar m-2" ref={fileSysRef} onClick={clickHandler}>
+    <div
+      className="file-sys-container custom-scrollbar"
+      ref={fileSysRef}
+      onClick={clickHandler}
+    >
       {parse(mapObjectRecursively(structureData))}
     </div>
   );

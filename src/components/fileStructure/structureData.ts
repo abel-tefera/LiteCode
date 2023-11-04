@@ -46,10 +46,21 @@ const structureData = {
     },
   },
   "Folder 4": {
+    Files: ["mickss.css"],
     "Folder 5": {
       Files: ["hello.js", "world.css"],
     },
   },
 };
+
+// const structureData = {
+//   Files: ["root.js"],
+//   "Folder 1": {
+//     Files: ["rickrolled.jsx"],
+//     "Folder 2": {
+//       Files: ["manutd.js"],
+//     },
+//   },
+// };
 
 export default structureData;
