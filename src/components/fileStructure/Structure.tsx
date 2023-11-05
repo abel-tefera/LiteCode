@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import "./structure.css";
 import parse from "html-react-parser";
 import structureData from "./structureData";
@@ -7,6 +7,7 @@ import { getTranslateX, getStyle } from "../../utils/getStyle";
 
 const Structure = () => {
   const fileSysRef = useRef<any>(null);
+
 
   function mapObjectRecursively(obj: any, domBuilder = [], index = 0) {
     for (let key in obj) {
@@ -87,6 +88,7 @@ const Structure = () => {
       }
     }
   };
+
 
   const clickHandler = (event: any) => {
     if (fileSysRef.current == null) return;

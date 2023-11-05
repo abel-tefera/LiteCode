@@ -10,7 +10,7 @@ import Tabs from "./components/Tabs";
 const App = () => {
   return (
     <Provider store={store}>
-      <div className="App bg-dark-bg text-white">
+      <div className="App bg-dark-bg text-white font-roboto">
         <Layout>
           <Tabs />
           <CodeCell />

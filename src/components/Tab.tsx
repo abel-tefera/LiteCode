@@ -31,14 +31,14 @@ const Tab: React.FC<any> = ({ id, name, type, selected, onSelect }) => {
   return (
     <div
       onClick={() => onSelect(id)}
-      className={`p-2 px-2 flex flex-row flex-shrink-0 cursor-pointer select-none rounded-sm ${
+      className={`p-2 px-2 flex flex-row flex-shrink-0 cursor-pointer select-none items-center rounded-sm ${
         selected
           ? `bg-dark-hover border-t border-t-slate-200`
           : `hover:bg-dark-hover`
       }`}
     >
-      <img src={logo} alt="js-logo" className="w-6 h-6 rounded-full" />
-      <span className="text-lg mx-2">{name}</span>
+      <img src={logo} alt="js-logo" className="w-4 h-4 rounded-full" />
+      <span className="text-base mx-2">{name}</span>
       <img
         src={cross}
         alt="close"

@@ -17,7 +17,7 @@ const Layout = (props: PropsWithChildren) => {
         "flex min-h-screen md:overflow-y-hidden": true,
         // "min-w-[200px]": !collapsed,
         // "min-w-[64px]": collapsed,
-        "transition-width duration-300 ease-in-out": true,
+        // "transition-width duration-300 ease-in-out": true,
       })}
     >
       <Sidebar
