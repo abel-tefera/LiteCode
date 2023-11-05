@@ -80,9 +80,9 @@ const Structure = () => {
         !measurable.classList.contains("collapsed-now")
       ) {
         if (max > 32) {
-          measurable.style.width = `${180 + max - 48}px`;
+          measurable.style.width = `${200 + max - 48}px`;
         } else {
-          measurable.style.width = `${180}px`;
+          measurable.style.width = `${200}px`;
         }
       }
     }

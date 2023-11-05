@@ -6,13 +6,37 @@ import CodeEditor from "./CodeEditor";
 import CodePreview from "./CodePreview";
 import bundle from "../bundler";
 import Resizable from "./Resizable";
+import throttle from "../utils/throttle";
+// import useWindowDimensions from "../hooks/useWindowDimensions";
 
 const CodeCell = () => {
   const [input, setInput] = useState("");
   const [code, setCode] = useState("");
-  const [err, setErr] = useState('');
+  const [err, setErr] = useState("");
+  const [direction, setDirection] = useState<
+    "horizontal" | "vertical" | null
+  >();
 
   const esbuildRef = useRef<any>(null);
+
+  const findWidth = () => {
+    const width = window.innerWidth;
+    if (width >= 768) {
+      return "horizontal";
+    } else {
+      return "vertical";
+    }
+  };
+
+  const handleResize = throttle((e: any) => {
+    setDirection(findWidth());
+  }, 500);
+
+  useEffect(() => {
+    setDirection(findWidth());
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     async function serviceStart() {
@@ -45,13 +69,16 @@ const CodeCell = () => {
   };
 
   return (
-    <div className="code-cell">
-      <Resizable direction={"horizontal"}>
-        <CodeEditor
-          initialValue="console.log(123);"
-          onChange={onEditorChange}
-        />
-      </Resizable>
+    <div className="code-cell flex flex-col md:flex-row">
+      {direction && (
+        <Resizable direction={direction}>
+          <CodeEditor
+            initialValue="console.log(123);"
+            onChange={onEditorChange}
+          />
+        </Resizable>
+      )}
+
       <CodePreview code={code} err={err} />
     </div>
   );

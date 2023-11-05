@@ -2,11 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    background-color: #0E1525;
+}
+
 .code-cell {
-    display: flex;
-    flex-direction: row;
     height: 100%;
-    
 }
 
 .editor-wrapper {
@@ -18,9 +19,11 @@
 .preview-wrapper {
     background-color: white;
     position: relative;
-    height: 85%;
+    height: 80%;
     display: flex;
     flex-grow: 1;
+    margin-right: 2rem;
+    width: 100%;
 }
 
 .preview-wrapper iframe {

@@ -7,11 +7,17 @@ const Layout = (props: PropsWithChildren) => {
   const [showSidebar, setShowSidebar] = useState(true);
   return (
     <div
+      // className={classNames({
+      //   "grid min-h-screen": true,
+      //   "grid-cols-sidebar": !collapsed,
+      //   "grid-cols-sidebar-collapsed": collapsed,
+      //   "transition-[grid-template-columns] duration-300 ease-in-out": true,
+      // })}
       className={classNames({
-        "grid min-h-screen overflow-y-hidden": true,
-        "grid-cols-sidebar": !collapsed,
-        "grid-cols-sidebar-collapsed": collapsed,
-        "transition-[grid-template-columns] duration-300 ease-in-out": true,
+        "flex min-h-screen md:overflow-y-hidden": true,
+        // "min-w-[200px]": !collapsed,
+        // "min-w-[64px]": collapsed,
+        "transition-width duration-300 ease-in-out": true,
       })}
     >
       <Sidebar
@@ -19,7 +25,7 @@ const Layout = (props: PropsWithChildren) => {
         setCollapsed={setSidebarCollapsed}
         shown={showSidebar}
       />
-      <div className="">
+      <div className="w-full">
         <Navbar onMenuButtonClick={() => setShowSidebar((prev) => !prev)} />
         {props.children}
       </div>

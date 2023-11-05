@@ -1,10 +1,10 @@
 .file-sys-container {
     display: flex;
     flex-direction: column;
-    /* max-width: 18rem; */
+    max-width: 205px;
     overflow-x: auto;
     text-wrap: nowrap;
-    height: 65vh;
+    max-height: calc(50vh + 18px);
     /* background-color: blue; */
 }
 
@@ -28,7 +28,6 @@
 .file {
     cursor: pointer;
     /* background-color: red; */
-    /* width: 100%; */
 }
 
 .transformer {
@@ -60,6 +59,10 @@
     /* background-color: red; */
     padding-top: 0.25rem;
     padding-bottom: 0.25rem;
+}
+
+.measurable {
+    width: 200px;
 }
 
 
@@ -106,38 +109,14 @@
     display: none;
 }
 
-/* #hierarchy
-{
-    font-family: FontAwesome;
-    width: 300px;
+@media screen and (min-width: 768px) {
+    .file-sys-container {
+        max-height: calc(55vh + 18px);
+    }
 }
-.folder-container, .file, .noitems
-{
-    display: block;
-    padding: 5px 5px 5px 50px;
+
+@media screen and (min-width: 1024px) {
+    .file-sys-container {
+        max-height: calc(60vh + 18px);
+    }
 }
-.folder
-{
-    color: red;
-}
-.file
-{
-    color: green;
-}
-.folder, .file
-{
-    cursor: pointer;
-}
-.noitems
-{
-    display: none;
-    pointer-events: none;
-}
-.folder:hover,.file:hover
-{
-    background: yellow;
-}
-.folder:before, .file:before
-{
-    padding-right: 10px;
-} */

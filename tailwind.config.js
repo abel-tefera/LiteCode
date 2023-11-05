@@ -11,10 +11,10 @@ module.exports = {
         'dark-bg-2': '#1C2333',
         'dark-hover': '#2B3245'
       },
-      gridTemplateColumns: {
-        sidebar: "180px auto", //for sidebar layout
-        "sidebar-collapsed": "64px auto", //for sidebar layout
-      },
+      // gridTemplateColumns: {
+      //   sidebar: "200px auto", //for sidebar layout
+      //   "sidebar-collapsed": "64px auto", //for sidebar layout
+      // },
 
     },
   },

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import { defaultNavItems, NavItem } from "./defaultNavItems";
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
@@ -8,20 +7,15 @@ import {
 import Structure from "../fileStructure/Structure";
 import FileActions from "../fileStructure/FileActions";
 import logo from "../../assets/logo-2.png";
+import ethiopiaIcon from "../../assets/ethiopia.png";
 
 // add NavItem prop to component prop
 type Props = {
   collapsed: boolean;
-  navItems?: NavItem[];
   setCollapsed(collapsed: boolean): void;
   shown: boolean;
 };
-const Sidebar = ({
-  collapsed,
-  navItems = defaultNavItems,
-  shown,
-  setCollapsed,
-}: Props) => {
+const Sidebar = ({ collapsed, shown, setCollapsed }: Props) => {
   const [visibility, setVisibility] = useState(collapsed);
   const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
 
@@ -35,31 +29,32 @@ const Sidebar = ({
   return (
     <div
       className={classNames({
-        "fixed md:static md:translate-x-0 z-20": true,
-        "transition-all duration-300 ease-in-out": true,
-        "w-[180px]": !collapsed,
-        "w-16": collapsed,
+        "fixed bg-dark-bg md:static md:translate-x-0 z-20 ": true,
+        "transition-transform duration-300 ease-in-out": true,
+        "w-[250px] max-w-[250px] transition-[width]": !collapsed,
+        "w-20 min-w-[80px] transition-[width]": collapsed,
         "-translate-x-full": !shown,
       })}
     >
+      <div className="h-[18px]">&nbsp;</div>
       <div
         className={classNames({
-          "flex flex-col justify-between h-screen sticky inset-0 w-full": true,
+          "flex flex-col justify-between h-[95vh] sticky inset-0 w-full": true,
         })}
       >
         {/* logo and collapse button */}
         <div
           className={classNames({
-            "flex items-center mb-[2px] transition-none": true,
-            "p-4 justify-between": !collapsed,
-            "py-4 justify-center": collapsed,
+            "flex items-center mb-[7px] transition-none": true,
+            "px-4 py-2 justify-between": !collapsed,
+            "py-2 justify-center": collapsed,
           })}
         >
           {!collapsed && (
             <span className={`text-lg`}>
-              {!visibility && <>&nbsp;</>}
-              <span className={visibility ? `block` : `hidden`}>
-                <img src={logo} alt="Logo" className="w-24" />
+              {collapsed && <>&nbsp;</>}
+              <span className={!collapsed ? `block` : `hidden`}>
+                <img src={logo} alt="Logo" className="w-[7.5rem]" />
               </span>
             </span>
           )}
@@ -71,22 +66,31 @@ const Sidebar = ({
           </button>
         </div>
         <nav className="flex flex-col flex-grow">
-          <div className={!collapsed && visibility ? "block w-full" : "display-none"}>
+          <div
+            className={
+              !collapsed && visibility ? "block" : "display-none"
+            }
+          >
             <FileActions />
             <Structure />
           </div>
         </nav>
         {!collapsed && (
-          <div className="ml-4">
-            <div className={visibility ? `block` : `hidden`}>
-              Built by{" "}
+          <div className="ml-4 text-base">
+            <div
+              className={
+                visibility ? `inline-flex items-center -mb-2` : `hidden`
+              }
+            >
+              Developed by&nbsp;
               <a
                 href="https://www.abeltb.xyz/"
+                target="_blank"
+                rel="noreferrer"
                 className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
               >
                 Abel
-              </a>{" "}
-              in 2023
+              </a>
             </div>
           </div>
         )}
