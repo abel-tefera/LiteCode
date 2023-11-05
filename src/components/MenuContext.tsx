@@ -30,6 +30,17 @@ const MenuContext = ({ top, left, clicked, setClicked }) => {
       title: "Paste",
       handler: () => {},
     },
+    {
+      type: "hr",
+    },
+    {
+      title: "Rename",
+      handler: () => {},
+    },
+    {
+      title: "Delete",
+      handler: () => {},
+    },
   ]
 
   return (
@@ -46,7 +57,9 @@ const MenuContext = ({ top, left, clicked, setClicked }) => {
             if (action.type === "hr") {
               return <hr key={index} className="my-2 border-t border-t-zinc-600" />
             } else {
-              return <li key={index} className="hover:bg-hover-blue rounded-md px-7 py-1 cursor-pointer">{action.title}</li>
+              return <li key={index} className="hover:bg-hover-blue rounded-md px-7 py-1 cursor-pointer">
+                <span className="select-none">{action.title}</span>
+                </li>
             }
           })
         }

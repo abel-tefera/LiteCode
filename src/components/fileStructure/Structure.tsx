@@ -24,7 +24,13 @@ const Structure = () => {
                 index + 1
               }rem">
                 <span class="span-logo closed-folder">&nbsp;</span>
-                <span class="folder-name">${key}</span>
+                <span class="folder-name">${((() => {
+                  const [fname] = key.split(".");
+                  if (fname.length > 12) {
+                    return `${fname.slice(0, 12)}...`;
+                  }
+                  return key;
+                }))()}</span>
               </span>
             </span>`,
             `</div>`
@@ -61,7 +67,13 @@ const Structure = () => {
               }'>
                 <span class="transformer" style="padding-left: ${index + 1}rem">
                     <span class="span-logo ${logo}">&nbsp;</span>
-                    <span class="file-name">${file}</span>
+                    <span class="file-name">${((() => {
+                      const [fname, ext] = file.split(".");
+                      if (fname.length > 12) {
+                        return `${fname.slice(0, 12)}...${ext}`;
+                      }
+                      return file;
+                    }))()}</span>
                 </span></div>`;
             })
             .join("");
@@ -80,7 +92,7 @@ const Structure = () => {
         !measurable.classList.contains("not-seen") &&
         !measurable.classList.contains("collapsed-now")
       ) {
-        if (max > 32) {
+        if (max > 48) {
           measurable.style.width = `${200 + max - 48}px`;
         } else {
           measurable.style.width = `${200}px`;

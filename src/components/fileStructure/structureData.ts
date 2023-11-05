@@ -1,5 +1,5 @@
 const structureData = {
-  Files: ["root.js", "README.md"],
+  Files: ["root.js", "README.md", "mynameisjeffandiamaveryveryverylongfilename.js"],
   "Folder 1": {
     "Folder 2": {
       Files: ["me.js", "you.css", "README.md"],

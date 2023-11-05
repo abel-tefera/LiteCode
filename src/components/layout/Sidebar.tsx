@@ -35,12 +35,19 @@ const Sidebar = ({ collapsed, shown, setCollapsed }: Props) => {
 
   const contextHandler = (e: any) => {
     e.preventDefault(); // prevent the default behaviour when right clicked
-    setPoints({
-      x: e.clientY,
-      y: e.clientX,
-    });
+    if (e.clientY > 300) {
+      setPoints({
+        x: e.clientY - 300,
+        y: e.clientX,
+      });
+    } else {
+      setPoints({
+        x: e.clientY,
+        y: e.clientX,
+      });
+    }
+
     setClicked(true);
-    // console.log("XXX", e);
     // console.log("Right Click", points.x, points.y, e.target.innerHTML);
   };
 
@@ -89,7 +96,12 @@ const Sidebar = ({ collapsed, shown, setCollapsed }: Props) => {
             <Structure />
           </div>
         </nav>
-        <MenuContext top={points.x} left={points.y} clicked={clicked} setClicked={setClicked} />
+        <MenuContext
+          top={points.x}
+          left={points.y}
+          clicked={clicked}
+          setClicked={setClicked}
+        />
 
         {!collapsed && (
           <div className="ml-4 text-base">

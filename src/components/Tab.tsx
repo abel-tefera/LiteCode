@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import jsLogo from "../assets/js.svg";
 import cssLogo from "../assets/css.svg";
-import mdLogo from "../assets/markdown.png";
+import mdLogo from "../assets/readme.png";
 import jsxLogo from "../assets/jsx.svg";
 
 import cross from "../assets/cross.svg";
@@ -37,8 +37,8 @@ const Tab: React.FC<any> = ({ id, name, type, selected, onSelect }) => {
           : `hover:bg-dark-hover`
       }`}
     >
-      <img src={logo} alt="js-logo" className="w-4 h-4 rounded-full" />
-      <span className="text-base mx-2">{name}</span>
+      <img src={logo} alt="js-logo" className="w-4 h-4" />
+      <span className="text-lg mx-2">{name}</span>
       <img
         src={cross}
         alt="close"

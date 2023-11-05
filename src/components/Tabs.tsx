@@ -17,7 +17,21 @@ const Tabs = () => {
             <Tab
               id={i}
               name={"index.js"}
-              type={"js"}
+              type={(() => {
+                const rand = Math.floor(Math.random() * 4);
+                switch (rand) {
+                  case 0:
+                    return "js";
+                  case 1:
+                    return "jsx";
+                  case 2:
+                    return "css";
+                  case 3:
+                    return "md";
+                  default:
+                    return "js";
+                }
+              })()}
               selected={i === 3}
               onSelect={onSelect}
             />
