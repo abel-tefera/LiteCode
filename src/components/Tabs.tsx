@@ -1,7 +1,10 @@
 import React from "react";
 import Tab from "./Tab";
-import downloadIcon from "../assets/down.jpg";
+import newProjectIcon from "../assets/new-project.png";
+import uploadIcon from "../assets/upload.png";
+
 import { Tooltip } from "react-tooltip";
+
 const Tabs = () => {
   const onSelect = (i: any) => {
     alert(`Tab ${i} selected`);
@@ -36,6 +39,30 @@ const Tabs = () => {
               onSelect={onSelect}
             />
           ))}
+      </div>
+      <div className="flex items-center">
+        <div className="p-2 mb-3 mr-6 flex flex-row">
+          <div className="mx-1">
+            <Tooltip id="start-new-project" className="z-20" />
+            <img
+              data-tooltip-id="start-new-project"
+              data-tooltip-content={"Start new Project"}
+              src={newProjectIcon}
+              alt="new project"
+              className="w-8 h-8 p-1 cursor-pointer hover:bg-dark-hover rounded-sm"
+            />
+          </div>
+          <div className="mx-1">
+            <Tooltip id="open-existing-project" className="z-20" />
+            <img
+              data-tooltip-id="open-existing-project"
+              data-tooltip-content={"Open existing Project"}
+              src={uploadIcon}
+              alt="open project"
+              className="w-8 h-8 p-1 cursor-pointer hover:bg-dark-hover rounded-sm"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

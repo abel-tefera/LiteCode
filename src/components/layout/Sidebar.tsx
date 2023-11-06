@@ -70,7 +70,7 @@ const Sidebar = ({ collapsed, shown, setCollapsed }: Props) => {
         {/* logo and collapse button */}
         <div
           className={classNames({
-            "flex items-center mb-[7px] transition-none": true,
+            "flex items-center mb-[7px] select-none": true,
             "px-4 py-2 justify-between": !collapsed,
             "py-2 justify-center": collapsed,
           })}

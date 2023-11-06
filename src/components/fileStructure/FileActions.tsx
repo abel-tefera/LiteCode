@@ -11,9 +11,9 @@ const FileActions = () => {
     <div className="flex flex-col items-start my-2 px-2">
       <input
         placeholder="Search"
-        className="self-center rounded-lg w-full bg-dark-bg-2 p-2 hover:bg-dark-hover active:outline-none focus:outline-none"
+        className="self-center rounded-lg w-full bg-dark-bg-2 p-2 hover:bg-dark-hover active:outline-none focus:outline-none mb-2"
       />
-      <div className="flex flex-row items-center mt-2 w-full">
+      <div className="flex flex-row items-center mt-2 w-full select-none">
         <img
           src={downArrowLogo}
           className="w-3 h-3 mr-2 -rotate-90"

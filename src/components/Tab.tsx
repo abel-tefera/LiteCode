@@ -37,13 +37,15 @@ const Tab: React.FC<any> = ({ id, name, type, selected, onSelect }) => {
           : `hover:bg-dark-hover`
       }`}
     >
-      <img src={logo} alt="js-logo" className="w-4 h-4" />
+      <img src={logo} alt="file-logo" className="w-4 h-4" />
       <span className="text-lg mx-2">{name}</span>
-      <img
-        src={cross}
-        alt="close"
-        className="h-3 w-3 cursor-pointer hover:opacity-30"
-      />
+      <span className="self-start">
+        <img
+          src={cross}
+          alt="close"
+          className="h-3 w-3 cursor-pointer hover:opacity-30 align-baseline"
+        />
+      </span>
     </div>
   );
 };
