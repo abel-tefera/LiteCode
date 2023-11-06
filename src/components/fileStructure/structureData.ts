@@ -1,9 +1,9 @@
 const structureData = {
   Files: ["root.js", "README.md", "mynameisjeffandiamaveryveryverylongfilename.js"],
-  "Folder 1": {
-    "Folder 2": {
+  "mynameisjeffandiamaveryveryverylongfilename": {
+    "mynameisjeffandiamaveryveryverylongfilename": {
       Files: ["me.js", "you.css", "README.md"],
-      "Folder 3": {
+      "mynameisjeffandiamaveryveryverylongfilename": {
         Files: ["index.js", "base.jsx", "hello.js"],
         "Folder 4": {
           "Folder 5": {

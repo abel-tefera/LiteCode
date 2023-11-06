@@ -11,7 +11,7 @@
 .folder-container {
     display: flex;
     flex-direction: column;
-    background-color: yellow;
+    /* background-color: yellow; */
     /* width: 100%; */
 }
 
@@ -27,7 +27,7 @@
 .folder,
 .file {
     cursor: pointer;
-    background-color: red;
+    /* background-color: red; */
 }
 
 .transformer {

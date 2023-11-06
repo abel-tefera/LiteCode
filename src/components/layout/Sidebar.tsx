@@ -75,14 +75,7 @@ const Sidebar = ({ collapsed, shown, setCollapsed }: Props) => {
             "py-2 justify-center": collapsed,
           })}
         >
-          {!collapsed && (
-            <span className={`text-lg`}>
-              {collapsed && <>&nbsp;</>}
-              <span className={!collapsed ? `block` : `hidden`}>
-                <img src={logo} alt="Logo" className="w-[7.5rem]" />
-              </span>
-            </span>
-          )}
+          {!collapsed && <img src={logo} alt="Logo" className="w-[7.5rem]" />}
           <button
             className="grid place-content-center hover:bg-dark-hover w-10 h-10 rounded-full opacity-0 md:opacity-100"
             onClick={() => setCollapsed(!collapsed)}

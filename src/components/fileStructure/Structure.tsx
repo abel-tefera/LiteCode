@@ -17,8 +17,8 @@ const Structure = () => {
             index,
             0,
             // @ts-ignore
-            `<div class='folder-container measurable ${
-              index !== 0 ? `not-seen collapsed-now` : `flex`
+            `<div class='folder-container measurable parent-collapsed ${
+              index !== 0 ? `not-seen` : `flex`
             }'><span class="folder clickable" data-iscollapsed="true">
               <span class="span-text transformer" style="padding-left: ${
                 index + 1
@@ -62,8 +62,8 @@ const Structure = () => {
                   logo = "file-logo";
                   break;
               }
-              return `<div class='file clickable measurable span-text ${
-                index !== 0 && `not-seen collapsed-now`
+              return `<div class='file clickable measurable span-text parent-collapsed ${
+                index !== 0 && `not-seen`
               }'>
                 <span class="transformer" style="padding-left: ${index + 1}rem">
                     <span class="span-logo ${logo}">&nbsp;</span>
@@ -89,11 +89,10 @@ const Structure = () => {
     for (let i = 0; i < measurables.length; i++) {
       const measurable = measurables[i];
       if (
-        !measurable.classList.contains("not-seen") &&
-        !measurable.classList.contains("collapsed-now")
+        !measurable.classList.contains("not-seen")
       ) {
-        if (max > 48) {
-          measurable.style.width = `${200 + max - 48}px`;
+        if (max > 64) {
+          measurable.style.width = `${200 + max - 64}px`;
         } else {
           measurable.style.width = `${200}px`;
         }
@@ -137,14 +136,15 @@ const Structure = () => {
         const children =
           elem.parentElement.getElementsByClassName("measurable");
         let max = 0;
+        console.log("PARENT", elem.parentElement);
         // const tX = getTranslateX(transformers[0]);
         if (children.length > 0) {
           for (let i = 1; i < children.length; i++) {
             const child = children[i];
             if (!isCollapsed) {
-              child.classList.add("collapsed-now");
+              child.classList.add("parent-collapsed");
             } else {
-              child.classList.remove("collapsed-now");
+              child.classList.remove("parent-collapsed");
             }
           }
         }
@@ -155,7 +155,7 @@ const Structure = () => {
           const classList = [...measurable.classList];
 
           if (
-            !classList.some((el) => el === "not-seen" || el === "collapsed-now")
+            !classList.some((el) => el === "not-seen" || el === "parent-collapsed")
           ) {
             const transformer =
               measurable.getElementsByClassName("transformer")[0];
@@ -171,8 +171,10 @@ const Structure = () => {
         if (!isCollapsed) {
           folderIcon.classList.remove("opened-folder");
           folderIcon.classList.add("closed-folder");
+          folderIcon.classList.add("parent-collapsed");
         } else {
           folderIcon.classList.remove("closed-folder");
+          folderIcon.classList.remove("parent-collapsed");
           folderIcon.classList.add("opened-folder");
         }
 
