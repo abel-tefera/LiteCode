@@ -1,5 +1,100 @@
 import { getStyle } from "../../utils/getStyle";
 
+const trimName = (name: string, isFile: boolean) => {
+  const [fname, ext] = name.split(".");
+  let newName: string = "";
+  if (isFile) {
+    if (fname.length > 10) {
+      newName = `${fname.slice(0, 10)}...${ext}`;
+    } else {
+      newName = name;
+    }
+  } else {
+    if (fname.length > 12) {
+      newName = `${fname.slice(0, 12)}...`;
+    } else {
+      newName = name;
+    }
+  }
+  // TODO Optimize Too many calls
+  // console.log("NAME", newName);
+  return newName;
+};
+
+const folderStructure = (
+  key: string,
+  index: number,
+  nested: boolean
+): string[] => {
+  const styles = `folder-container measurable ${
+    nested && index !== 0 ? `not-seen` : `flex`
+  } ${nested && `parent-collapsed`}`;
+  const opening = `<div class='${styles}'>`;
+  const body = `<span class="folder clickable" data-iscollapsed="true">
+        <span class="span-text transformer" style="padding-left: ${
+          index + 1
+        }rem">
+          <span class="span-logo closed-folder">&nbsp;</span>
+          <span class="folder-name">${trimName(key, false)}</span>
+        </span>
+      </span>`;
+  const closing = `</div>`;
+
+  if (nested) {
+    return [`${opening}${body}`, closing];
+  } else {
+    return [styles, `${body}${closing}`];
+  }
+};
+
+const fileStructure = (
+  file: string,
+  index: number,
+  logo: string,
+  nested: boolean
+): string | string[] => {
+  const styles = `file clickable measurable span-text ${
+    nested && index !== 0 && `not-seen`
+  } ${nested && `parent-collapsed`}`;
+  const body = `<span class="transformer" style="padding-left: ${
+    index + 1
+  }rem;">
+  <span class="span-logo ${logo}">&nbsp;</span>
+  <span class="file-name">${trimName(file, true)}</span>
+</span>`;
+
+  if (nested) {
+    return `<div class='${styles}'>
+  ${body}
+</div>`;
+  } else {
+    // console.log("HERE", body);
+    return [styles, body];
+  }
+};
+
+const getLogo = (fileType: string) => {
+  let logo: string = "";
+  switch (fileType) {
+    case "js":
+      logo = "js-logo";
+      break;
+    case "jsx":
+      logo = "jsx-logo";
+      break;
+    case "css":
+      logo = "css-logo";
+      break;
+    case "md":
+      logo = "md-logo";
+      break;
+    default:
+      logo = "file-logo";
+      break;
+  }
+  return logo;
+};
+
 const mapObjectRecursively = (
   obj: {
     [k: string]: any;
@@ -9,27 +104,9 @@ const mapObjectRecursively = (
 ) => {
   for (let key in obj) {
     if (key !== "Files") {
-      domBuilder.splice(
-        index,
-        0,
-        `<div class='folder-container measurable parent-collapsed ${
-          index !== 0 ? `not-seen` : `flex`
-        }'><span class="folder clickable" data-iscollapsed="true">
-              <span class="span-text transformer" style="padding-left: ${
-                index + 1
-              }rem">
-                <span class="span-logo closed-folder">&nbsp;</span>
-                <span class="folder-name">${(() => {
-                  const [fname] = key.split(".");
-                  if (fname.length > 12) {
-                    return `${fname.slice(0, 12)}...`;
-                  }
-                  return key;
-                })()}</span>
-              </span>
-            </span>`,
-        `</div>`
-      );
+      // @ts-ignore
+      const [opening, closing] = folderStructure(key, index, true);
+      domBuilder.splice(index, 0, opening, closing);
       index += 1;
       mapObjectRecursively(obj[key], domBuilder, index);
       index -= 1;
@@ -37,38 +114,10 @@ const mapObjectRecursively = (
       const x = obj[key]
         // eslint-disable-next-line
         .map((file: any) => {
-          let logo: string | undefined;
           const fileType = file.split(".")[1];
-          switch (fileType) {
-            case "js":
-              logo = "js-logo";
-              break;
-            case "jsx":
-              logo = "jsx-logo";
-              break;
-            case "css":
-              logo = "css-logo";
-              break;
-            case "md":
-              logo = "md-logo";
-              break;
-            default:
-              logo = "file-logo";
-              break;
-          }
-          return `<div class='file clickable measurable span-text parent-collapsed ${
-            index !== 0 && `not-seen`
-          }'>
-                <span class="transformer" style="padding-left: ${index + 1}rem">
-                    <span class="span-logo ${logo}">&nbsp;</span>
-                    <span class="file-name">${(() => {
-                      const [fname, ext] = file.split(".");
-                      if (fname.length > 12) {
-                        return `${fname.slice(0, 12)}...${ext}`;
-                      }
-                      return file;
-                    })()}</span>
-                </span></div>`;
+          const logo: string = getLogo(fileType);
+
+          return fileStructure(file, index, logo, true);
         })
         .join("");
       domBuilder.splice(index, 0, x);
@@ -201,4 +250,11 @@ const fileStructureClickHandler = (
   }
 };
 
-export { mapObjectRecursively, fileStructureClickHandler, collapseOrExpand };
+export {
+  mapObjectRecursively,
+  fileStructureClickHandler,
+  collapseOrExpand,
+  folderStructure,
+  fileStructure,
+  getLogo
+};

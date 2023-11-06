@@ -10,7 +10,12 @@ import logo from "../../assets/logo-2.png";
 import MenuContext from "../menus/MenuContext";
 import CustomInput from "../file-structure/CustomInput";
 import { createPortal } from "react-dom";
-import { collapseOrExpand } from "../file-structure/StructureUtils";
+import {
+  collapseOrExpand,
+  fileStructure,
+  folderStructure,
+  getLogo,
+} from "../file-structure/StructureUtils";
 import { getStyle } from "../../utils/getStyle";
 
 type SidebarProps = {
@@ -37,37 +42,55 @@ const Sidebar: React.FC<SidebarProps> = ({
   const structureRef = useRef<HTMLDivElement>(null);
   const [showInput, setShowInput] = useState(false);
   const [inputPadding, setInputPadding] = useState(0);
+  const [inputType, setInputType] = useState<"file" | "folder" | "">("");
 
+  const createFileInput = () => {
+    if (!clickedRef.current) return;
+
+    const padding = getStyle(
+      clickedRef.current.getElementsByClassName(
+        "transformer"
+      )[0] as HTMLElement,
+      "padding-left"
+    );
+    const type = clickedRef.current.classList.contains("folder")
+      ? "folder"
+      : "file";
+
+    if (type === "folder") {
+      setInputPadding(parseInt(padding));
+    } else {
+      setInputPadding(parseInt(padding) - 16);
+    }
+
+    if (clickedRef.current.classList.contains("main-nav")) {
+      clickedRef.current = clickedRef.current.getElementsByClassName(
+        "main-content"
+      )[0] as HTMLElement;
+    } else {
+      collapseOrExpand(clickedRef.current, structureRef, false);
+    }
+    // structureRef.current?.classList.add('dont-overflow');
+    setShowInput(true);
+  };
   const actions = [
     {
       title: "New File",
       handler: () => {
-        if (clickedRef.current == null) return;
+        setInputType("file");
         // console.log("XXX", structureRef)
         // clickedRef.current.parentElement?.classList.add(
         //   "folder-container-reverse"
         // );
-        const padding = getStyle(
-          clickedRef.current.getElementsByClassName(
-            "transformer"
-          )[0] as HTMLElement,
-          "padding-left"
-        );
-        const type = clickedRef.current.classList.contains("folder")
-          ? "folder"
-          : "file";
-        if (type === "folder") {
-          setInputPadding(parseInt(padding));
-        } else {
-          setInputPadding(parseInt(padding) - 16);
-        }
-        collapseOrExpand(clickedRef.current, structureRef, false);
-        setShowInput(true);
+        createFileInput();
       },
     },
     {
       title: "New Folder",
-      handler: () => {},
+      handler: () => {
+        setInputType("folder");
+        createFileInput();
+      },
     },
     {
       type: "hr",
@@ -95,9 +118,61 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: "Delete",
-      handler: () => {},
+      handler: () => {
+        if (!clickedRef.current) return;
+        const type = clickedRef.current.classList.contains("folder")
+          ? "folder"
+          : "file";
+
+        if (type === "folder") {
+          clickedRef.current.parentElement?.remove();
+        } else {
+          clickedRef.current.remove();
+        }
+      },
     },
   ];
+
+  const inputSubmit = (value: string) => {
+    if (!clickedRef.current) return;
+    let paddingRem: number = 0;
+    if (inputPadding > 16) {
+      paddingRem = inputPadding / 16;
+    } else if (inputPadding > 0) {
+      paddingRem = 1;
+    }
+    let styles: string,
+      markup: string = "";
+
+    if (inputType === "file") {
+      // @ts-ignore
+      [styles, markup] = fileStructure(
+        value,
+        paddingRem,
+        getLogo(value.split(".").reverse()[0]),
+        false
+      );
+    } else if (inputType === "folder") {
+      [styles, markup] = folderStructure(value, paddingRem, false);
+    }
+
+    const element = document.createElement("div");
+    element.innerHTML = markup;
+    // @ts-ignore
+    element.classList.add(...styles.split(" "));
+
+    if (clickedRef.current.classList.contains("main-content")) {
+      const appendTo = clickedRef.current.getElementsByClassName(
+        "file-sys-container"
+      )[0] as HTMLElement;
+      appendTo.appendChild(element);
+    } else {
+      const appendTo = clickedRef.current.parentElement as HTMLElement;
+      appendTo.appendChild(element);
+    }
+    // structureRef.current?.classList.remove('dont-overflow')
+    setShowInput(false);
+  };
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -169,10 +244,14 @@ const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
         <nav
-          className="flex select-none flex-col flex-grow"
+          className="flex select-none flex-col flex-grow main-nav"
           onContextMenu={contextHandler}
         >
-          <div className={!collapsed && visibility ? "block" : "display-none"}>
+          <div
+            className={
+              !collapsed && visibility ? "block main-content" : "display-none"
+            }
+          >
             <FileActions />
             <Structure ref={structureRef} />
           </div>
@@ -194,7 +273,11 @@ const Sidebar: React.FC<SidebarProps> = ({
                 //     "folder-container-reverse"
                 //   );
                 // }
+                // structureRef.current?.classList.remove('dont-overflow')
                 setShowInput(false);
+              }}
+              submit={(value) => {
+                inputSubmit(value);
               }}
               padding={inputPadding + 1}
             />,
@@ -213,7 +296,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <div
               className={
                 visibility
-                  ? `inline-flex items-center -mb-2 select-none`
+                  ? `inline-flex items-center select-none`
                   : `hidden`
               }
             >
