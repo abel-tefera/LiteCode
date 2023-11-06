@@ -1,9 +1,15 @@
 import React, { useRef } from "react";
-import useOutsideAlerter from "../hooks/useOutsideAlerter";
+import useOutsideAlerter from "../../hooks/useOutsideAlerter";
 
-// @ts-ignore
-const MenuContext = ({ top, left, clicked, setClicked }) => {
-  const contextRef = useRef(null);
+interface MenuContextProps {
+  top: number;
+  left: number;
+  clicked: boolean;
+  setClicked: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const MenuContext: React.FC<MenuContextProps> = ({ top, left, clicked, setClicked }) => {
+  const contextRef = useRef<HTMLDivElement>(null);
   useOutsideAlerter(contextRef, setClicked);
 
   const actions = [

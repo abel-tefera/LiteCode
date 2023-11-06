@@ -1,12 +1,12 @@
 import React from "react";
 import Tab from "./Tab";
-import newProjectIcon from "../assets/new-project.png";
-import uploadIcon from "../assets/upload.png";
+import newProjectIcon from "../../assets/new-project.png";
+import uploadIcon from "../../assets/upload.png";
 
 import { Tooltip } from "react-tooltip";
 
 const Tabs = () => {
-  const onSelect = (i: any) => {
+  const onSelect = (i: number) => {
     alert(`Tab ${i} selected`);
   };
   return (

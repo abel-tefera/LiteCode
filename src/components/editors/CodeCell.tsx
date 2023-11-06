@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { OnChange as MonacoOnChange } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
-import startService from "../bundler/plugins/startService";
-import CodeEditor from "./CodeEditor";
-import CodePreview from "./CodePreview";
-import bundle from "../bundler";
-import Resizable from "./Resizable";
-import throttle from "../utils/throttle";
-// import useWindowDimensions from "../hooks/useWindowDimensions";
+import startService from "../../bundler/plugins/startService";
+import CodeEditor from "./code/CodeEditor";
+import CodePreview from "./code/CodePreview";
+import bundle from "../../bundler";
+import Resizable from "../Resizable";
+import throttle from "../../utils/throttle";
 
 const CodeCell = () => {
   const [input, setInput] = useState("");
@@ -28,7 +27,7 @@ const CodeCell = () => {
     }
   };
 
-  const handleResize = throttle((e: any) => {
+  const handleResize = throttle((e: UIEvent) => {
     setDirection(findWidth());
   }, 500);
 

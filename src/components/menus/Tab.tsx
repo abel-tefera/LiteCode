@@ -1,13 +1,21 @@
 import React, { useEffect } from "react";
-import jsLogo from "../assets/js.svg";
-import cssLogo from "../assets/css.svg";
-import mdLogo from "../assets/readme.png";
-import jsxLogo from "../assets/jsx.svg";
+import jsLogo from "../../assets/js.svg";
+import cssLogo from "../../assets/css.svg";
+import mdLogo from "../../assets/readme.png";
+import jsxLogo from "../../assets/jsx.svg";
 
-import cross from "../assets/cross.svg";
+import cross from "../../assets/cross.svg";
 
-const Tab: React.FC<any> = ({ id, name, type, selected, onSelect }) => {
-  const [logo, setLogo] = React.useState<string | undefined>(undefined);
+interface TabProps {
+  id: number;
+  name: string;
+  type: string;
+  selected: boolean;
+  onSelect: (id: number) => void;
+}
+
+const Tab: React.FC<TabProps> = ({ id, name, type, selected, onSelect }) => {
+  const [logo, setLogo] = React.useState<string | null>();
 
   useEffect(() => {
     switch (type) {
@@ -27,7 +35,8 @@ const Tab: React.FC<any> = ({ id, name, type, selected, onSelect }) => {
         setLogo(jsLogo);
         break;
     }
-  }, []);
+  }, [type]);
+  
   return (
     <div
       onClick={() => onSelect(id)}
@@ -37,7 +46,7 @@ const Tab: React.FC<any> = ({ id, name, type, selected, onSelect }) => {
           : `hover:bg-dark-hover`
       }`}
     >
-      <img src={logo} alt="file-logo" className="w-4 h-4" />
+      <img src={logo ? logo : ''} alt="file-logo" className="w-4 h-4" />
       <span className="text-lg mx-2">{name}</span>
       <span className="self-start">
         <img

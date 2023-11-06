@@ -16,9 +16,9 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
 
   const [resizableWidth, setResizableWidth] = useState(window.innerWidth * 0.5);
 
-  const containerRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleResize = throttle((e: any) => {
+  const handleResize = throttle((e: UIEvent) => {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
@@ -43,7 +43,7 @@ const Resizable: React.FC<ResizableProps> = ({ direction, children }) => {
       resizeHandles: ["e"],
       minConstraints: [innerWidth * 0.2, Infinity],
       maxConstraints: [innerWidth * 0.65, Infinity],
-      onResizeStop: (e: any, data: any) => {
+      onResizeStop: (e, data) => {
         setResizableWidth(data.size.width);
       },
     };

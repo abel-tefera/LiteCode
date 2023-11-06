@@ -1,4 +1,4 @@
-const throttle = (func: any, delay: any) => {
+const throttle = (func: (...args: any[]) => void, delay: number) => {
   let inProgress = false;
   return (...args: any[]) => {
     if (inProgress) {
@@ -6,7 +6,7 @@ const throttle = (func: any, delay: any) => {
     }
     inProgress = true;
     setTimeout(() => {
-      func(...args); // Consider moving this line before the set timeout if you want the very first one to be immediate
+      func(...args);
       inProgress = false;
     }, delay);
   };

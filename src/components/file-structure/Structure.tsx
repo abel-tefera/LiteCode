@@ -1,96 +1,96 @@
-// @ts-nocheck
-import React, { useRef, useState } from "react";
-import "./structure.css";
+import React, { useRef } from "react";
+import "../../styles/structure.css";
 import parse from "html-react-parser";
 import structureData from "./structureData";
-import { getTranslateX, getStyle } from "../../utils/getStyle";
+import { getStyle } from "../../utils/getStyle";
 
 const Structure = () => {
-  const fileSysRef = useRef<any>(null);
+  const fileSysRef = useRef<HTMLDivElement>(null);
 
-
-  function mapObjectRecursively(obj: any, domBuilder = [], index = 0) {
+  function mapObjectRecursively(
+    obj: {
+      [k: string]: any;
+    },
+    domBuilder: string[] = [],
+    index = 0
+  ) {
     for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        if (key !== "Files") {
-          domBuilder.splice(
-            index,
-            0,
-            // @ts-ignore
-            `<div class='folder-container measurable parent-collapsed ${
-              index !== 0 ? `not-seen` : `flex`
-            }'><span class="folder clickable" data-iscollapsed="true">
+      if (key !== "Files") {
+        domBuilder.splice(
+          index,
+          0,
+          `<div class='folder-container measurable parent-collapsed ${
+            index !== 0 ? `not-seen` : `flex`
+          }'><span class="folder clickable" data-iscollapsed="true">
               <span class="span-text transformer" style="padding-left: ${
                 index + 1
               }rem">
                 <span class="span-logo closed-folder">&nbsp;</span>
-                <span class="folder-name">${((() => {
+                <span class="folder-name">${(() => {
                   const [fname] = key.split(".");
                   if (fname.length > 12) {
                     return `${fname.slice(0, 12)}...`;
                   }
                   return key;
-                }))()}</span>
+                })()}</span>
               </span>
             </span>`,
-            `</div>`
-          );
-          index += 1;
-          mapObjectRecursively(obj[key], domBuilder, index);
-          index -= 1;
-          // domBuilder.push(`<div class="folder-container"><span class="folder fa-folder-o" data-isexpanded="true">${key}</span>`);
-        } else {
-          const x = obj[key]
-            // eslint-disable-next-line no-loop-func
-            .map((file: any) => {
-              let logo: string | undefined;
-              const fileType = file.split(".")[1];
-              switch (fileType) {
-                case "js":
-                  logo = "js-logo";
-                  break;
-                case "jsx":
-                  logo = "jsx-logo";
-                  break;
-                case "css":
-                  logo = "css-logo";
-                  break;
-                case "md":
-                  logo = "md-logo";
-                  break;
-                default:
-                  logo = "file-logo";
-                  break;
-              }
-              return `<div class='file clickable measurable span-text parent-collapsed ${
-                index !== 0 && `not-seen`
-              }'>
+          `</div>`
+        );
+        index += 1;
+        mapObjectRecursively(obj[key], domBuilder, index);
+        index -= 1;
+      } else {
+        const x = obj[key]
+          // eslint-disable-next-line
+          .map((file: any) => {
+            let logo: string | undefined;
+            const fileType = file.split(".")[1];
+            switch (fileType) {
+              case "js":
+                logo = "js-logo";
+                break;
+              case "jsx":
+                logo = "jsx-logo";
+                break;
+              case "css":
+                logo = "css-logo";
+                break;
+              case "md":
+                logo = "md-logo";
+                break;
+              default:
+                logo = "file-logo";
+                break;
+            }
+            return `<div class='file clickable measurable span-text parent-collapsed ${
+              index !== 0 && `not-seen`
+            }'>
                 <span class="transformer" style="padding-left: ${index + 1}rem">
                     <span class="span-logo ${logo}">&nbsp;</span>
-                    <span class="file-name">${((() => {
+                    <span class="file-name">${(() => {
                       const [fname, ext] = file.split(".");
                       if (fname.length > 12) {
                         return `${fname.slice(0, 12)}...${ext}`;
                       }
                       return file;
-                    }))()}</span>
+                    })()}</span>
                 </span></div>`;
-            })
-            .join("");
-          // @ts-ignore
-          domBuilder.splice(index, 0, x);
-        }
+          })
+          .join("");
+        domBuilder.splice(index, 0, x);
       }
     }
     return domBuilder.join("");
   }
 
-  const collapseMeasurables = (measurables: any, max: any) => {
+  const collapseMeasurables = (
+    measurables: HTMLCollectionOf<HTMLElement>,
+    max: number
+  ) => {
     for (let i = 0; i < measurables.length; i++) {
       const measurable = measurables[i];
-      if (
-        !measurable.classList.contains("not-seen")
-      ) {
+      if (!measurable.classList.contains("not-seen")) {
         if (max > 64) {
           measurable.style.width = `${200 + max - 64}px`;
         } else {
@@ -100,18 +100,18 @@ const Structure = () => {
     }
   };
 
-
-  const clickHandler = (event: any) => {
+  const clickHandler = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     if (fileSysRef.current == null) return;
-    const elem = event.target;
+    const elem = event.target as HTMLElement;
     const type = elem.classList.contains("folder") ? "folder" : "file";
     if (elem !== event.currentTarget) {
       if (type === "file") {
         alert("File accessed");
       } else if (type === "folder") {
         const isCollapsed = elem.dataset.iscollapsed === "true";
-
-        const toggleElems = [].slice.call(elem.parentElement.children);
+        const toggleElems = elem.parentElement
+          ? Array.from(elem.parentElement.children)
+          : [];
         const classNames = "file,folder-container,noitems".split(",");
         toggleElems.forEach((element: any) => {
           if (
@@ -130,14 +130,15 @@ const Structure = () => {
 
         const folderIcon = elem.querySelector(".span-logo");
 
-        const measurables =
-          fileSysRef.current.getElementsByClassName("measurable");
+        const measurables = fileSysRef.current.getElementsByClassName(
+          "measurable"
+        ) as HTMLCollectionOf<HTMLElement>;
 
-        const children =
-          elem.parentElement.getElementsByClassName("measurable");
+        const children = elem.parentElement
+          ? Array.from(elem.parentElement.getElementsByClassName("measurable"))
+          : [];
+
         let max = 0;
-        console.log("PARENT", elem.parentElement);
-        // const tX = getTranslateX(transformers[0]);
         if (children.length > 0) {
           for (let i = 1; i < children.length; i++) {
             const child = children[i];
@@ -152,13 +153,18 @@ const Structure = () => {
         for (let i = 0; i < measurables.length; i++) {
           const measurable = measurables[i];
 
-          const classList = [...measurable.classList];
+          const classList = [...Array.from(measurable.classList)];
 
           if (
-            !classList.some((el) => el === "not-seen" || el === "parent-collapsed")
+            !classList.some(
+              (el) => el === "not-seen" || el === "parent-collapsed"
+            )
           ) {
-            const transformer =
-              measurable.getElementsByClassName("transformer")[0];
+            const transformers = measurable.getElementsByClassName(
+              "transformer"
+            ) as HTMLCollectionOf<HTMLElement>;
+
+            const transformer = transformers[0];
             const padding = getStyle(transformer, "padding-left");
             const paddingInt = parseInt(padding);
             if (paddingInt > max) {
@@ -169,16 +175,16 @@ const Structure = () => {
         collapseMeasurables(measurables, max);
 
         if (!isCollapsed) {
-          folderIcon.classList.remove("opened-folder");
-          folderIcon.classList.add("closed-folder");
-          folderIcon.classList.add("parent-collapsed");
+          folderIcon?.classList.remove("opened-folder");
+          folderIcon?.classList.add("closed-folder");
+          folderIcon?.classList.add("parent-collapsed");
         } else {
-          folderIcon.classList.remove("closed-folder");
-          folderIcon.classList.remove("parent-collapsed");
-          folderIcon.classList.add("opened-folder");
+          folderIcon?.classList.remove("closed-folder");
+          folderIcon?.classList.remove("parent-collapsed");
+          folderIcon?.classList.add("opened-folder");
         }
 
-        elem.dataset.iscollapsed = !isCollapsed;
+        elem.dataset.iscollapsed = (!isCollapsed).toString();
       }
     }
   };

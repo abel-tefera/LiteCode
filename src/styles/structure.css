@@ -12,16 +12,6 @@
     display: flex;
     flex-direction: column;
     /* background-color: yellow; */
-    /* width: 100%; */
-}
-
-.folder:before,
-.file:before {
-    /* padding-right: 10rem;
-    padding-left: 10rem;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    content: ''; */
 }
 
 .folder,
@@ -65,33 +55,28 @@
     width: 200px;
 }
 
-
-/* .file {
-    display: inline-block;
-} */
-
 .js-logo {
-    background-image: url("../../assets/js.svg");
+    background-image: url("../assets/js.svg");
 }
 
 .css-logo {
-    background-image: url("../../assets/css.svg");
+    background-image: url("../assets/css.svg");
 }
 
 .jsx-logo {
-    background-image: url("../../assets/jsx.svg");
+    background-image: url("../assets/jsx.svg");
 }
 
 .md-logo {
-    background-image: url("../../assets/readme.png");
+    background-image: url("../assets/readme.png");
 }
 
 .opened-folder {
-    background-image: url("../../assets/opened-folder.svg");
+    background-image: url("../assets/opened-folder.svg");
 }
 
 .closed-folder {
-    background-image: url("../../assets/folder.svg");
+    background-image: url("../assets/folder.svg");
 }
 
 .clickable>* {

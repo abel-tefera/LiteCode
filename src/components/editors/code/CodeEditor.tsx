@@ -1,8 +1,12 @@
 import React, { useRef, useCallback } from "react";
-import Monaco, { OnChange } from "@monaco-editor/react";
-import * as prettier from "prettier/standalone";
-import parserBabel from "prettier/plugins/babel";
-import * as prettierPluginEstree from "prettier/plugins/estree";
+import MonacoEditor, { OnChange } from "@monaco-editor/react";
+import { editor } from "monaco-editor";
+import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
+// import * as prettier from "prettier/standalone";
+// import parserBabel from "prettier/plugins/babel";
+// import * as prettierPluginEstree from "prettier/plugins/estree";
+
+type Monaco = typeof monaco;
 
 interface CodeEditorProps {
   initialValue: string;
@@ -10,33 +14,28 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
 
   const handleEditorDidMount = useCallback(
-    async (editor: any, monacoEditor: any) => {
+    async (editor: editor.IStandaloneCodeEditor, monacoEditor: Monaco) => {
       editorRef.current = editor;
     },
     []
   );
 
-  const formatCode = () => {
-    const unformatted = editorRef.current.getValue();
-    prettier
-      .format(unformatted, {
-        parser: "babel",
-        plugins: [parserBabel, prettierPluginEstree],
-        useTabs: false,
-        semi: true,
-        singleQuote: true,
-      })
-      .then((formatted: string) => {
-        formatted.replace(/\n$/, "");
-        editorRef.current.setValue(formatted);
-      });
-    // .replace(/\n$/, "");
-    // editorRef.current.setValue(formatted);
-    // onChange(formatted);
-  };
+  // const formatCode = async () => {
+  //   if (!editorRef.current) return;
+  //   const unformatted = editorRef.current.getValue();
+  //   const formatted = await prettier.format(unformatted, {
+  //     parser: "babel",
+  //     plugins: [parserBabel, prettierPluginEstree],
+  //     useTabs: false,
+  //     semi: true,
+  //     singleQuote: true,
+  //   });
+  //   formatted.replace(/\n$/, "");
+  //   editorRef.current.setValue(formatted);
+  // };
 
   return (
     <div className="editor-wrapper">
@@ -46,7 +45,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
       >
         Format
       </button> */}
-      <Monaco
+      <MonacoEditor
         defaultValue={initialValue}
         theme="vs-dark"
         defaultLanguage="javascript"

@@ -1,20 +1,18 @@
 import React from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import classNames from "classnames";
-type Props = {
-  /**
-   * Allows the parent component to modify the state when the
-   * menu button is clicked.
-   */
+
+type NavbarProps = {
   onMenuButtonClick(): void;
 };
-const Navbar = (props: Props) => {
+
+const Navbar: React.FC<NavbarProps> = (props) => {
   return (
     <nav
       className={classNames({
-        "flex items-center": true, // layout
+        "flex items-center": true,
         "w-screen md:w-full z-10 px-4 shadow-sm h-[18px] top-0 justify-end":
-          true, //positioning & styling
+          true,
       })}
     >
       <div className="md:hidden">

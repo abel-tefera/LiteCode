@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import downArrowLogo from "../../assets/left-arrow.svg";
 import newFileIcon from "../../assets/new-file.svg";
 import newFolderIcon from "../../assets/new-folder.svg";
@@ -6,7 +6,7 @@ import downloadIcon from "../../assets/download.svg";
 
 import { Tooltip } from "react-tooltip";
 
-const FileActions = () => {
+const FileActions: React.FC<PropsWithChildren> = () => {
   return (
     <div className="flex flex-col items-start my-2 px-2">
       <input

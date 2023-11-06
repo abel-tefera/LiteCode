@@ -1,9 +1,9 @@
 const structureData = {
-  Files: ["root.js", "README.md", "mynameisjeffandiamaveryveryverylongfilename.js"],
-  "mynameisjeffandiamaveryveryverylongfilename": {
-    "mynameisjeffandiamaveryveryverylongfilename": {
+  Files: ["index.js", "README.md", "createNewReduxStoreFromScratch.js"],
+  "src": {
+    "store": {
       Files: ["me.js", "you.css", "README.md"],
-      "mynameisjeffandiamaveryveryverylongfilename": {
+      "actions": {
         Files: ["index.js", "base.jsx", "hello.js"],
         "Folder 4": {
           "Folder 5": {

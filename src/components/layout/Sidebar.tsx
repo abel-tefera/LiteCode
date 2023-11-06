@@ -1,21 +1,25 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
 } from "@heroicons/react/24/outline";
-import Structure from "../fileStructure/Structure";
-import FileActions from "../fileStructure/FileActions";
+import Structure from "../file-structure/Structure";
+import FileActions from "../file-structure/FileActions";
 import logo from "../../assets/logo-2.png";
-import MenuContext from "../MenuContext";
+import MenuContext from "../menus/MenuContext";
 
-// add NavItem prop to component prop
-type Props = {
+type SidebarProps = {
   collapsed: boolean;
   setCollapsed(collapsed: boolean): void;
   shown: boolean;
 };
-const Sidebar = ({ collapsed, shown, setCollapsed }: Props) => {
+
+const Sidebar: React.FC<SidebarProps> = ({
+  collapsed,
+  shown,
+  setCollapsed,
+}) => {
   const [visibility, setVisibility] = useState(collapsed);
   const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
 
@@ -33,8 +37,8 @@ const Sidebar = ({ collapsed, shown, setCollapsed }: Props) => {
     return () => clearTimeout(timeout);
   }, [collapsed]);
 
-  const contextHandler = (e: any) => {
-    e.preventDefault(); // prevent the default behaviour when right clicked
+  const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    e.preventDefault();
     if (e.clientY > 300) {
       setPoints({
         x: e.clientY - 300,
@@ -67,7 +71,6 @@ const Sidebar = ({ collapsed, shown, setCollapsed }: Props) => {
           "flex flex-col justify-between h-[95vh] sticky inset-0 w-full": true,
         })}
       >
-        {/* logo and collapse button */}
         <div
           className={classNames({
             "flex items-center mb-[7px] select-none": true,
