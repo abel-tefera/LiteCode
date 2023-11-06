@@ -1,7 +1,7 @@
 .file-sys-container {
     display: flex;
     flex-direction: column;
-    max-width: 205px;
+    width: 100%;
     overflow-x: auto;
     text-wrap: nowrap;
     max-height: calc(50vh + 18px);
@@ -11,13 +11,17 @@
 .folder-container {
     display: flex;
     flex-direction: column;
-    /* background-color: yellow; */
+    /* background-color: green; */
+}
+
+.folder-container-reverse {
+    flex-direction: column-reverse;
 }
 
 .folder,
 .file {
     cursor: pointer;
-    /* background-color: red; */
+    /* background-color: yellow; */
 }
 
 .transformer {
@@ -52,7 +56,7 @@
 }
 
 .measurable {
-    width: 200px;
+    width: 235px;
 }
 
 .js-logo {
@@ -95,7 +99,12 @@
 
 @media screen and (min-width: 768px) {
     .file-sys-container {
+        max-width: 205px;
         max-height: calc(55vh + 18px);
+    }
+
+    .measurable {
+        width: 200px
     }
 }
 

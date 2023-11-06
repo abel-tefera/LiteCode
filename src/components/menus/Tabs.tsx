@@ -41,7 +41,7 @@ const Tabs = () => {
           ))}
       </div>
       <div className="flex items-center">
-        <div className="p-2 mb-3 mr-6 flex flex-row">
+        <div className="p-2 mr-8 mb-3 md:mr-6 flex flex-row">
           <div className="mx-1">
             <Tooltip id="start-new-project" className="z-20" />
             <img
@@ -49,7 +49,7 @@ const Tabs = () => {
               data-tooltip-content={"Start new Project"}
               src={newProjectIcon}
               alt="new project"
-              className="w-8 h-8 p-1 cursor-pointer hover:bg-dark-hover rounded-sm"
+              className="w-5 h-5 object-cover md:w-8 md:h-8 md:p-1 cursor-pointer hover:bg-dark-hover rounded-sm"
             />
           </div>
           <div className="mx-1">
@@ -59,7 +59,7 @@ const Tabs = () => {
               data-tooltip-content={"Open existing Project"}
               src={uploadIcon}
               alt="open project"
-              className="w-8 h-8 p-1 cursor-pointer hover:bg-dark-hover rounded-sm"
+              className="w-5 h-5 object-cover md:w-8 md:h-8 md:p-1 cursor-pointer hover:bg-dark-hover rounded-sm"
             />
           </div>
         </div>

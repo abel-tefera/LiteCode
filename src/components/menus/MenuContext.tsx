@@ -6,48 +6,29 @@ interface MenuContextProps {
   left: number;
   clicked: boolean;
   setClicked: React.Dispatch<React.SetStateAction<boolean>>;
+  actions: (
+    | {
+        title: string;
+        handler: () => void;
+        type?: undefined;
+      }
+    | {
+        type: string;
+        handler: () => void;
+        title?: undefined;
+      }
+  )[];
 }
 
-const MenuContext: React.FC<MenuContextProps> = ({ top, left, clicked, setClicked }) => {
+const MenuContext: React.FC<MenuContextProps> = ({
+  top,
+  left,
+  clicked,
+  setClicked,
+  actions,
+}) => {
   const contextRef = useRef<HTMLDivElement>(null);
   useOutsideAlerter(contextRef, setClicked);
-
-  const actions = [
-    {
-      title: "New File",
-      handler: () => {},
-    },
-    {
-      title: "New Folder",
-      handler: () => {},
-    },
-    {
-      type: "hr",
-    },
-    {
-      title: "Cut",
-      handler: () => {},
-    },
-    {
-      title: "Copy",
-      handler: () => {},
-    },
-    {
-      title: "Paste",
-      handler: () => {},
-    },
-    {
-      type: "hr",
-    },
-    {
-      title: "Rename",
-      handler: () => {},
-    },
-    {
-      title: "Delete",
-      handler: () => {},
-    },
-  ]
 
   return (
     <div
@@ -58,17 +39,26 @@ const MenuContext: React.FC<MenuContextProps> = ({ top, left, clicked, setClicke
       style={{ top: `${top}px`, left: `${left}px` }}
     >
       <ul className="w-full">
-        {
-          actions.map((action, index) => {
-            if (action.type === "hr") {
-              return <hr key={index} className="my-2 border-t border-t-zinc-600" />
-            } else {
-              return <li key={index} className="hover:bg-hover-blue rounded-md px-7 py-1 cursor-pointer">
+        {actions.map((action, index) => {
+          if (action.type === "hr") {
+            return (
+              <hr key={index} className="my-2 border-t border-t-zinc-600" />
+            );
+          } else {
+            return (
+              <li
+                key={index}
+                onClick={() => {
+                  action.handler();
+                  setClicked(false);
+                }}
+                className="hover:bg-hover-blue rounded-md px-7 py-1 cursor-pointer"
+              >
                 <span className="select-none">{action.title}</span>
-                </li>
-            }
-          })
-        }
+              </li>
+            );
+          }
+        })}
       </ul>
     </div>
   );
