@@ -134,14 +134,46 @@ const Sidebar: React.FC<SidebarProps> = ({
         const type = clickedRef.current.classList.contains("folder")
           ? "folder"
           : "file";
-        collapseOrExpand(clickedRef.current, structureRef, true)
 
-        if (type === "folder") {
-          clickedRef.current.parentElement?.remove();
-        } else {
+        if (
+          type === "file" &&
+          clickedRef.current.parentElement === structureRef.current
+        ) {
           clickedRef.current.remove();
-        }
+        } else if (type === "file") {
+          if (
+            clickedRef.current.parentElement &&
+            clickedRef.current.parentElement?.childNodes.length <= 2
+          ) {
+            collapseOrExpand(
+              clickedRef.current.parentElement.getElementsByClassName(
+                "clickable"
+              )[0] as HTMLElement,
+              structureRef,
+              true
+            );
+          }
+          clickedRef.current.remove();
+        } else if (
+          type === "folder" &&
+          clickedRef.current.parentElement === structureRef.current
+        ) {
+          collapseOrExpand(clickedRef.current, structureRef, true);
+          clickedRef.current.parentElement?.remove();
+        } else if (type === "folder") {
+          const grandParent = clickedRef.current.parentElement
+            ?.parentElement as HTMLElement;
+          if (
+            grandParent &&
+            grandParent?.childNodes.length <= 2
+          ) {
+            collapseOrExpand(grandParent.getElementsByClassName('clickable')[0] as HTMLElement, structureRef, true);
+          } else {
+            collapseOrExpand(clickedRef.current, structureRef, true);
+          }
 
+          clickedRef.current.parentElement?.remove();
+        }
       },
     },
   ];
@@ -187,7 +219,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     element.innerHTML = markup;
     // @ts-ignore
     element.classList.add(...styles.split(" "));
-    element.style.width = 'auto';
+    element.style.width = "auto";
 
     if (
       clickedRef.current.classList.contains("main-nav") ||
@@ -239,7 +271,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         "transition-all duration-300 ease-in-out": true,
         "w-[250px] max-w-[250px] ": !collapsed,
         "w-20 min-w-[80px]": collapsed,
-        "-translate-x-full ": !shown,
+        "-translate-x-full": !shown,
       })}
     >
       <div className="h-[18px]">&nbsp;</div>
@@ -302,6 +334,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             padding={inputPadding + 1}
             show={clickedRef.current && showInput}
             type={inputType}
+            container={structureRef.current}
           />,
           prependTo.current as HTMLElement
         )}

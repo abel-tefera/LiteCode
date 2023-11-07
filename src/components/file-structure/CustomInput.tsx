@@ -12,6 +12,7 @@ interface CustomInputProps {
   padding: number;
   show: boolean | undefined;
   type: "file" | "folder" | "";
+  container: HTMLDivElement | null;
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -20,15 +21,54 @@ const CustomInput: React.FC<CustomInputProps> = ({
   padding,
   show,
   type,
+  container,
 }) => {
   const [value, setValue] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
 
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [extension, setExtension] = useState("");
   const [logo, setLogo] = useState(newFileIcon);
+  const [position, setPosition] = useState<"top" | "bottom">("bottom");
+
+  const direction = (
+    ele: HTMLElement,
+    container: HTMLDivElement | null
+  ): 'top' | 'bottom' | '' => {
+    if (!container) return '';
+    const eleTop = ele.offsetTop;
+    
+    const containerTop = container.scrollTop;
+    let pos = containerTop;
+    if (containerTop > 450) {
+      pos = containerTop % 450
+    }
+
+    if (pos >= 100 && pos <= 195){
+      return 'top'
+    } else if (pos < 100 || pos > 195){
+      return 'bottom'
+    }
+
+
+    return ''
+  };
+
+  useEffect(() => {
+    if (!errorRef.current || !error || errorMessage === "" || !container)
+      return;
+    const changeDirection = direction(errorRef.current, container);
+    if (changeDirection !== '' && changeDirection !== position) {
+      if (position === "top") {
+        setPosition("bottom");
+      } else if (position === "bottom") {
+        setPosition("top");
+      }
+    }
+  }, [error, errorMessage, container]);
 
   useOutsideAlerter(containerRef, (e: boolean) => {
     if (!error && value.length > 0) {
@@ -53,7 +93,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
     const isValid = value.match(regexFileName);
     const matches = value.match(regex);
     // const matches = value.match(regex);
-
 
     if (isValid && matches) {
       const validFiles = ["js", "jsx", "css", "md"];
@@ -118,7 +157,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
           />
           <input
             className={`border w-32 border-dark-bg bg-monaco-color text-white focus:outline-none ${
-              error && errorMessage !== "" ? "focus:border-red-500" : "focus:border-cyan-500"
+              error && errorMessage !== ""
+                ? "focus:border-red-500"
+                : "focus:border-cyan-500"
             }`}
             value={value}
             autoFocus
@@ -136,8 +177,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
         {error && errorMessage !== "" && (
           <div
-            className="w-32 absolute top-8 flex items-start p-1 border border-red-500 bg-red-900 text-sm"
-            style={{ whiteSpace: "pre-wrap", marginLeft: `24px` }}
+            ref={errorRef}
+            className={`w-32 absolute flex items-start p-1 border border-red-500 bg-red-900 text-sm ${
+              position !== "top" ? "top-8" : "bottom-8"
+            }`}
+            style={{ whiteSpace: "pre-wrap", marginLeft: `26px` }}
           >
             {errorMessage}
           </div>

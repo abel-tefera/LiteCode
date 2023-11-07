@@ -140,8 +140,8 @@ const collapseMeasurables = (
   for (let i = 0; i < measurables.length; i++) {
     const measurable = measurables[i];
     if (!measurable.classList.contains("not-seen")) {
-      if (max > 64) {
-        measurable.style.width = `${200 + max - 48 + offset}px`;
+      if (max > 48) {
+        measurable.style.width = `${200 + max - 32 + offset}px`;
       } else {
         measurable.style.width = `${200 + offset}px`;
       }
