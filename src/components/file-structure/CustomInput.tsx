@@ -10,7 +10,7 @@ import throttle from "../../utils/throttle";
 
 interface CustomInputProps {
   closeCallback: React.Dispatch<React.SetStateAction<boolean>>;
-  submit: (value: string) => void;
+  submit: (value: string | false) => void;
   padding: number;
   show: boolean | undefined;
   type: "file" | "folder" | "";
@@ -122,13 +122,13 @@ const CustomInput: React.FC<CustomInputProps> = ({
       } else if (extension !== "") {
         setError(true);
         setLogo(errorIcon);
-        setErrorMessage("File type is not supported");
+        setErrorMessage("This file type is not supported. Please choose a different extension.");
       }
     } else if (!isLns && value !== "") {
       // console.log("VVV", value);
       setError(true);
       setLogo(errorIcon);
-      setErrorMessage("Invalid file format");
+      setErrorMessage(`This name is not valid as a file or folder name. Please choose a different name.`);
     } else {
       setError(true);
       setLogo(newFileIcon);
@@ -161,7 +161,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
             alt="new file icon"
           />
           <input
-            className={`border w-32 border-dark-bg bg-monaco-color text-white focus:outline-none ${
+            className={`border w-32 border-monaco-color bg-monaco-color text-white focus:outline-none ${
               error && errorMessage !== ""
                 ? "focus:border-red-500"
                 : "focus:border-cyan-500"
@@ -175,7 +175,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
                   submit(value);
                 }
               } else if (e.key === "Escape") {
-                submit("");
+                submit(false);
               }
             }}
             ref={inputRef}

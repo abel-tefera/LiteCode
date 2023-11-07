@@ -43,7 +43,7 @@ const Tab: React.FC<TabProps> = ({ id, name, type, selected, onSelect }) => {
       className={`p-2 px-2 flex flex-row flex-shrink-0 cursor-pointer select-none items-center rounded-sm ${
         selected
           ? `bg-dark-hover border-t border-t-slate-200`
-          : `hover:bg-dark-hover`
+          : `hover:bg-slate-800`
       }`}
     >
       <img src={logo ? logo : ''} alt="file-logo" className="w-4 h-4" />
@@ -52,7 +52,7 @@ const Tab: React.FC<TabProps> = ({ id, name, type, selected, onSelect }) => {
         <img
           src={cross}
           alt="close"
-          className="h-3 w-3 cursor-pointer hover:opacity-30 align-baseline"
+          className="px-1 h-5 w-5 cursor-pointer hover:bg-dark-hover align-baseline"
         />
       </span>
     </div>

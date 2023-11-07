@@ -14,7 +14,7 @@ const Tabs = () => {
       <div
         className={`w-[80vw] md:max-w-[65vw] my-1 flex flex-row items-center overflow-x-scroll custom-scrollbar`}
       >
-        {Array(24)
+        {Array(6)
           .fill(0)
           .map((_, i) => (
             <Tab

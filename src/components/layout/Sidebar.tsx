@@ -258,17 +258,16 @@ const Sidebar: React.FC<SidebarProps> = ({
     return timeout;
   };
 
-  const inputSubmit = (value: string) => {
+  const inputSubmit = (value: string | false) => {
     console.log("SUBMIT")
     if (!clickedRef.current) return;
-    console.log("YYY", clickedRef.current, clickedRef.current.classList)
-
-    if (rename === true) {
+ 
+    if (rename === true || value === false) {
       setShowInput(false);
-      console.log("ww", clickedRef.current, clickedRef.current.classList)
       clickedRef.current?.classList.remove("hide-input");
       return;
     }
+    
     let paddingRem: number = 0;
     if (inputPadding > 16) {
       paddingRem = inputPadding / 16;
