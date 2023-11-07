@@ -140,7 +140,7 @@ const collapseMeasurables = (
   for (let i = 0; i < measurables.length; i++) {
     const measurable = measurables[i];
     if (!measurable.classList.contains("not-seen")) {
-      if (max > 48) {
+      if (max > 31) {
         measurable.style.width = `${200 + max - 32 + offset}px`;
       } else {
         measurable.style.width = `${200 + offset}px`;
@@ -154,6 +154,7 @@ const collapseOrExpand = (
   fileSysRef: any,
   collapse: boolean
 ) => {
+  console.log("COLLAPSING");
   const isCollapsed = elem.dataset.iscollapsed === "true";
   if (!isCollapsed && !collapse) return;
   const toggleElems = elem.parentElement

@@ -49,6 +49,17 @@
     background: #2B3245;
 }
 
+.hide-input {
+    visibility: hidden;
+    position: absolute;
+}
+
+/* .hide-input::before {
+    content: '';
+    height: 20px;
+    background-color: blue;
+} */
+
 .span-text {
     display: flex;
     flex-direction: row;

@@ -47,10 +47,45 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [inputPadding, setInputPadding] = useState(0);
 
   const [inputType, setInputType] = useState<"file" | "folder" | "">("");
+  const [rename, setRename] = useState<string | true>("");
 
-  const createFileInput = () => {
+  const prependForPortal = (isNew: boolean) => {
     if (!clickedRef.current) return;
 
+    if (
+      clickedRef.current.classList.contains("main-nav") ||
+      clickedRef.current === structureRef.current
+    ) {
+      if (!structureRef.current) return;
+
+      if (!isNew) {
+        prependTo.current = structureRef.current.childNodes[0] as HTMLElement;
+        if (!prependTo.current) {
+          prependTo.current = structureRef.current;
+        }
+      } else {
+        prependTo.current = structureRef.current;
+      }
+    } else {
+      if (isNew) {
+        collapseOrExpand(clickedRef.current, structureRef, false);
+      }
+      const parent = clickedRef.current.parentElement;
+      const childNodes = parent?.childNodes;
+      prependTo.current = parent as HTMLElement;
+
+      if (isNew) {
+        findPrependTo(childNodes, parent);
+      } else {
+        console.log("XXX", childNodes, parent);
+
+        findPrependToRename(parent);
+      }
+    }
+  };
+
+  const setPadding = (isNew: boolean) => {
+    if (!clickedRef.current) return;
     const sibling = clickedRef.current.getElementsByClassName(
       "transformer"
     )[0] as HTMLElement;
@@ -59,35 +94,33 @@ const Sidebar: React.FC<SidebarProps> = ({
       : "file";
     if (sibling) {
       const padding = getStyle(sibling, "padding-left");
-      if (type === "folder") {
+      if (type === "folder" && isNew) {
         setInputPadding(parseInt(padding));
       } else {
         setInputPadding(parseInt(padding) - 16);
       }
     }
+  };
 
-    if (
-      clickedRef.current.classList.contains("main-nav") ||
-      clickedRef.current === structureRef.current
-    ) {
-      if (!structureRef.current) return;
+  const createFileInput = () => {
+    if (!clickedRef.current) return;
 
-      prependTo.current = structureRef.current.childNodes[0] as HTMLElement;
-      if (!prependTo.current) {
-        prependTo.current = structureRef.current;
-      }
-    } else {
-      // @ts-ignore
-      collapseOrExpand(clickedRef.current, structureRef, false);
-      const parent = clickedRef.current.parentElement;
-      const childNodes = parent?.childNodes;
-      prependTo.current = parent as HTMLElement;
+    setPadding(true);
 
-      findPrependTo(childNodes, parent);
-    }
+    prependForPortal(true);
 
     setShowInput(true);
   };
+
+  const createFileInputForRename = () => {
+    // loop through children of folder to find nth element === clicked ref
+    // insert input into nth position
+    // input display hidden
+    prependForPortal(false);
+    setPadding(false);
+    setShowInput(true);
+  };
+
   const actions = [
     {
       title: "New File",
@@ -125,7 +158,16 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: "Rename",
-      handler: () => {},
+      handler: () => {
+        if (!clickedRef.current) return;
+        clickedRef.current?.classList.add("hide-input");
+        const type = clickedRef.current.classList.contains("folder")
+          ? "folder"
+          : "file";
+        setInputType(type);
+        createFileInputForRename();
+        setRename(true);
+      },
     },
     {
       title: "Delete",
@@ -163,11 +205,12 @@ const Sidebar: React.FC<SidebarProps> = ({
         } else if (type === "folder") {
           const grandParent = clickedRef.current.parentElement
             ?.parentElement as HTMLElement;
-          if (
-            grandParent &&
-            grandParent?.childNodes.length <= 2
-          ) {
-            collapseOrExpand(grandParent.getElementsByClassName('clickable')[0] as HTMLElement, structureRef, true);
+          if (grandParent && grandParent?.childNodes.length <= 2) {
+            collapseOrExpand(
+              grandParent.getElementsByClassName("clickable")[0] as HTMLElement,
+              structureRef,
+              true
+            );
           } else {
             collapseOrExpand(clickedRef.current, structureRef, true);
           }
@@ -192,8 +235,40 @@ const Sidebar: React.FC<SidebarProps> = ({
     return timeout;
   };
 
+  const findPrependToRename = (
+    parentNode: ParentNode | undefined | null
+  ): NodeJS.Timeout => {
+    const timeout = setTimeout(() => {
+      console.log("PARENT", parentNode);
+      if (parentNode && parentNode.childNodes) {
+        const childNodes = parentNode.childNodes;
+        const input = childNodes[0];
+        let idx = 0;
+        for (let i = 1; i < childNodes.length; i++) {
+          console.log("FP", clickedRef.current);
+          if (childNodes[i] === clickedRef.current) {
+            console.log("FOUND", i);
+            idx = i;
+            break;
+          }
+        }
+        parentNode.insertBefore(input, childNodes[idx]);
+      }
+    }, 1);
+    return timeout;
+  };
+
   const inputSubmit = (value: string) => {
+    console.log("SUBMIT")
     if (!clickedRef.current) return;
+    console.log("YYY", clickedRef.current, clickedRef.current.classList)
+
+    if (rename === true) {
+      setShowInput(false);
+      console.log("ww", clickedRef.current, clickedRef.current.classList)
+      clickedRef.current?.classList.remove("hide-input");
+      return;
+    }
     let paddingRem: number = 0;
     if (inputPadding > 16) {
       paddingRem = inputPadding / 16;
@@ -242,6 +317,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     return () => clearTimeout(timeout);
   }, [collapsed]);
+
+  useEffect(() => {
+    if (rename === true && showInput === false) {
+      console.log("ww", clickedRef.current, clickedRef.current?.classList)
+      clickedRef.current?.classList.remove("hide-input");
+      return;
+    }
+  }, [rename, showInput])
 
   const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();

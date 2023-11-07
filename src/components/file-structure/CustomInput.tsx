@@ -5,6 +5,8 @@ import jsLogo from "../../assets/js.svg";
 import cssLogo from "../../assets/css.svg";
 import mdLogo from "../../assets/readme.png";
 import jsxLogo from "../../assets/jsx.svg";
+import errorIcon from "../../assets/cross.png";
+import throttle from "../../utils/throttle";
 
 interface CustomInputProps {
   closeCallback: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,41 +37,38 @@ const CustomInput: React.FC<CustomInputProps> = ({
   const [position, setPosition] = useState<"top" | "bottom">("bottom");
 
   const direction = (
-    ele: HTMLElement,
     container: HTMLDivElement | null
-  ): 'top' | 'bottom' | '' => {
-    if (!container) return '';
-    const eleTop = ele.offsetTop;
+  ): "top" | "bottom" | "" => {
+    if (!container) return "";
+    if (!containerRef.current) return "";
+    const containerTop = container.offsetTop;
+    const containerScrollTop = container.scrollTop;
+
+    const elementTop = containerRef.current.offsetTop;
+    const elementRelativeTop = elementTop - containerTop;
     
-    const containerTop = container.scrollTop;
-    let pos = containerTop;
-    if (containerTop > 450) {
-      pos = containerTop % 450
-    }
+    if (
+      !(elementRelativeTop - containerScrollTop < 393 &&
+      containerScrollTop < elementRelativeTop)
+    ) {
 
-    if (pos >= 100 && pos <= 195){
+      return '';
+    }else if (elementRelativeTop - containerScrollTop < 196){
+      return 'bottom';
+    } else {
       return 'top'
-    } else if (pos < 100 || pos > 195){
-      return 'bottom'
     }
-
-
-    return ''
   };
 
   useEffect(() => {
     if (!errorRef.current || !error || errorMessage === "" || !container)
       return;
-    const changeDirection = direction(errorRef.current, container);
-    if (changeDirection !== '' && changeDirection !== position) {
-      if (position === "top") {
-        setPosition("bottom");
-      } else if (position === "bottom") {
-        setPosition("top");
-      }
+    const changeDirection = direction(container);
+    if (changeDirection !== "" && changeDirection !== position) {
+      setPosition(changeDirection);
     }
   }, [error, errorMessage, container]);
-
+  
   useOutsideAlerter(containerRef, (e: boolean) => {
     if (!error && value.length > 0) {
       submit(value);
@@ -81,7 +80,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     if (!inputRef.current) return;
     setTimeout(() => {
       inputRef.current?.focus();
-    }, 0);
+    }, 2);
   }, [show]);
 
   const validate = () => {
@@ -89,19 +88,22 @@ const CustomInput: React.FC<CustomInputProps> = ({
     const regex = /^([^\\]*)\.(\w+)$/;
     const regexFileName =
       /^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\.[a-zA-Z0-9_-]+$/;
+    const lettersNumbersSymbols = /^[a-z0-9._]+$/i;
 
     const isValid = value.match(regexFileName);
     const matches = value.match(regex);
+    const isLns = value.match(lettersNumbersSymbols);
     // const matches = value.match(regex);
 
     if (isValid && matches) {
+      // console.log("HOORAY");
       const validFiles = ["js", "jsx", "css", "md"];
 
       const filename = matches[1];
-      const extension = matches[2];
-      setExtension(extension);
-      if (validFiles.includes(extension)) {
-        switch (extension) {
+      const ext = matches[2];
+      setExtension(ext);
+      if (validFiles.includes(ext)) {
+        switch (ext) {
           case "js":
             setLogo(jsLogo);
             break;
@@ -119,15 +121,18 @@ const CustomInput: React.FC<CustomInputProps> = ({
         setErrorMessage("");
       } else if (extension !== "") {
         setError(true);
-        setLogo(newFileIcon);
+        setLogo(errorIcon);
         setErrorMessage("File type is not supported");
       }
-    } else if (extension !== "") {
+    } else if (!isLns && value !== "") {
+      // console.log("VVV", value);
       setError(true);
-      setLogo(newFileIcon);
+      setLogo(errorIcon);
       setErrorMessage("Invalid file format");
     } else {
       setError(true);
+      setLogo(newFileIcon);
+      setErrorMessage("");
     }
   };
 
@@ -169,6 +174,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
                 if (!error && value.length > 0) {
                   submit(value);
                 }
+              } else if (e.key === "Escape") {
+                submit("");
               }
             }}
             ref={inputRef}
