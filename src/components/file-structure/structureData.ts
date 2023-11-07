@@ -91,12 +91,8 @@ const structureData = {
 // };
 
 // const structureData = {
-//   "src": {
-//         Files: ["index.jsx"],
-//         "components": {
-//           Files: ["hello.js", "spurs.css"],
-//         },
-//       },
-// }
+//   Files: ["index.js"],
+//   src: {},
+// };
 
 export default structureData;

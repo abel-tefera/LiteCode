@@ -5,6 +5,7 @@
     overflow-x: auto;
     text-wrap: nowrap;
     max-height: calc(50vh + 18px);
+    min-height: calc(50vh + 18px);
     /* background-color: blue; */
 }
 
@@ -14,6 +15,19 @@
     /* background-color: green; */
 }
 
+.folder-main-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.folder-line::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+
+    color: red;
+}
+
 .folder-container-reverse {
     flex-direction: column-reverse;
 }
@@ -21,6 +35,7 @@
 .folder,
 .file {
     cursor: pointer;
+    border: 1px solid #0E1525;
     /* background-color: yellow; */
 }
 
@@ -101,6 +116,7 @@
     .file-sys-container {
         max-width: 205px;
         max-height: calc(55vh + 18px);
+        min-height: calc(55vh + 18px);
     }
 
     .measurable {
@@ -111,5 +127,6 @@
 @media screen and (min-width: 1024px) {
     .file-sys-container {
         max-height: calc(60vh + 18px);
+        min-height: calc(55vh + 18px);
     }
 }

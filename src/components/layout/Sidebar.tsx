@@ -17,6 +17,7 @@ import {
   getLogo,
 } from "../file-structure/StructureUtils";
 import { getStyle } from "../../utils/getStyle";
+import { usePrependPortal } from "../../hooks/usePrependPortal";
 
 type SidebarProps = {
   collapsed: boolean;
@@ -40,37 +41,51 @@ const Sidebar: React.FC<SidebarProps> = ({
   });
 
   const structureRef = useRef<HTMLDivElement>(null);
+  const prependTo = useRef<HTMLElement | null>(null);
+
   const [showInput, setShowInput] = useState(false);
   const [inputPadding, setInputPadding] = useState(0);
+
   const [inputType, setInputType] = useState<"file" | "folder" | "">("");
 
   const createFileInput = () => {
     if (!clickedRef.current) return;
 
-    const padding = getStyle(
-      clickedRef.current.getElementsByClassName(
-        "transformer"
-      )[0] as HTMLElement,
-      "padding-left"
-    );
+    const sibling = clickedRef.current.getElementsByClassName(
+      "transformer"
+    )[0] as HTMLElement;
     const type = clickedRef.current.classList.contains("folder")
       ? "folder"
       : "file";
-
-    if (type === "folder") {
-      setInputPadding(parseInt(padding));
-    } else {
-      setInputPadding(parseInt(padding) - 16);
+    if (sibling) {
+      const padding = getStyle(sibling, "padding-left");
+      if (type === "folder") {
+        setInputPadding(parseInt(padding));
+      } else {
+        setInputPadding(parseInt(padding) - 16);
+      }
     }
 
-    if (clickedRef.current.classList.contains("main-nav")) {
-      clickedRef.current = clickedRef.current.getElementsByClassName(
-        "main-content"
-      )[0] as HTMLElement;
+    if (
+      clickedRef.current.classList.contains("main-nav") ||
+      clickedRef.current === structureRef.current
+    ) {
+      if (!structureRef.current) return;
+
+      prependTo.current = structureRef.current.childNodes[0] as HTMLElement;
+      if (!prependTo.current) {
+        prependTo.current = structureRef.current;
+      }
     } else {
+      // @ts-ignore
       collapseOrExpand(clickedRef.current, structureRef, false);
+      const parent = clickedRef.current.parentElement;
+      const childNodes = parent?.childNodes;
+      prependTo.current = parent as HTMLElement;
+
+      findPrependTo(childNodes, parent);
     }
-    // structureRef.current?.classList.add('dont-overflow');
+
     setShowInput(true);
   };
   const actions = [
@@ -78,10 +93,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       title: "New File",
       handler: () => {
         setInputType("file");
-        // console.log("XXX", structureRef)
-        // clickedRef.current.parentElement?.classList.add(
-        //   "folder-container-reverse"
-        // );
         createFileInput();
       },
     },
@@ -123,15 +134,31 @@ const Sidebar: React.FC<SidebarProps> = ({
         const type = clickedRef.current.classList.contains("folder")
           ? "folder"
           : "file";
+        collapseOrExpand(clickedRef.current, structureRef, true)
 
         if (type === "folder") {
           clickedRef.current.parentElement?.remove();
         } else {
           clickedRef.current.remove();
         }
+
       },
     },
   ];
+
+  const findPrependTo = (
+    childNodes: NodeListOf<ChildNode> | undefined,
+    parent: HTMLElement | null
+  ): NodeJS.Timeout => {
+    const timeout = setTimeout(() => {
+      if (childNodes) {
+        const input = childNodes[0];
+        const header = childNodes[1];
+        parent?.insertBefore(header, input);
+      }
+    }, 1);
+    return timeout;
+  };
 
   const inputSubmit = (value: string) => {
     if (!clickedRef.current) return;
@@ -160,11 +187,13 @@ const Sidebar: React.FC<SidebarProps> = ({
     element.innerHTML = markup;
     // @ts-ignore
     element.classList.add(...styles.split(" "));
+    element.style.width = 'auto';
 
-    if (clickedRef.current.classList.contains("main-content")) {
-      const appendTo = clickedRef.current.getElementsByClassName(
-        "file-sys-container"
-      )[0] as HTMLElement;
+    if (
+      clickedRef.current.classList.contains("main-nav") ||
+      clickedRef.current === structureRef.current
+    ) {
+      const appendTo = structureRef.current as HTMLElement;
       appendTo.appendChild(element);
     } else {
       const appendTo = clickedRef.current.parentElement as HTMLElement;
@@ -184,15 +213,9 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
-    // if (fileSysRef.current == null) return;
     const elem = e.target as HTMLElement;
     clickedRef.current = elem;
-    // console.log("XXXX", clickedRef.current.parentElement);
-    // const type = elem.classList.contains("folder") ? "folder" : "file";
-    // if (elem !== event.currentTarget) {
-    //   if (type === "file") {
-    //     alert("File accessed");
-    //   } else if (type === "folder") {
+
     // @ts-ignore
     if (e.clientY > 300) {
       setPoints({
@@ -207,7 +230,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
 
     setClicked(true);
-    // console.log("Right Click", points.x, points.y, e.target.innerHTML);
   };
 
   return (
@@ -263,41 +285,32 @@ const Sidebar: React.FC<SidebarProps> = ({
           setClicked={setClicked}
           actions={actions}
         />
-        {clickedRef.current &&
-          showInput &&
-          createPortal(
-            <CustomInput
-              closeCallback={() => {
-                // if (clickedRef.current) {
-                //   clickedRef.current.parentElement?.classList.remove(
-                //     "folder-container-reverse"
-                //   );
-                // }
-                // structureRef.current?.classList.remove('dont-overflow')
-                setShowInput(false);
-              }}
-              submit={(value) => {
-                inputSubmit(value);
-              }}
-              padding={inputPadding + 1}
-            />,
-            (() => {
-              // const clickable =
-              //   clickedRef.current.parentElement?.getElementsByClassName(
-              //     "clickable"
-              //   )[0] as HTMLElement;
-              // console.log("ABC", clickable, clickedRef.current.parentElement);
-              return clickedRef.current.parentElement as HTMLElement;
-            })()
-          )}
+        {usePrependPortal(
+          <CustomInput
+            closeCallback={() => {
+              // if (clickedRef.current) {
+              //   clickedRef.current.parentElement?.classList.remove(
+              //     "folder-container-reverse"
+              //   );
+              // }
+              // structureRef.current?.classList.remove('dont-overflow')
+              setShowInput(false);
+            }}
+            submit={(value) => {
+              inputSubmit(value);
+            }}
+            padding={inputPadding + 1}
+            show={clickedRef.current && showInput}
+            type={inputType}
+          />,
+          prependTo.current as HTMLElement
+        )}
 
         {!collapsed && (
           <div className="ml-4 text-base" id="my-d">
             <div
               className={
-                visibility
-                  ? `inline-flex items-center select-none`
-                  : `hidden`
+                visibility ? `inline-flex items-center select-none` : `hidden`
               }
             >
               Developed by&nbsp;

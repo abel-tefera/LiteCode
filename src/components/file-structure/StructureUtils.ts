@@ -68,7 +68,6 @@ const fileStructure = (
   ${body}
 </div>`;
   } else {
-    // console.log("HERE", body);
     return [styles, body];
   }
 };
@@ -142,7 +141,7 @@ const collapseMeasurables = (
     const measurable = measurables[i];
     if (!measurable.classList.contains("not-seen")) {
       if (max > 64) {
-        measurable.style.width = `${200 + max - 64 + offset}px`;
+        measurable.style.width = `${200 + max - 48 + offset}px`;
       } else {
         measurable.style.width = `${200 + offset}px`;
       }
