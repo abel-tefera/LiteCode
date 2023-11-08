@@ -2,11 +2,11 @@ import React from "react";
 import CodeCell from "./components/editors/CodeCell";
 import TextEditor from "./components/editors/TextEditor";
 import { Provider } from "react-redux";
-import { store } from "./state";
 import Layout from "./components/layout/Layout";
 import Structure from "./components/file-structure/Structure";
 import Tabs from "./components/menus/Tabs";
 import Dialog from "./components/menus/Dialog";
+import { store } from "./state/store";
 
 const App = () => {
   return (

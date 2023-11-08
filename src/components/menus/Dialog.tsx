@@ -12,7 +12,7 @@ const Dialog: React.FC<DialogProps> = ({ close }) => {
     <div className="absolute top-0 z-50 flex w-full h-full justify-start items-start transition-all">
       <div
         ref={dialogRef}
-        className="ml-[230px] mt-[275px] dialog-content bg-dark-bg p-4 rounded-lg flex flex-col my-2 h-fit"
+        className="ml-[230px] mt-[20%] dialog-content bg-dark-bg p-4 rounded-lg flex flex-col my-2 h-fit"
       >
         <div className="text-lg my-2 w-72 select-none text-white">
           Are you sure you want to delete this file?

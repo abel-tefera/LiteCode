@@ -187,7 +187,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   useEffect(() => {
     validate(undefined);
-    console.log("rename", item.rename);
   }, [value]);
 
   return (
@@ -218,6 +217,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
                   submit(value);
                 } else if (value.length === 0) {
                   setError(true);
+                  setLogo(errorIcon)
                   setErrorMessage(
                     `The ${item.type} name cannot be empty. Please enter a valid name.`
                   );

@@ -3,9 +3,12 @@ import "../../styles/structure.css";
 import parse from "html-react-parser";
 import structureData from "./structureData";
 import { fileStructureClickHandler, mapObjectRecursively } from "./StructureUtils";
+// import { useTypedSelector, useTypedDispatch } from '../../state/hooks';
 
 const Structure = forwardRef<any>((props, fileSysRef) => {
   // const fileSysRef = useRef<HTMLDivElement>(null);
+  // const count = useTypedSelector((state) => state.counter.value)
+  // const dispatch = useTypedDispatch()
 
   return (
     <div

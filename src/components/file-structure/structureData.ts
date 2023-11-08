@@ -91,8 +91,8 @@ const structureData = {
 // };
 
 // const structureData = {
-//   Files: ["index.js"],
-//   src: {},
+//   "Files": ["index.js"],
+//   "src": {},
 // };
 
 export default structureData;

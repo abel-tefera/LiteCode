@@ -19,6 +19,9 @@ import {
 import { getStyle } from "../../utils/getStyle";
 import { usePrependPortal } from "../../hooks/usePrependPortal";
 import Dialog from "../menus/Dialog";
+import { addNode, renameNode } from "../../state/features/structure/structureSlice";
+import { useTypedDispatch } from "../../state/hooks";
+import { useDispatch } from "react-redux";
 
 type SidebarProps = {
   collapsed: boolean;
@@ -48,11 +51,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [inputPadding, setInputPadding] = useState(0);
 
   const [inputType, setInputType] = useState<"file" | "folder" | "">("");
-  const [rename, setRename] = useState<boolean>(false);
+  const [isRename, setIsRename] = useState<boolean>(false);
 
   const [showDialog, setShowDialog] = useState(false);
 
+  const dispatch = useDispatch();
+
   const prependForPortal = (isNew: boolean) => {
+
     if (!clickedRef.current) return;
 
     if (
@@ -167,7 +173,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           : "file";
         setInputType(type);
         createFileInputForRename();
-        setRename(true);
+        setIsRename(true);
       },
     },
     {
@@ -256,16 +262,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     return timeout;
   };
 
-  const inputSubmit = (value: string | false) => {
+  const handleDOM = (value: string) => {
     if (!clickedRef.current) return;
-
-    if (rename === true || value === false) {
-      setShowInput(false);
-      clickedRef.current?.classList.remove("hide-input");
-      setRename(false);
-      return;
-    }
-
     let paddingRem: number = 0;
     if (inputPadding > 16) {
       paddingRem = inputPadding / 16;
@@ -303,6 +301,24 @@ const Sidebar: React.FC<SidebarProps> = ({
       const appendTo = clickedRef.current.parentElement as HTMLElement;
       appendTo.appendChild(element);
     }
+  }
+
+  const inputSubmit = (value: string | false) => {
+    if (!clickedRef.current) return;
+
+    if (isRename === true || value === false) {
+      console.log("DISPATCHING");
+      dispatch(renameNode());
+      
+      setShowInput(false);
+      clickedRef.current?.classList.remove("hide-input");
+      setIsRename(false);
+      return;
+    }
+
+    dispatch(addNode({value, inputType}))
+
+    handleDOM(value);
     // structureRef.current?.classList.remove('dont-overflow')
     setShowInput(false);
   };
@@ -316,12 +332,12 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [collapsed]);
 
   useEffect(() => {
-    if (rename === true && showInput === false) {
+    if (isRename === true && showInput === false) {
       clickedRef.current?.classList.remove("hide-input");
-      setRename(false);
+      setIsRename(false);
       return;
     }
-  }, [rename, showInput]);
+  }, [isRename, showInput]);
 
   const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
@@ -415,7 +431,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             show={clickedRef.current && showInput}
             item={{
               type: inputType,
-              rename,
+              rename: isRename,
             }}
             container={structureRef.current}
           />,
