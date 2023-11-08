@@ -10,35 +10,37 @@ const Tabs = () => {
     alert(`Tab ${i} selected`);
   };
   return (
-    <div className="flex flex-row w-full justify-between file-tabs">
+    <div className="flex flex-row w-full justify-between">
       <div
-        className={`w-[80vw] md:max-w-[65vw] my-1 flex flex-row items-center overflow-x-scroll custom-scrollbar transition-all duration-300 ease-in-out`}
+        className={`file-tabs w-[80vw] md:max-w-[65vw] py-1`}
       >
-        {Array(4)
-          .fill(0)
-          .map((_, i) => (
-            <Tab
-              id={i}
-              name={"index.js"}
-              type={(() => {
-                const rand = Math.floor(Math.random() * 4);
-                switch (rand) {
-                  case 0:
-                    return "js";
-                  case 1:
-                    return "jsx";
-                  case 2:
-                    return "css";
-                  case 3:
-                    return "md";
-                  default:
-                    return "js";
-                }
-              })()}
-              selected={i === 3}
-              onSelect={onSelect}
-            />
-          ))}
+        <div className="flex flex-row items-center w-full overflow-x-scroll custom-scrollbar">
+          {Array(24)
+            .fill(0)
+            .map((_, i) => (
+              <Tab
+                id={i}
+                name={"index.js"}
+                type={(() => {
+                  const rand = Math.floor(Math.random() * 4);
+                  switch (rand) {
+                    case 0:
+                      return "js";
+                    case 1:
+                      return "jsx";
+                    case 2:
+                      return "css";
+                    case 3:
+                      return "md";
+                    default:
+                      return "js";
+                  }
+                })()}
+                selected={i === 3}
+                onSelect={onSelect}
+              />
+            ))}
+        </div>
       </div>
       <div className="flex items-center">
         <div className="p-2 mr-8 mb-3 md:mr-6 flex flex-row">

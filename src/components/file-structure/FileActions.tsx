@@ -11,7 +11,7 @@ const FileActions: React.FC<PropsWithChildren> = () => {
     <div className="flex flex-col items-start my-2 px-2">
       <input
         placeholder="Search"
-        className="self-center rounded-lg w-full bg-dark-bg-2 p-2 hover:bg-dark-hover active:outline-none focus:outline-none mb-2"
+        className="self-center rounded-lg w-full bg-dark-bg-2 p-2 hover:bg-dark-hover active:outline-none focus:outline-none mb-2 focus:bg-dark-hover"
       />
       <div className="flex flex-row items-center mt-2 w-full select-none">
         <img

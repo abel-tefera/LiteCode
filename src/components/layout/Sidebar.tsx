@@ -48,9 +48,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [inputPadding, setInputPadding] = useState(0);
 
   const [inputType, setInputType] = useState<"file" | "folder" | "">("");
-  const [rename, setRename] = useState<string | true>("");
+  const [rename, setRename] = useState<boolean>(false);
 
-  const [showDialog, setShowDialog] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
 
   const prependForPortal = (isNew: boolean) => {
     if (!clickedRef.current) return;
@@ -262,6 +262,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (rename === true || value === false) {
       setShowInput(false);
       clickedRef.current?.classList.remove("hide-input");
+      setRename(false);
       return;
     }
 
@@ -317,6 +318,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   useEffect(() => {
     if (rename === true && showInput === false) {
       clickedRef.current?.classList.remove("hide-input");
+      setRename(false);
       return;
     }
   }, [rename, showInput]);
@@ -411,7 +413,10 @@ const Sidebar: React.FC<SidebarProps> = ({
             }}
             padding={inputPadding + 1}
             show={clickedRef.current && showInput}
-            type={inputType}
+            item={{
+              type: inputType,
+              rename,
+            }}
             container={structureRef.current}
           />,
           prependTo.current as HTMLElement

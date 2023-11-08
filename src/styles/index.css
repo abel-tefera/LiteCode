@@ -47,17 +47,15 @@ body {
 .custom-scrollbar::-webkit-scrollbar {
     width: 10px;
     height: 10px;
+    /* transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms; */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
     background: #4a5575;
     border-radius: 5px;
     visibility: hidden;
-    transition-property: all;
-    /* transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); */
-    /* transition-duration: 150ms; */
-    transition-duration: 300ms;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 
 }
 
@@ -67,13 +65,16 @@ body {
 
 .file-tabs:hover .custom-scrollbar::-webkit-scrollbar-thumb {
     visibility: visible;
-    transition-property: all;
-    /* transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); */
-    /* transition-duration: 150ms; */
-    transition-duration: 300ms;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+
+.custom-scrollbar::-webkit-scrollbar-button:vertical:start:increment,
+.custom-scrollbar::-webkit-scrollbar-button:vertical:end:decrement,
+.custom-scrollbar::-webkit-scrollbar-button:horizontal:start:increment, 
+.custom-scrollbar::-webkit-scrollbar-button:horizontal:end:decrement 
+{
+    display: none;
+}
 
 /* iframe#webpack-dev-server-client-overlay {
     display: none !important

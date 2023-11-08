@@ -6,14 +6,18 @@ import cssLogo from "../../assets/css.svg";
 import mdLogo from "../../assets/readme.png";
 import jsxLogo from "../../assets/jsx.svg";
 import errorIcon from "../../assets/cross.png";
-import throttle from "../../utils/throttle";
+import addFolderIcon from "../../assets/add-folder.png";
+import editFolderIcon from "../../assets/rename-folder.png";
 
 interface CustomInputProps {
   closeCallback: React.Dispatch<React.SetStateAction<boolean>>;
   submit: (value: string | false) => void;
   padding: number;
   show: boolean | undefined;
-  type: "file" | "folder" | "";
+  item: {
+    type: "file" | "folder" | "";
+    rename: boolean;
+  };
   container: HTMLDivElement | null;
 }
 
@@ -22,18 +26,23 @@ const CustomInput: React.FC<CustomInputProps> = ({
   submit,
   padding,
   show,
-  type,
+  item,
   container,
 }) => {
   const [value, setValue] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
-
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [extension, setExtension] = useState("");
-  const [logo, setLogo] = useState(newFileIcon);
+  const [logo, setLogo] = useState(
+    item.type === "file"
+      ? newFileIcon
+      : item.type === "folder" && item.rename
+      ? editFolderIcon
+      : addFolderIcon
+  );
   const [position, setPosition] = useState<"top" | "bottom">("bottom");
 
   const direction = (
@@ -84,7 +93,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     }, 0);
   }, [show]);
 
-  const validate = () => {
+  const validateFile = (preValidate: true | undefined) => {
     // const regexp = new RegExp(/^(.*?)(\.[^.]*)?$/);
     const regex = /^([^\\]*)\.(\w+)$/;
     const regexFileName =
@@ -129,7 +138,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           );
         } else {
           setErrorMessage(
-            "This file type is not supported. Please choose a different extension."
+            "This file type is not supported. Please choose a different file extension."
           );
         }
       }
@@ -137,7 +146,13 @@ const CustomInput: React.FC<CustomInputProps> = ({
       setError(true);
       setLogo(errorIcon);
       setErrorMessage(
-        `This name is not valid as a file or folder name. Please choose a different name.`
+        `This name is not valid as a file name. Please choose a different name.`
+      );
+    } else if (preValidate) {
+      setError(true);
+      setLogo(errorIcon);
+      setErrorMessage(
+        "The file type cannot be empty. Please choose a valid file extension."
       );
     } else {
       setError(true);
@@ -146,16 +161,37 @@ const CustomInput: React.FC<CustomInputProps> = ({
     }
   };
 
-  useEffect(() => {
-    // if (value.length > 3) {
-    //   setError(true)
-    // } else {
-    //   setError(false)
-    // }
-    if (type === "file") {
-      validate();
+  const validateFolder = () => {
+    const regex = /^[\w\s ']{1,}$/g;
+    const isValid = value.match(regex);
+
+    if (isValid || value === "") {
+      setError(false);
+      if (item.rename) {
+        setLogo(editFolderIcon);
+      } else {
+        setLogo(addFolderIcon);
+      }
+      setErrorMessage("");
+    } else {
+      setError(true);
+      setLogo(errorIcon);
+      setErrorMessage(
+        `This name is not valid as a folder name. Please choose a different name.`
+      );
     }
-  }, [value, type]);
+  };
+  const validate = (preValidate: true | undefined) => {
+    if (item.type === "file") {
+      validateFile(preValidate);
+    } else if (item.type === "folder") {
+      validateFolder();
+    }
+  };
+
+  useEffect(() => {
+    validate(undefined);
+  }, [value]);
 
   return (
     <div
@@ -183,8 +219,13 @@ const CustomInput: React.FC<CustomInputProps> = ({
               if (e.key === "Enter") {
                 if (!error && value.length > 0) {
                   submit(value);
+                } else if (value.length === 0) {
+                  setError(true);
+                  setErrorMessage(
+                    `The ${item.type} name cannot be empty. Please enter a valid name.`
+                  );
                 } else {
-                  validate();
+                  validate(true);
                 }
               } else if (e.key === "Escape") {
                 submit(false);
