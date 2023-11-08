@@ -1,7 +1,7 @@
 import React from "react";
 import Tab from "./Tab";
-import newProjectIcon from "../../assets/new-project.png";
-import uploadIcon from "../../assets/upload.png";
+import newProjectIcon from "../../assets/new-project.svg";
+import uploadIcon from "../../assets/open-project.svg";
 
 import { Tooltip } from "react-tooltip";
 

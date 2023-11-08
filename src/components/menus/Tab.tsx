@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import jsLogo from "../../assets/js.svg";
 import cssLogo from "../../assets/css.svg";
-import mdLogo from "../../assets/readme.png";
+import mdLogo from "../../assets/readme.svg";
 import jsxLogo from "../../assets/jsx.svg";
 
 import cross from "../../assets/cross.svg";

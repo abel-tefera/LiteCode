@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import newFileIcon from "../../assets/new-file.png";
+import newFileIcon from "../../assets/new-file-colored.svg";
 import useOutsideAlerter from "../../hooks/useOutsideAlerter";
 import jsLogo from "../../assets/js.svg";
 import cssLogo from "../../assets/css.svg";
-import mdLogo from "../../assets/readme.png";
+import mdLogo from "../../assets/readme.svg";
 import jsxLogo from "../../assets/jsx.svg";
 import errorIcon from "../../assets/cross.png";
-import addFolderIcon from "../../assets/add-folder.png";
-import editFolderIcon from "../../assets/rename-folder.png";
+import addFolderIcon from "../../assets/folder.svg";
+import renameIcon from "../../assets/rename.svg";
 
 interface CustomInputProps {
   closeCallback: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,13 +36,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [extension, setExtension] = useState("");
-  const [logo, setLogo] = useState(
-    item.type === "file"
-      ? newFileIcon
-      : item.type === "folder" && item.rename
-      ? editFolderIcon
-      : addFolderIcon
+  const [originalLogo, setOriginalLogo] = useState(
+    item.rename ? renameIcon : item.type === "file" ? newFileIcon : addFolderIcon
   );
+  const [logo, setLogo] = useState(originalLogo);
+
   const [position, setPosition] = useState<"top" | "bottom">("bottom");
 
   const direction = (
@@ -156,7 +154,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       );
     } else {
       setError(true);
-      setLogo(newFileIcon);
+      setLogo(originalLogo);
       setErrorMessage("");
     }
   };
@@ -167,12 +165,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
     if (isValid || value === "") {
       setError(false);
-      if (item.rename) {
-        setLogo(editFolderIcon);
-      } else {
-        setLogo(addFolderIcon);
-      }
       setErrorMessage("");
+      setLogo(originalLogo)
     } else {
       setError(true);
       setLogo(errorIcon);
@@ -182,6 +176,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
     }
   };
   const validate = (preValidate: true | undefined) => {
+    
+
     if (item.type === "file") {
       validateFile(preValidate);
     } else if (item.type === "folder") {
@@ -191,13 +187,14 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   useEffect(() => {
     validate(undefined);
+    console.log("rename", item.rename);
   }, [value]);
 
   return (
     <div
       className={`py-1 bg-dark-bg relative ${show ? "block" : "hidden"}`}
       ref={containerRef}
-      style={{ marginLeft: `${padding + 14}px`, wordWrap: "break-word" }}
+      style={{ background: 'border-box', marginLeft: `${padding + 14}px`, wordWrap: "break-word" }}
     >
       <div className={`flex flex-col`}>
         <div className="flex flex-row">
