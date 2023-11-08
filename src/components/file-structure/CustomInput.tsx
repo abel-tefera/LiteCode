@@ -46,17 +46,18 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
     const elementTop = containerRef.current.offsetTop;
     const elementRelativeTop = elementTop - containerTop;
-    
-    if (
-      !(elementRelativeTop - containerScrollTop < 393 &&
-      containerScrollTop < elementRelativeTop)
-    ) {
 
-      return '';
-    }else if (elementRelativeTop - containerScrollTop < 196){
-      return 'bottom';
+    if (
+      !(
+        elementRelativeTop - containerScrollTop < 393 &&
+        containerScrollTop < elementRelativeTop
+      )
+    ) {
+      return "";
+    } else if (elementRelativeTop - containerScrollTop < 196) {
+      return "bottom";
     } else {
-      return 'top'
+      return "top";
     }
   };
 
@@ -68,7 +69,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       setPosition(changeDirection);
     }
   }, [error, errorMessage, container]);
-  
+
   useOutsideAlerter(containerRef, (e: boolean) => {
     if (!error && value.length > 0) {
       submit(value);
@@ -80,7 +81,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     if (!inputRef.current) return;
     setTimeout(() => {
       inputRef.current?.focus();
-    }, 2);
+    }, 0);
   }, [show]);
 
   const validate = () => {
@@ -95,14 +96,14 @@ const CustomInput: React.FC<CustomInputProps> = ({
     const isLns = value.match(lettersNumbersSymbols);
     // const matches = value.match(regex);
 
-    if (isValid && matches) {
-      // console.log("HOORAY");
+    // console.log(isValid, matches, isLns);
+    if (matches && isLns) {
       const validFiles = ["js", "jsx", "css", "md"];
 
       const filename = matches[1];
       const ext = matches[2];
       setExtension(ext);
-      if (validFiles.includes(ext)) {
+      if (isValid && isLns && validFiles.includes(ext)) {
         switch (ext) {
           case "js":
             setLogo(jsLogo);
@@ -119,16 +120,25 @@ const CustomInput: React.FC<CustomInputProps> = ({
         }
         setError(false);
         setErrorMessage("");
-      } else if (extension !== "") {
+      } else if (extension !== "" || !isValid) {
         setError(true);
         setLogo(errorIcon);
-        setErrorMessage("This file type is not supported. Please choose a different extension.");
+        if (validFiles.includes(ext)) {
+          setErrorMessage(
+            "The file name cannot be empty. Please enter a valid file name."
+          );
+        } else {
+          setErrorMessage(
+            "This file type is not supported. Please choose a different extension."
+          );
+        }
       }
     } else if (!isLns && value !== "") {
-      // console.log("VVV", value);
       setError(true);
       setLogo(errorIcon);
-      setErrorMessage(`This name is not valid as a file or folder name. Please choose a different name.`);
+      setErrorMessage(
+        `This name is not valid as a file or folder name. Please choose a different name.`
+      );
     } else {
       setError(true);
       setLogo(newFileIcon);
@@ -173,6 +183,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
               if (e.key === "Enter") {
                 if (!error && value.length > 0) {
                   submit(value);
+                } else {
+                  validate();
                 }
               } else if (e.key === "Escape") {
                 submit(false);

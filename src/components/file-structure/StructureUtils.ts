@@ -154,7 +154,6 @@ const collapseOrExpand = (
   fileSysRef: any,
   collapse: boolean
 ) => {
-  console.log("COLLAPSING");
   const isCollapsed = elem.dataset.iscollapsed === "true";
   if (!isCollapsed && !collapse) return;
   const toggleElems = elem.parentElement

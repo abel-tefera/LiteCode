@@ -10,11 +10,11 @@ const Tabs = () => {
     alert(`Tab ${i} selected`);
   };
   return (
-    <div className="flex flex-row w-full justify-between">
+    <div className="flex flex-row w-full justify-between file-tabs">
       <div
-        className={`w-[80vw] md:max-w-[65vw] my-1 flex flex-row items-center overflow-x-scroll custom-scrollbar`}
+        className={`w-[80vw] md:max-w-[65vw] my-1 flex flex-row items-center overflow-x-scroll custom-scrollbar transition-all duration-300 ease-in-out`}
       >
-        {Array(6)
+        {Array(4)
           .fill(0)
           .map((_, i) => (
             <Tab

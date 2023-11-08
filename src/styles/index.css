@@ -52,10 +52,26 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb {
     background: #4a5575;
     border-radius: 5px;
+    visibility: hidden;
+    transition-property: all;
+    /* transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); */
+    /* transition-duration: 150ms; */
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
     background-color: #0E1525;
+}
+
+.file-tabs:hover .custom-scrollbar::-webkit-scrollbar-thumb {
+    visibility: visible;
+    transition-property: all;
+    /* transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); */
+    /* transition-duration: 150ms; */
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 

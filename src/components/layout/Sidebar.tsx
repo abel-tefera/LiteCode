@@ -18,6 +18,7 @@ import {
 } from "../file-structure/StructureUtils";
 import { getStyle } from "../../utils/getStyle";
 import { usePrependPortal } from "../../hooks/usePrependPortal";
+import Dialog from "../menus/Dialog";
 
 type SidebarProps = {
   collapsed: boolean;
@@ -49,6 +50,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [inputType, setInputType] = useState<"file" | "folder" | "">("");
   const [rename, setRename] = useState<string | true>("");
 
+  const [showDialog, setShowDialog] = useState(true);
+
   const prependForPortal = (isNew: boolean) => {
     if (!clickedRef.current) return;
 
@@ -77,8 +80,6 @@ const Sidebar: React.FC<SidebarProps> = ({
       if (isNew) {
         findPrependTo(childNodes, parent);
       } else {
-        console.log("XXX", childNodes, parent);
-
         findPrependToRename(parent);
       }
     }
@@ -172,51 +173,51 @@ const Sidebar: React.FC<SidebarProps> = ({
     {
       title: "Delete",
       handler: () => {
-        if (!clickedRef.current) return;
-        const type = clickedRef.current.classList.contains("folder")
-          ? "folder"
-          : "file";
+        setShowDialog(true);
+        // if (!clickedRef.current) return;
+        // const type = clickedRef.current.classList.contains("folder")
+        //   ? "folder"
+        //   : "file";
 
-        if (
-          type === "file" &&
-          clickedRef.current.parentElement === structureRef.current
-        ) {
-          clickedRef.current.remove();
-        } else if (type === "file") {
-          if (
-            clickedRef.current.parentElement &&
-            clickedRef.current.parentElement?.childNodes.length <= 2
-          ) {
-            collapseOrExpand(
-              clickedRef.current.parentElement.getElementsByClassName(
-                "clickable"
-              )[0] as HTMLElement,
-              structureRef,
-              true
-            );
-          }
-          clickedRef.current.remove();
-        } else if (
-          type === "folder" &&
-          clickedRef.current.parentElement === structureRef.current
-        ) {
-          collapseOrExpand(clickedRef.current, structureRef, true);
-          clickedRef.current.parentElement?.remove();
-        } else if (type === "folder") {
-          const grandParent = clickedRef.current.parentElement
-            ?.parentElement as HTMLElement;
-          if (grandParent && grandParent?.childNodes.length <= 2) {
-            collapseOrExpand(
-              grandParent.getElementsByClassName("clickable")[0] as HTMLElement,
-              structureRef,
-              true
-            );
-          } else {
-            collapseOrExpand(clickedRef.current, structureRef, true);
-          }
+        // if (
+        //   type === "file" &&
+        //   clickedRef.current.parentElement === structureRef.current
+        // ) {
+        //   clickedRef.current.remove();
+        // } else if (type === "file") {
+        //   if (
+        //     clickedRef.current.parentElement &&
+        //     clickedRef.current.parentElement?.childNodes.length <= 2
+        //   ) {
+        //     collapseOrExpand(
+        //       clickedRef.current.parentElement.getElementsByClassName(
+        //         "clickable"
+        //       )[0] as HTMLElement,
+        //       structureRef,
+        //       true
+        //     );
+        //   }
+        //   clickedRef.current.remove();
+        // } else if (
+        //   type === "folder" &&
+        //   clickedRef.current.parentElement === structureRef.current
+        // ) {
+        //   collapseOrExpand(clickedRef.current, structureRef, true);
+        //   clickedRef.current.parentElement?.remove();
+        // } else if (type === "folder") {
+        //   const grandParent = clickedRef.current.parentElement
+        //     ?.parentElement as HTMLElement;
+        //   if (grandParent && grandParent?.childNodes.length <= 2) {
+        //     collapseOrExpand(
+        //       grandParent.getElementsByClassName("clickable")[0] as HTMLElement,
+        //       structureRef,
+        //       true
+        //     );
+        //   } else {
+        //     collapseOrExpand(clickedRef.current, structureRef, true);
+        //   }
 
-          clickedRef.current.parentElement?.remove();
-        }
+        //   clickedRef.current.parentElement?.remove();
       },
     },
   ];
@@ -231,7 +232,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         const header = childNodes[1];
         parent?.insertBefore(header, input);
       }
-    }, 1);
+    }, 0);
     return timeout;
   };
 
@@ -239,35 +240,31 @@ const Sidebar: React.FC<SidebarProps> = ({
     parentNode: ParentNode | undefined | null
   ): NodeJS.Timeout => {
     const timeout = setTimeout(() => {
-      console.log("PARENT", parentNode);
       if (parentNode && parentNode.childNodes) {
         const childNodes = parentNode.childNodes;
         const input = childNodes[0];
         let idx = 0;
         for (let i = 1; i < childNodes.length; i++) {
-          console.log("FP", clickedRef.current);
           if (childNodes[i] === clickedRef.current) {
-            console.log("FOUND", i);
             idx = i;
             break;
           }
         }
         parentNode.insertBefore(input, childNodes[idx]);
       }
-    }, 1);
+    }, 0);
     return timeout;
   };
 
   const inputSubmit = (value: string | false) => {
-    console.log("SUBMIT")
     if (!clickedRef.current) return;
- 
+
     if (rename === true || value === false) {
       setShowInput(false);
       clickedRef.current?.classList.remove("hide-input");
       return;
     }
-    
+
     let paddingRem: number = 0;
     if (inputPadding > 16) {
       paddingRem = inputPadding / 16;
@@ -319,11 +316,10 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   useEffect(() => {
     if (rename === true && showInput === false) {
-      console.log("ww", clickedRef.current, clickedRef.current?.classList)
       clickedRef.current?.classList.remove("hide-input");
       return;
     }
-  }, [rename, showInput])
+  }, [rename, showInput]);
 
   const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
@@ -421,6 +417,11 @@ const Sidebar: React.FC<SidebarProps> = ({
           prependTo.current as HTMLElement
         )}
 
+        {showDialog &&
+          createPortal(
+            <Dialog close={setShowDialog} />,
+            document.getElementById("root") as HTMLElement
+          )}
         {!collapsed && (
           <div className="ml-4 text-base" id="my-d">
             <div

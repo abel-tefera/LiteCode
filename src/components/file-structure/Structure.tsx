@@ -9,7 +9,7 @@ const Structure = forwardRef<any>((props, fileSysRef) => {
 
   return (
     <div
-      className="file-sys-container custom-scrollbar"
+      className="file-sys-container custom-scrollbar-2"
       ref={fileSysRef}
       onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
     >

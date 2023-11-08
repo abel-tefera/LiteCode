@@ -15,6 +15,35 @@
     /* background-color: green; */
 }
 
+.custom-scrollbar-2::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+.custom-scrollbar-2::-webkit-scrollbar-thumb {
+    background: #4a5575;
+    border-radius: 5px;
+    visibility: visible;
+    transition-property: all;
+    /* transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); */
+
+}
+
+
+/* .file:hover .custom-scrollbar-2::-webkit-scrollbar-thumb {
+    visibility: visible;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+} */
+
+
+
 /* .folder-main-container {
     display: flex;
     flex-direction: column;

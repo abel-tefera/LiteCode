@@ -6,6 +6,7 @@ import { store } from "./state";
 import Layout from "./components/layout/Layout";
 import Structure from "./components/file-structure/Structure";
 import Tabs from "./components/menus/Tabs";
+import Dialog from "./components/menus/Dialog";
 
 const App = () => {
   return (
