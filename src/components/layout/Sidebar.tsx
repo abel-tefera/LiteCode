@@ -12,10 +12,11 @@ import CustomInput from "../file-structure/CustomInput";
 import { createPortal } from "react-dom";
 
 import { getStyle } from "../../utils/getStyle";
-import { usePrependPortal } from "../../hooks/usePrependPortal";
+// import { usePrependPortal } from "../../hooks/usePrependPortal";
 import Dialog from "../menus/Dialog";
 import {
   addNode,
+  collapseOrExpand,
   renameNode,
 } from "../../state/features/structure/structureSlice";
 import { useTypedDispatch } from "../../state/hooks";
@@ -43,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   });
 
   const structureRef = useRef<HTMLDivElement>(null);
-  const prependTo = useRef<HTMLElement | null>(null);
+  const appendTo = useRef<HTMLElement | null>(null);
 
   const [showInput, setShowInput] = useState(false);
   const [inputPadding, setInputPadding] = useState(0);
@@ -120,7 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const prependForPortal = (isNew: boolean) => {
     if (!clickedRef.current) return;
-
+    console.log("HERE", clickedRef.current);
     if (
       clickedRef.current.classList.contains("main-nav") ||
       clickedRef.current === structureRef.current
@@ -128,20 +129,32 @@ const Sidebar: React.FC<SidebarProps> = ({
       if (!structureRef.current) return;
 
       if (!isNew) {
-        prependTo.current = structureRef.current.childNodes[0] as HTMLElement;
-        if (!prependTo.current) {
-          prependTo.current = structureRef.current;
+        appendTo.current = structureRef.current.childNodes[0] as HTMLElement;
+        if (!appendTo.current) {
+          appendTo.current = structureRef.current;
         }
       } else {
-        prependTo.current = structureRef.current;
+        appendTo.current = structureRef.current;
       }
     } else {
       if (isNew) {
-        // collapseOrExpand(clickedRef.current, structureRef, false);
+        const itemType = clickedRef.current.getAttribute("typeof-item");
+        if (itemType === "folder") {
+          dispatch(
+            collapseOrExpand({
+              item: { id: clickedRef.current.id, type: "folder" },
+              collapse: false,
+            })
+          );
+          setInputPadding(1);
+        } else {
+          setInputPadding(0);
+        }
       }
+      // @ts-ignore
       const parent = clickedRef.current.parentElement;
       const childNodes = parent?.childNodes;
-      prependTo.current = parent as HTMLElement;
+      appendTo.current = parent as HTMLElement;
 
       if (isNew) {
         findPrependTo(childNodes, parent);
@@ -151,28 +164,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  const setPadding = (isNew: boolean) => {
-    if (!clickedRef.current) return;
-    const sibling = clickedRef.current.getElementsByClassName(
-      "transformer"
-    )[0] as HTMLElement;
-    const type = clickedRef.current.classList.contains("folder")
-      ? "folder"
-      : "file";
-    if (sibling) {
-      const padding = getStyle(sibling, "padding-left");
-      if (type === "folder" && isNew) {
-        setInputPadding(parseInt(padding));
-      } else {
-        setInputPadding(parseInt(padding) - 16);
-      }
-    }
-  };
-
   const createFileInput = () => {
     if (!clickedRef.current) return;
-
-    setPadding(true);
 
     prependForPortal(true);
 
@@ -184,7 +177,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     // insert input into nth position
     // input display hidden
     prependForPortal(false);
-    setPadding(false);
     setShowInput(true);
   };
 
@@ -194,9 +186,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   ): NodeJS.Timeout => {
     const timeout = setTimeout(() => {
       if (childNodes) {
-        const input = childNodes[0];
-        const header = childNodes[1];
-        parent?.insertBefore(header, input);
+        const input = childNodes[2];
+        const body = childNodes[1] as HTMLElement;
+        if (body.classList.contains("sub-folder")) {
+          parent?.insertBefore(input, body);
+        }
       }
     }, 0);
     return timeout;
@@ -208,15 +202,16 @@ const Sidebar: React.FC<SidebarProps> = ({
     const timeout = setTimeout(() => {
       if (parentNode && parentNode.childNodes) {
         const childNodes = parentNode.childNodes;
-        const input = childNodes[0];
-        let idx = 0;
-        for (let i = 1; i < childNodes.length; i++) {
-          if (childNodes[i] === clickedRef.current) {
-            idx = i;
-            break;
-          }
-        }
-        parentNode.insertBefore(input, childNodes[idx]);
+        const top = childNodes[0];
+        let idx = childNodes.length - 1;
+        console.log("XXX", childNodes)
+        // for (let i = 1; i < childNodes.length; i++) {
+        //   if (childNodes[i] === clickedRef.current) {
+        //     idx = i;
+        //     break;
+        //   }
+        // }
+        parentNode.insertBefore(top, childNodes[idx]);
       }
     }, 0);
     return timeout;
@@ -260,8 +255,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
     const elem = e.target as HTMLElement;
-    clickedRef.current = elem;
-
+    if (clickedRef.current?.classList.contains("sidebar-container")) {
+      console.log("SIDEBAR");
+    } else {
+      clickedRef.current = elem.parentElement?.parentElement as HTMLElement;
+    }
     // @ts-ignore
     if (e.clientY > 300) {
       setPoints({
@@ -281,7 +279,8 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div
       className={classNames({
-        "fixed bg-dark-bg md:static md:translate-x-0 z-20 ": true,
+        "fixed bg-dark-bg md:static md:translate-x-0 z-20 sidebar-container":
+          true,
         "transition-all duration-300 ease-in-out": true,
         "w-[250px] max-w-[250px] ": !collapsed,
         "w-20 min-w-[80px]": collapsed,
@@ -331,30 +330,25 @@ const Sidebar: React.FC<SidebarProps> = ({
           setClicked={setClicked}
           actions={actions}
         />
-        {usePrependPortal(
-          <CustomInput
-            closeCallback={() => {
-              // if (clickedRef.current) {
-              //   clickedRef.current.parentElement?.classList.remove(
-              //     "folder-container-reverse"
-              //   );
-              // }
-              // structureRef.current?.classList.remove('dont-overflow')
-              setShowInput(false);
-            }}
-            submit={(value) => {
-              inputSubmit(value);
-            }}
-            padding={inputPadding + 1}
-            show={clickedRef.current && showInput}
-            item={{
-              type: inputType,
-              rename: isRename,
-            }}
-            container={structureRef.current}
-          />,
-          prependTo.current as HTMLElement
-        )}
+        {appendTo.current &&
+          createPortal(
+            <CustomInput
+              closeCallback={() => {
+                setShowInput(false);
+              }}
+              submit={(value) => {
+                inputSubmit(value);
+              }}
+              padding={inputPadding}
+              show={clickedRef.current && showInput}
+              item={{
+                type: inputType,
+                rename: isRename,
+              }}
+              container={structureRef.current}
+            />,
+            appendTo.current as HTMLElement
+          )}
 
         {showDialog &&
           createPortal(
@@ -368,7 +362,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                 visibility ? `inline-flex items-center select-none` : `hidden`
               }
             >
-              Developed by
+              Developed by&nbsp;
               <a
                 href="https://www.abeltb.xyz/"
                 target="_blank"

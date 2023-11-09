@@ -37,7 +37,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [extension, setExtension] = useState("");
   const [originalLogo, setOriginalLogo] = useState(
-    item.rename ? renameIcon : item.type === "file" ? newFileIcon : addFolderIcon
+    item.rename
+      ? renameIcon
+      : item.type === "file"
+      ? newFileIcon
+      : addFolderIcon
   );
   const [logo, setLogo] = useState(originalLogo);
 
@@ -66,7 +70,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     } else if (containerScrollTop - 196 < elementRelativeTop) {
       return "top";
     } else {
-      return ""
+      return "";
     }
   };
 
@@ -168,7 +172,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     if (isValid || value === "") {
       setError(false);
       setErrorMessage("");
-      setLogo(originalLogo)
+      setLogo(originalLogo);
     } else {
       setError(true);
       setLogo(errorIcon);
@@ -178,8 +182,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
     }
   };
   const validate = (preValidate: true | undefined) => {
-    
-
     if (item.type === "file") {
       validateFile(preValidate);
     } else if (item.type === "folder") {
@@ -193,9 +195,11 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   return (
     <div
-      className={`py-1 relative ${show ? "block" : "hidden"}`}
+      className={`py-1 relative ${show ? "block" : "hidden"} ${
+        padding === 0 ? "mx-1 pr-1 pl-[0.3rem]" : "pl-[1.3rem]"
+      }`}
       ref={containerRef}
-      style={{ marginLeft: `${padding + 14}px`, wordWrap: "break-word" }}
+      style={{ wordWrap: "break-word" }}
     >
       <div className={`flex flex-col`}>
         <div className="flex flex-row">
@@ -219,7 +223,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
                   submit(value);
                 } else if (value.length === 0) {
                   setError(true);
-                  setLogo(errorIcon)
+                  setLogo(errorIcon);
                   setErrorMessage(
                     `The ${item.type} name cannot be empty. Please enter a valid name.`
                   );

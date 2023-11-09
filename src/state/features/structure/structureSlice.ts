@@ -164,12 +164,17 @@ export const structureSlice = createSlice({
     },
 
     collapseOrExpand: (state, action) => {
-      if (action.payload.type === "folder") {
-        bfsNodeAction(state.initialFolder, action.payload.id, (folder) => {
-          folder.collapsed = !folder.collapsed;
+      if (action.payload.item.type === "folder") {
+        const { item, collapse } = action.payload;
+        bfsNodeAction(state.initialFolder, item.id, (folder) => {
+          if (collapse) {
+            folder.collapsed = !folder.collapsed;
+          } else {
+            folder.collapsed = false;
+          }
         });
+        state.selected = item.id;
       }
-      state.selected = action.payload.id;
     },
 
     copyNode: (state, action) => {
@@ -181,6 +186,10 @@ export const structureSlice = createSlice({
       bfsNodeAction(state.initialFolder, action.payload.targetId, (folder) => {
         folder.children.push = newNode;
       });
+    },
+
+    setSelected: (state, action) => {
+      state.selected = action.payload.id;
     },
   },
 });
@@ -196,6 +205,7 @@ export const {
   renameNode,
   collapseOrExpand,
   normalizeState,
+  setSelected,
 } = structureSlice.actions;
 
 export default structureSlice.reducer;
