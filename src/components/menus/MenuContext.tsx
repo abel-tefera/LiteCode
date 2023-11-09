@@ -10,12 +10,14 @@ interface MenuContextProps {
     | {
         title: string;
         handler: () => void;
+        disabled: boolean;
         type?: undefined;
       }
     | {
         type: string;
         handler: () => void;
         title?: undefined;
+        disabled?: undefined;
       }
   )[];
 }
@@ -49,10 +51,16 @@ const MenuContext: React.FC<MenuContextProps> = ({
               <li
                 key={index}
                 onClick={() => {
-                  action.handler();
-                  setClicked(false);
+                  if (!action.disabled) {
+                    action.handler();
+                    setClicked(false);
+                  }
                 }}
-                className="hover:bg-hover-blue rounded-md px-7 py-1 cursor-pointer"
+                className={`rounded-md px-7 py-1 ${
+                  !action.disabled
+                    ? "hover:bg-hover-blue cursor-pointer"
+                    : "text-zinc-500"
+                } `}
               >
                 <span className="select-none">{action.title}</span>
               </li>

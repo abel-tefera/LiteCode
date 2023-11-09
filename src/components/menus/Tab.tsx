@@ -5,6 +5,7 @@ import mdLogo from "../../assets/readme.svg";
 import jsxLogo from "../../assets/jsx.svg";
 
 import cross from "../../assets/cross.svg";
+import { getLogo } from "../file-structure/StructureUtils";
 
 interface TabProps {
   id: number;
@@ -18,23 +19,7 @@ const Tab: React.FC<TabProps> = ({ id, name, type, selected, onSelect }) => {
   const [logo, setLogo] = React.useState<string | null>();
 
   useEffect(() => {
-    switch (type) {
-      case "js":
-        setLogo(jsLogo);
-        break;
-      case "css":
-        setLogo(cssLogo);
-        break;
-      case "md":
-        setLogo(mdLogo);
-        break;
-      case "jsx":
-        setLogo(jsxLogo);
-        break;
-      default:
-        setLogo(jsLogo);
-        break;
-    }
+    setLogo(getLogo(type));
   }, [type]);
   
   return (

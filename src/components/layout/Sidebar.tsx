@@ -10,16 +10,14 @@ import logo from "../../assets/logo-2.png";
 import MenuContext from "../menus/MenuContext";
 import CustomInput from "../file-structure/CustomInput";
 import { createPortal } from "react-dom";
-import {
-  // collapseOrExpand,
-  fileStructure,
-  folderStructure,
-  getLogo,
-} from "../file-structure/StructureUtils";
+
 import { getStyle } from "../../utils/getStyle";
 import { usePrependPortal } from "../../hooks/usePrependPortal";
 import Dialog from "../menus/Dialog";
-import { addNode, renameNode } from "../../state/features/structure/structureSlice";
+import {
+  addNode,
+  renameNode,
+} from "../../state/features/structure/structureSlice";
 import { useTypedDispatch } from "../../state/hooks";
 import { useDispatch } from "react-redux";
 
@@ -57,8 +55,70 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const dispatch = useDispatch();
 
-  const prependForPortal = (isNew: boolean) => {
+  const actions = [
+    {
+      title: "New File",
+      handler: () => {
+        setInputType("file");
+        createFileInput();
+      },
+      disabled: false,
+    },
+    {
+      title: "New Folder",
+      handler: () => {
+        setInputType("folder");
+        createFileInput();
+      },
+      disabled: true,
+    },
+    {
+      type: "hr",
+      handler: () => {},
+    },
+    {
+      title: "Cut",
+      handler: () => {},
+      disabled: false,
+    },
+    {
+      title: "Copy",
+      handler: () => {},
+      disabled: false,
+    },
+    {
+      title: "Paste",
+      handler: () => {},
+      disabled: false,
+    },
+    {
+      type: "hr",
+      handler: () => {},
+    },
+    {
+      title: "Rename",
+      handler: () => {
+        if (!clickedRef.current) return;
+        clickedRef.current?.classList.add("hide-input");
+        const type = clickedRef.current.classList.contains("folder")
+          ? "folder"
+          : "file";
+        setInputType(type);
+        createFileInputForRename();
+        setIsRename(true);
+      },
+      disabled: false,
+    },
+    {
+      title: "Delete",
+      handler: () => {
+        setShowDialog(true);
+      },
+      disabled: false,
+    },
+  ];
 
+  const prependForPortal = (isNew: boolean) => {
     if (!clickedRef.current) return;
 
     if (
@@ -128,106 +188,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     setShowInput(true);
   };
 
-  const actions = [
-    {
-      title: "New File",
-      handler: () => {
-        setInputType("file");
-        createFileInput();
-      },
-    },
-    {
-      title: "New Folder",
-      handler: () => {
-        setInputType("folder");
-        createFileInput();
-      },
-    },
-    {
-      type: "hr",
-      handler: () => {},
-    },
-    {
-      title: "Cut",
-      handler: () => {},
-    },
-    {
-      title: "Copy",
-      handler: () => {},
-    },
-    {
-      title: "Paste",
-      handler: () => {},
-    },
-    {
-      type: "hr",
-      handler: () => {},
-    },
-    {
-      title: "Rename",
-      handler: () => {
-        if (!clickedRef.current) return;
-        clickedRef.current?.classList.add("hide-input");
-        const type = clickedRef.current.classList.contains("folder")
-          ? "folder"
-          : "file";
-        setInputType(type);
-        createFileInputForRename();
-        setIsRename(true);
-      },
-    },
-    {
-      title: "Delete",
-      handler: () => {
-        setShowDialog(true);
-        // if (!clickedRef.current) return;
-        // const type = clickedRef.current.classList.contains("folder")
-        //   ? "folder"
-        //   : "file";
-
-        // if (
-        //   type === "file" &&
-        //   clickedRef.current.parentElement === structureRef.current
-        // ) {
-        //   clickedRef.current.remove();
-        // } else if (type === "file") {
-        //   if (
-        //     clickedRef.current.parentElement &&
-        //     clickedRef.current.parentElement?.childNodes.length <= 2
-        //   ) {
-        //     collapseOrExpand(
-        //       clickedRef.current.parentElement.getElementsByClassName(
-        //         "clickable"
-        //       )[0] as HTMLElement,
-        //       structureRef,
-        //       true
-        //     );
-        //   }
-        //   clickedRef.current.remove();
-        // } else if (
-        //   type === "folder" &&
-        //   clickedRef.current.parentElement === structureRef.current
-        // ) {
-        //   collapseOrExpand(clickedRef.current, structureRef, true);
-        //   clickedRef.current.parentElement?.remove();
-        // } else if (type === "folder") {
-        //   const grandParent = clickedRef.current.parentElement
-        //     ?.parentElement as HTMLElement;
-        //   if (grandParent && grandParent?.childNodes.length <= 2) {
-        //     collapseOrExpand(
-        //       grandParent.getElementsByClassName("clickable")[0] as HTMLElement,
-        //       structureRef,
-        //       true
-        //     );
-        //   } else {
-        //     collapseOrExpand(clickedRef.current, structureRef, true);
-        //   }
-
-        //   clickedRef.current.parentElement?.remove();
-      },
-    },
-  ];
-
   const findPrependTo = (
     childNodes: NodeListOf<ChildNode> | undefined,
     parent: HTMLElement | null
@@ -262,63 +222,21 @@ const Sidebar: React.FC<SidebarProps> = ({
     return timeout;
   };
 
-  const handleDOM = (value: string) => {
-    if (!clickedRef.current) return;
-    let paddingRem: number = 0;
-    if (inputPadding > 16) {
-      paddingRem = inputPadding / 16;
-    } else if (inputPadding > 0) {
-      paddingRem = 1;
-    }
-    let styles: string,
-      markup: string = "";
-
-    if (inputType === "file") {
-      // @ts-ignore
-      [styles, markup] = fileStructure(
-        value,
-        paddingRem,
-        getLogo(value.split(".").reverse()[0]),
-        false
-      );
-    } else if (inputType === "folder") {
-      [styles, markup] = folderStructure(value, paddingRem, false);
-    }
-
-    const element = document.createElement("div");
-    element.innerHTML = markup;
-    // @ts-ignore
-    element.classList.add(...styles.split(" "));
-    element.style.width = "auto";
-
-    if (
-      clickedRef.current.classList.contains("main-nav") ||
-      clickedRef.current === structureRef.current
-    ) {
-      const appendTo = structureRef.current as HTMLElement;
-      appendTo.appendChild(element);
-    } else {
-      const appendTo = clickedRef.current.parentElement as HTMLElement;
-      appendTo.appendChild(element);
-    }
-  }
-
   const inputSubmit = (value: string | false) => {
     if (!clickedRef.current) return;
 
     if (isRename === true || value === false) {
       // console.log("DISPATCHING");
       // dispatch(renameNode());
-      
+
       setShowInput(false);
       clickedRef.current?.classList.remove("hide-input");
       setIsRename(false);
       return;
     }
 
-    dispatch(addNode({value, inputType}))
+    dispatch(addNode({ value, inputType }));
 
-    handleDOM(value);
     // structureRef.current?.classList.remove('dont-overflow')
     setShowInput(false);
   };
@@ -457,7 +375,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                 rel="noreferrer"
                 className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
               >
-                {" "} Abel
+                {" "}
+                Abel
               </a>
             </div>
           </div>

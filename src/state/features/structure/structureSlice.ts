@@ -48,6 +48,8 @@ const initialState = {
     id: "head",
     name: "head",
     type: "folder",
+    collapsed: false,
+    selected: false,
     children: [
       {
         id: "folder1Id",
@@ -61,6 +63,7 @@ const initialState = {
                 id: "folder3Id",
                 name: "Folder 3",
                 type: "folder",
+                selected: false,
                 collapsed: true,
                 children: [],
               },
@@ -72,18 +75,21 @@ const initialState = {
               },
             ],
             type: "folder",
+            selected: false,
             collapsed: true,
           },
           {
             id: "folder4Id",
             name: "Folder 4",
             type: "folder",
+            selected: false,
             collapsed: false,
             children: [
               {
                 id: "folder5Id",
                 name: "Folder 5",
                 type: "folder",
+                selected: true,
                 collapsed: true,
                 children: [],
               },
@@ -98,9 +104,11 @@ const initialState = {
         ],
         type: "folder",
         collapsed: false,
+        selected: false,
       },
     ],
   },
+  selected: null,
 };
 
 export const structureSlice = createSlice({
@@ -161,6 +169,7 @@ export const structureSlice = createSlice({
           folder.collapsed = !folder.collapsed;
         });
       }
+      state.selected = action.payload.id;
     },
 
     copyNode: (state, action) => {
@@ -178,6 +187,8 @@ export const structureSlice = createSlice({
 
 export const getInitialSet = (state: any) =>
   state.structure.initialFolder.children;
+
+export const selectedItem = (state: any) => state.structure.selected;
 
 export const {
   addNode,

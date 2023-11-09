@@ -67,12 +67,29 @@ body {
     visibility: visible;
 }
 
+.bg-vscode-overlay {
+    position: relative;
+}
+
+.bg-vscode-overlay::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #4078CE;
+    opacity: 0.6;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    border-top-right-radius: 0.125rem/* 2px */;
+    border-bottom-right-radius: 0.125rem/* 2px */;
+}
+
 
 .custom-scrollbar::-webkit-scrollbar-button:vertical:start:increment,
 .custom-scrollbar::-webkit-scrollbar-button:vertical:end:decrement,
-.custom-scrollbar::-webkit-scrollbar-button:horizontal:start:increment, 
-.custom-scrollbar::-webkit-scrollbar-button:horizontal:end:decrement 
-{
+.custom-scrollbar::-webkit-scrollbar-button:horizontal:start:increment,
+.custom-scrollbar::-webkit-scrollbar-button:horizontal:end:decrement {
     display: none;
 }
 
