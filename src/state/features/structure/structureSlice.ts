@@ -1,7 +1,9 @@
+// @ts-nocheck
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 import { v4 as uuidv4 } from "uuid";
+import { bfsNodeAction, dfsNodeAction } from "./utils/traversal";
 
 // type NestedRecord<T extends any[]>
 //     = T extends [any, ...infer R]
@@ -32,51 +34,73 @@ import { v4 as uuidv4 } from "uuid";
 
 // Define the initial state using that type
 const initialState = {
-  id: "head",
-  name: "root",
-  type: "folder",
-  children: [
-    {
-      id: "root",
-      name: "Folder 1",
-      children: [
-        {
-          id: "root2",
-          name: "Folder 2",
-          children: [
-            {
-              id: "root3",
-              name: "Folder 3",
-              type: "folder",
-            },
-            {
-              id: "file1",
-              name: "File 1",
-              type: "file",
-            },
-          ],
-        },
-        {
-          id: "root4",
-          name: "Folder 4",
-          type: "folder",
-          children: [
-            {
-              id: "root5",
-              name: "Folder 5",
-              type: "folder",
-            },
-            {
-              id: "file2",
-              name: "File 2",
-              type: "file",
-            },
-          ],
-        },
-      ],
+  normalized: {
+    files: {
+      byId: {},
+      allIds: [],
     },
-  ],
-  classList: [],
+    folders: {
+      byId: {},
+      allIds: [],
+    },
+  },
+  initialFolder: {
+    id: "head",
+    name: "head",
+    type: "folder",
+    children: [
+      {
+        id: "folder1Id",
+        name: "Folder 1",
+        children: [
+          {
+            id: "folder2Id",
+            name: "Folder 2",
+            children: [
+              {
+                id: "folder3Id",
+                name: "Folder 3",
+                type: "folder",
+                collapsed: true,
+                children: [],
+              },
+              {
+                id: "file1Id",
+                name: "File1.js",
+                type: "file",
+                extension: "js",
+              },
+            ],
+            type: "folder",
+            collapsed: true,
+          },
+          {
+            id: "folder4Id",
+            name: "Folder 4",
+            type: "folder",
+            collapsed: false,
+            children: [
+              {
+                id: "folder5Id",
+                name: "Folder 5",
+                type: "folder",
+                collapsed: true,
+                children: [],
+              },
+              {
+                id: "file2Id",
+                name: "File2.js",
+                type: "file",
+                extension: "js",
+              },
+            ],
+          },
+        ],
+        type: "folder",
+        collapsed: false,
+      },
+    ],
+  },
 };
 
 export const structureSlice = createSlice({
@@ -84,25 +108,83 @@ export const structureSlice = createSlice({
   initialState,
   reducers: {
     addNode: (state, action) => {
-      const newNode = {
+      const newChild = {
         id: uuidv4(),
-        name: action.payload.name,
-        type: action.payload.type,
-        parent: action.payload.parent,
-        children: [],
-        classList: [],
+        ...action.payload,
       };
-      console.log("ADDING NODE", action.payload);
+
+      bfsNodeAction(state.initialFolder, action.payload.id, (item) => {
+        item.children.push(newChild);
+      });
     },
 
-    removeNode: (state) => {},
+    removeNode: (state, action) => {
+      dfsNodeAction(
+        state.initialFolder.children,
+        action.payload.id,
+        (item, parent) => {
+          if (!parent) {
+            parent = state.initialFolder;
+          }
+          parent.children = parent.children.filter(
+            (child) => child.id !== item.id
+          );
+        }
+      );
+    },
 
-    renameNode: () => {
-      console.log("RECIEVEIN");
+    renameNode: (state, action) => {
+      dfsNodeAction(state.initialFolder.children, action.payload.id, (item) => {
+        item.name = "BAZZAR";
+      });
+    },
+
+    normalizeState: (state) => {
+      const mapStructureRecursively = (structure: any, normalized: any) => {
+        for (let item of structure) {
+          if (item.type === "folder") {
+            normalized.folders.byId[item.id] = item;
+            normalized.folders.allIds.push(item.id);
+            mapStructureRecursively(item.children, normalized);
+          } else if (item.type === "file") {
+            normalized.files.byId[item.id] = item;
+            normalized.files.allIds.push(item.id);
+          }
+        }
+      };
+      mapStructureRecursively(state.initialFolder.children, state.normalized);
+    },
+
+    collapseOrExpand: (state, action) => {
+      if (action.payload.type === "folder") {
+        bfsNodeAction(state.initialFolder, action.payload.id, (folder) => {
+          folder.collapsed = !folder.collapsed;
+        });
+      }
+    },
+
+    copyNode: (state, action) => {
+      const newNode = {
+        id: uuidv4(),
+        ...action.payload,
+      };
+
+      bfsNodeAction(state.initialFolder, action.payload.targetId, (folder) => {
+        folder.children.push = newNode;
+      });
     },
   },
 });
 
-export const { addNode, removeNode, renameNode } = structureSlice.actions;
+export const getInitialSet = (state: any) =>
+  state.structure.initialFolder.children;
+
+export const {
+  addNode,
+  removeNode,
+  renameNode,
+  collapseOrExpand,
+  normalizeState,
+} = structureSlice.actions;
 
 export default structureSlice.reducer;

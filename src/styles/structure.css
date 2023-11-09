@@ -97,18 +97,14 @@
 }
 
 .span-logo {
-    margin-right: 0.5rem;
     background-size: contain;
     background-repeat: no-repeat;
     width: 1rem;
-    display: inline-block;
     background-position-y: center;
 }
 
-.clickable {
-    /* background-color: red; */
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
+.clickable:hover .three-dots {
+    opacity: 1;
 }
 
 .measurable {
@@ -139,9 +135,12 @@
     background-image: url("../assets/folder.svg");
 }
 
-.clickable>* {
-    pointer-events: none;
-    user-select: none;
+.three-dots {
+    background-image: url("../assets/three-dots.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    opacity: 0;
 }
 
 .not-seen {

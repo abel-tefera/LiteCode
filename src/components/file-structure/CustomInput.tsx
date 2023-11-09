@@ -63,8 +63,10 @@ const CustomInput: React.FC<CustomInputProps> = ({
       return "";
     } else if (elementRelativeTop - containerScrollTop < 196) {
       return "bottom";
-    } else {
+    } else if (containerScrollTop - 196 < elementRelativeTop) {
       return "top";
+    } else {
+      return ""
     }
   };
 
@@ -191,9 +193,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   return (
     <div
-      className={`py-1 bg-dark-bg relative ${show ? "block" : "hidden"}`}
+      className={`py-1 relative ${show ? "block" : "hidden"}`}
       ref={containerRef}
-      style={{ background: 'border-box', marginLeft: `${padding + 14}px`, wordWrap: "break-word" }}
+      style={{ marginLeft: `${padding + 14}px`, wordWrap: "break-word" }}
     >
       <div className={`flex flex-col`}>
         <div className="flex flex-row">
@@ -203,7 +205,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
             alt="new file icon"
           />
           <input
-            className={`border w-32 border-monaco-color bg-monaco-color text-white focus:outline-none ${
+            className={`border w-[80%] max-w-[10rem] border-monaco-color bg-monaco-color text-white focus:outline-none ${
               error && errorMessage !== ""
                 ? "focus:border-red-500"
                 : "focus:border-cyan-500"
@@ -235,7 +237,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
         {error && errorMessage !== "" && (
           <div
             ref={errorRef}
-            className={`w-32 absolute flex items-start p-1 border border-red-500 bg-red-900 text-sm ${
+            className={`w-[80%] max-w-[10rem] absolute flex items-start p-1 border border-red-500 bg-red-900 text-sm ${
               position !== "top" ? "top-8" : "bottom-8"
             }`}
             style={{ whiteSpace: "pre-wrap", marginLeft: `26px` }}

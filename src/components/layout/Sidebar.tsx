@@ -11,7 +11,7 @@ import MenuContext from "../menus/MenuContext";
 import CustomInput from "../file-structure/CustomInput";
 import { createPortal } from "react-dom";
 import {
-  collapseOrExpand,
+  // collapseOrExpand,
   fileStructure,
   folderStructure,
   getLogo,
@@ -77,7 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       }
     } else {
       if (isNew) {
-        collapseOrExpand(clickedRef.current, structureRef, false);
+        // collapseOrExpand(clickedRef.current, structureRef, false);
       }
       const parent = clickedRef.current.parentElement;
       const childNodes = parent?.childNodes;
@@ -307,8 +307,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (!clickedRef.current) return;
 
     if (isRename === true || value === false) {
-      console.log("DISPATCHING");
-      dispatch(renameNode());
+      // console.log("DISPATCHING");
+      // dispatch(renameNode());
       
       setShowInput(false);
       clickedRef.current?.classList.remove("hide-input");
@@ -450,14 +450,14 @@ const Sidebar: React.FC<SidebarProps> = ({
                 visibility ? `inline-flex items-center select-none` : `hidden`
               }
             >
-              Developed by&nbsp;
+              Developed by
               <a
                 href="https://www.abeltb.xyz/"
                 target="_blank"
                 rel="noreferrer"
                 className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
               >
-                Abel
+                {" "} Abel
               </a>
             </div>
           </div>

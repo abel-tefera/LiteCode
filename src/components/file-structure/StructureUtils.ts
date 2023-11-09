@@ -252,8 +252,9 @@ const fileStructureClickHandler = (
 export {
   mapObjectRecursively,
   fileStructureClickHandler,
-  collapseOrExpand,
+  // collapseOrExpand,
   folderStructure,
   fileStructure,
-  getLogo
+  getLogo,
+  trimName
 };
