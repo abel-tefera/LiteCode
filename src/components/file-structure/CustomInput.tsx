@@ -208,21 +208,21 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   return (
     <div
-      className={`py-1 relative ${show ? "block" : "hidden"} ${
+      className={`py-1 ${show ? "block" : "hidden"} ${
         padding === 0 ? "mx-1 pr-1 pl-[0.3rem]" : "pl-[1.3rem]"
       }`}
       ref={containerRef}
       style={{ wordWrap: "break-word" }}
     >
-      <div className={`flex flex-col`}>
-        <div className="flex flex-row">
-          <img
-            className="w-4 h-4 mr-2 ml-[0.125rem] self-center"
-            src={logo}
-            alt="new file icon"
-          />
+      <div className="flex flex-row">
+        <img
+          className="w-4 h-4 mr-2 ml-[0.125rem] self-center"
+          src={logo}
+          alt="new file icon"
+        />
+        <div className="flex relative flex-col w-[80%] max-w-[10rem]">
           <input
-            className={`border w-[80%] max-w-[10rem] border-monaco-color bg-monaco-color text-white focus:outline-none ${
+            className={`border w-full border-monaco-color bg-monaco-color text-white focus:outline-none ${
               error && errorMessage !== ""
                 ? "focus:border-red-500"
                 : "focus:border-cyan-500"
@@ -249,19 +249,18 @@ const CustomInput: React.FC<CustomInputProps> = ({
             }}
             ref={inputRef}
           />
-        </div>
 
-        {error && errorMessage !== "" && (
-          <div
-            ref={errorRef}
-            className={`w-[80%] max-w-[10rem] absolute flex items-start p-1 border border-red-500 bg-red-900 text-sm ${
-              position !== "top" ? "top-8" : "bottom-8"
-            }`}
-            style={{ whiteSpace: "pre-wrap", marginLeft: `26px` }}
-          >
-            {errorMessage}
-          </div>
-        )}
+          {error && errorMessage !== "" && (
+            <div
+              ref={errorRef}
+              className={`w-fit absolute flex items-start p-1 border border-red-500 bg-red-900 text-sm ${
+                position !== "top" ? "top-8" : "bottom-8"
+              }`}
+            >
+              {errorMessage}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

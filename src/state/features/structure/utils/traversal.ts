@@ -23,8 +23,7 @@ const dfsNodeAction = (
 ) => {
   for (let item of structure) {
     if (item.id === id) {
-      callback(item, parent[parent.length - 1]);
-      return;
+      return callback(item, parent[parent.length - 1]);
     } else if (item.type === "folder") {
       parent.push(item);
       dfsNodeAction(item.children, id, callback, parent);

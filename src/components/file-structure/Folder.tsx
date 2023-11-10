@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from "react";
+import React, { useEffect } from "react";
 import { getLogo, trimName } from "./StructureUtils";
 import {
   addNode,
@@ -9,6 +9,7 @@ import {
   selectedItem,
   contextSelectedItem,
   contextClick,
+  clipboard,
 } from "../../state/features/structure/structureSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -18,6 +19,8 @@ const Folder: any = ({ data }) => {
   const dispatch = useDispatch();
   const selected = useSelector(selectedItem);
   const contextSelected = useSelector(contextSelectedItem);
+  const cutItem = useSelector(clipboard);
+
   const findLogo = (item) => {
     if (item.type === "folder") {
       return item.collapsed ? "closed-folder" : "opened-folder";
@@ -42,7 +45,11 @@ const Folder: any = ({ data }) => {
                 contextSelected === item.id
                   ? "bg-slate-700 hover:bg-slate-600"
                   : ""
-              }`}
+              } ${
+                cutItem.isCut && cutItem.id === item.id
+                  ? "bg-slate-700 hover:bg-slate-600 opacity-50"
+                  : ""
+              } }`}
             >
               <div
                 onClick={() =>

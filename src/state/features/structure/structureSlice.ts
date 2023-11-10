@@ -137,6 +137,9 @@ export const structureSlice = createSlice({
         state.initialFolder.children.push(newChild);
       } else if (state.contextSelected.id !== null) {
         bfsNodeAction(state.initialFolder, state.contextSelected.id, (item) => {
+          state.normalized.folders.byId[state.contextSelected.id].children.push(
+            newChild
+          );
           item.children.push(newChild);
         });
       }
@@ -145,25 +148,30 @@ export const structureSlice = createSlice({
     },
 
     removeNode: (state, action) => {
-      console.log("REMOVING", state, action);
-      // dfsNodeAction(
-      //   state.initialFolder.children,
-      //   state.contextSelected.id,
-      //   (item, parent) => {
-      //     if (!parent) {
-      //       parent = state.initialFolder;
-      //     }
-      //     parent.children = parent.children.filter(
-      //       (child) => child.id !== item.id
-      //     );
-      //   }
-      // );
+      const id = action.payload.id
+        ? action.payload.id
+        : state.contextSelected.id;
+      const type = action.payload.type
+        ? action.payload.type
+        : state.contextSelected.type;
 
-      // const { type } = state.contextSelected.type;
-      // state.normalized[type + "s"].byId[state.contextSelected.id] = undefined;
-      // state.normalized[type + "s"].allIds = state.normalized[
-      //   type + "s"
-      // ].allIds.filter((id) => id !== state.contextSelected.id);
+      dfsNodeAction(state.initialFolder.children, id, (item, parent) => {
+        if (!parent) {
+          parent = state.initialFolder;
+        }
+        parent.children = parent.children.filter(
+          (child) => child.id !== item.id
+        );
+
+        if (parent.children.length === 0) {
+          parent.collapsed = true;
+        }
+      });
+
+      state.normalized[type + "s"].byId[id] = undefined;
+      state.normalized[type + "s"].allIds = state.normalized[
+        type + "s"
+      ].allIds.filter((_id) => _id !== id);
     },
 
     renameNode: (state, action) => {
@@ -215,33 +223,45 @@ export const structureSlice = createSlice({
     copyNode: (state) => {
       const toCopy =
         state.normalized[state.toCopy.type + "s"].byId[state.toCopy.id];
-
-      if (state.toCopy.isCut) {
-        console.log("ISCUR");
-        
-        structureSlice.caseReducers.removeNode(state, );
-      }
-
-      const newNode = {
-        ...toCopy,
-        id: state.toCopy.isCut ? toCopy.id: `${state.toCopy.type}-${uuidv4()}`,
-      };
-
-      const reAssign = (node: any) => {
+      const dfs = (node: any, callback: any, children: any[] = []) => {
         for (let item of node) {
-          item.id = `${item.type}-${uuidv4()}`;
-          item.selected = false;
+          callback(item);
           if (item.collapsed !== undefined) {
             item.collapsed = true;
           }
           if (item.type === "folder") {
-            reAssign(item.children);
+            children.push(item.id);
+            dfs(item.children, callback, children);
           }
         }
+        return children;
+      };
+
+      const newNode = {
+        ...toCopy,
+        id: state.toCopy.isCut ? toCopy.id : `${state.toCopy.type}-${uuidv4()}`,
       };
 
       if (state.toCopy.type === "folder" && state.toCopy.isCut !== true) {
-        reAssign(toCopy.children);
+        dfs(toCopy.children, (item) => {
+          item.id = `${item.type}-${uuidv4()}`;
+          item.selected = false;
+        });
+      } else if (
+        state.toCopy.type === "folder" &&
+        state.toCopy.isCut === true
+      ) {
+        const children = dfs(toCopy.children, () => {});
+        const recursiveCut = children.find(
+          (child) => child === state.contextSelected.id
+        );
+        if (recursiveCut) {
+          state.toCopy = { id: null, type: null, isCut: null };
+          return;
+        }
+        structureSlice.caseReducers.removeNode(state, {
+          payload: { ...state.toCopy },
+        });
       }
 
       bfsNodeAction(state.initialFolder, state.contextSelected.id, (folder) => {
