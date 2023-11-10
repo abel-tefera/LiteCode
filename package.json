@@ -14,7 +14,6 @@
     "classnames": "^2.3.2",
     "esbuild-wasm": "^0.19.5",
     "html-react-parser": "^5.0.5",
-    "immer": "^10.0.3",
     "localforage": "^1.10.0",
     "monaco-editor": "^0.44.0",
     "react": "^18.2.0",

@@ -5,7 +5,7 @@ import jsLogo from "../../assets/js.svg";
 import cssLogo from "../../assets/css.svg";
 import mdLogo from "../../assets/readme.svg";
 import jsxLogo from "../../assets/jsx.svg";
-import errorIcon from "../../assets/cross.png";
+import errorIcon from "../../assets/error.png";
 import addFolderIcon from "../../assets/folder.svg";
 import renameIcon from "../../assets/rename.svg";
 
@@ -16,7 +16,7 @@ interface CustomInputProps {
   show: boolean | undefined;
   item: {
     type: "file" | "folder" | "";
-    rename: boolean;
+    rename: any;
   };
   container: HTMLDivElement | null;
 }
@@ -29,20 +29,18 @@ const CustomInput: React.FC<CustomInputProps> = ({
   item,
   container,
 }) => {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(item.rename ? item.rename.name : "");
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [extension, setExtension] = useState("");
-  const [originalLogo, setOriginalLogo] = useState(
-    item.rename
-      ? renameIcon
-      : item.type === "file"
-      ? newFileIcon
-      : addFolderIcon
-  );
+  const originalLogo = item.rename
+    ? renameIcon
+    : item.type === "file"
+    ? newFileIcon
+    : addFolderIcon;
   const [logo, setLogo] = useState(originalLogo);
 
   const [position, setPosition] = useState<"top" | "bottom">("bottom");
@@ -81,7 +79,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     if (changeDirection !== "" && changeDirection !== position) {
       setPosition(changeDirection);
     }
-  }, [error, errorMessage, container]);
+  }, [error, errorMessage, container, position]);
 
   useOutsideAlerter(containerRef, (e: boolean) => {
     if (!error && value.length > 0) {
@@ -94,8 +92,15 @@ const CustomInput: React.FC<CustomInputProps> = ({
     if (!inputRef.current) return;
     setTimeout(() => {
       inputRef.current?.focus();
+      if (item.rename) {
+        const idx = item.rename.name.lastIndexOf(".");
+        inputRef.current?.select();
+        if (idx !== -1) {
+          inputRef.current?.setSelectionRange(0, idx);
+        }
+      }
     }, 0);
-  }, [show]);
+  }, [show, item.rename]);
 
   const validateFile = (preValidate: true | undefined) => {
     // const regexp = new RegExp(/^(.*?)(\.[^.]*)?$/);
@@ -192,6 +197,14 @@ const CustomInput: React.FC<CustomInputProps> = ({
   useEffect(() => {
     validate(undefined);
   }, [value]);
+
+  // useEffect(() => {
+  //   if (!containerRef.current) return;
+  //   console.log("STARTED");
+  //   return () => {
+  //     console.log("ENDED");
+  //   };
+  // }, []);
 
   return (
     <div

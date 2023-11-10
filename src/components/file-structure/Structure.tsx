@@ -22,7 +22,7 @@ const Structure = forwardRef<any>((props, fileSysRef) => {
   const dispatch = useDispatch();
 
   useOutsideAlerter(fileSysRef, () => {
-    dispatch(setSelected({ id: null }));
+    dispatch(setSelected({ id: 'head' }));
   });
 
   return (

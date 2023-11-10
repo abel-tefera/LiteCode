@@ -85,12 +85,43 @@ body {
     border-bottom-right-radius: 0.125rem/* 2px */;
 }
 
+.dialog-cover::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #000;
+    opacity: 0.2;
+    width: 100%;
+    height: 100%;
+}
+
 
 .custom-scrollbar::-webkit-scrollbar-button:vertical:start:increment,
 .custom-scrollbar::-webkit-scrollbar-button:vertical:end:decrement,
 .custom-scrollbar::-webkit-scrollbar-button:horizontal:start:increment,
 .custom-scrollbar::-webkit-scrollbar-button:horizontal:end:decrement {
     display: none;
+}
+
+.js-logo {
+    background-image: url("../assets/js.svg");
+}
+
+.css-logo {
+    background-image: url("../assets/css.svg");
+}
+
+.jsx-logo {
+    background-image: url("../assets/jsx.svg");
+}
+
+.error-logo {
+    background-image: url("../assets/error.png");
+
+}
+
+.md-logo {
+    background-image: url("../assets/readme.svg");
 }
 
 /* iframe#webpack-dev-server-client-overlay {

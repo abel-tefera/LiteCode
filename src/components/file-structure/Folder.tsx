@@ -7,6 +7,7 @@ import {
   removeNode,
   renameNode,
   selectedItem,
+  contextSelectedItem,
   contextClick,
 } from "../../state/features/structure/structureSlice";
 import { useDispatch } from "react-redux";
@@ -16,7 +17,7 @@ import useOutsideAlerter from "../../hooks/useOutsideAlerter";
 const Folder: any = ({ data }) => {
   const dispatch = useDispatch();
   const selected = useSelector(selectedItem);
-
+  const contextSelected = useSelector(contextSelectedItem);
   const findLogo = (item) => {
     if (item.type === "folder") {
       return item.collapsed ? "closed-folder" : "opened-folder";
@@ -36,6 +37,10 @@ const Folder: any = ({ data }) => {
               className={`transition-colors flex flex-row hover:cursor-pointer rounded-r-sms clickable hover:bg-dark-hover rounded-r-sm  ${
                 selected === item.id
                   ? "bg-vscode-overlay hover:bg-vscode-blue"
+                  : ""
+              } ${
+                contextSelected === item.id
+                  ? "bg-slate-700 hover:bg-slate-600"
                   : ""
               }`}
             >
@@ -67,9 +72,19 @@ const Folder: any = ({ data }) => {
               <button
                 typeof-item={item.type}
                 parent-id={item.id}
-                onClick={(e) => dispatch(contextClick({ id: item.id, e }))}
+                onClick={(e) =>
+                  dispatch(
+                    contextClick({
+                      id: item.id,
+                      type: item.type,
+                      threeDot: { x: e.clientY, y: e.clientX },
+                    })
+                  )
+                }
                 className={`three-dots px-2 transition-opacity rounded-r-sm ${
-                  selected === item.id ? "hover:bg-blue-400" : 'hover:bg-slate-600'
+                  selected === item.id
+                    ? "hover:bg-blue-400"
+                    : "hover:bg-slate-500"
                 }`}
               >
                 &nbsp;

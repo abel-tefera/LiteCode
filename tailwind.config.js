@@ -12,7 +12,8 @@ module.exports = {
         'dark-hover': '#2B3245',
         'monaco-color': "#3C3C3C",
         'hover-blue': "#04395E",
-        'vscode-blue': '#4078CE'
+        'vscode-blue': '#4078CE',
+        'git-orange': '#F05033',
       },
       fontFamily: {
         'roboto': ['Roboto', 'sans-serif']

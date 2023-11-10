@@ -11,14 +11,20 @@ import MenuContext from "../menus/MenuContext";
 import CustomInput from "../file-structure/CustomInput";
 import { createPortal } from "react-dom";
 
-import { getStyle } from "../../utils/getStyle";
-// import { usePrependPortal } from "../../hooks/usePrependPortal";
 import Dialog from "../menus/Dialog";
 import {
   addNode,
   collapseOrExpand,
-  contextSelectedId,
+  contextClick,
+  contextSelectedEvent,
+  contextSelectedItem,
+  removeNode,
   renameNode,
+  getItem,
+  setToCopy,
+  copyNode,
+  contextSelectedItemType,
+  clipboard
 } from "../../state/features/structure/structureSlice";
 import { useTypedDispatch } from "../../state/hooks";
 import { useDispatch } from "react-redux";
@@ -36,17 +42,22 @@ const Sidebar: React.FC<SidebarProps> = ({
   shown,
   setCollapsed,
 }) => {
-  const contextSelected = useSelector(contextSelectedId);
-
+  const contextSelectedE = useSelector(contextSelectedEvent);
+  const contextSelectedId = useSelector(contextSelectedItem);
+  const contextSelectedType = useSelector(contextSelectedItemType);
+  const thisItem = useSelector(getItem);
+  const clipboardExists = useSelector(clipboard);
+  
   const [visibility, setVisibility] = useState(collapsed);
   const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
 
   const [showContext, setShowContext] = useState(false);
   const clickedRef = useRef<HTMLElement>();
   const [selectedType, setSelectedType] = useState<
-    "file" | "folder" | "main" | ""
+    "file" | "folder" | "head" | ""
   >("");
 
+  const [selectedItemId, setSelectedItemId] = useState("");
   const [points, setPoints] = useState({
     x: 0,
     y: 0,
@@ -59,7 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [inputPadding, setInputPadding] = useState(0);
 
   const [inputType, setInputType] = useState<"file" | "folder" | "">("");
-  const [isRename, setIsRename] = useState<boolean>(false);
+  const [isRename, setIsRename] = useState(false);
 
   const [showDialog, setShowDialog] = useState(false);
 
@@ -88,18 +99,24 @@ const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: "Cut",
-      handler: () => {},
-      disabled: selectedType === "main",
+      handler: () => {
+        dispatch(setToCopy({ id: contextSelectedId, type: contextSelectedType, isCut: true }));
+      },
+      disabled: selectedType === "head",
     },
     {
       title: "Copy",
-      handler: () => {},
-      disabled: selectedType === "main",
+      handler: () => {
+        dispatch(setToCopy({ id: contextSelectedId, type: contextSelectedType, isCut: false }));
+      },
+      disabled: selectedType === "head",
     },
     {
       title: "Paste",
-      handler: () => {},
-      disabled: selectedType === "file",
+      handler: () => {
+        dispatch(copyNode());
+      },
+      disabled: selectedType === "file" || clipboardExists.id === null,
     },
     {
       type: "hr",
@@ -108,84 +125,62 @@ const Sidebar: React.FC<SidebarProps> = ({
     {
       title: "Rename",
       handler: () => {
-        if (!clickedRef.current) return;
-        // clickedRef.current?.classList.add("hide-input");
-
-        // setInputType(type);
+        setInputType(
+          clickedRef.current?.getAttribute("typeof-item") as
+            | "file"
+            | "folder"
+            | ""
+        );
         createFileInputForRename();
         setIsRename(true);
       },
-      disabled: selectedType === "main",
+      disabled: selectedType === "head",
     },
     {
       title: "Delete",
       handler: () => {
         setShowDialog(true);
       },
-      disabled: selectedType === "main",
+      disabled: selectedType === "head",
     },
   ];
 
-  useEffect(() => {
-    if (!contextSelected) return;
-    contextHandler(contextSelected.e);
-  }, [contextSelected]);
-
-  const prependForPortal = (isNew: boolean) => {
-    console.log("HERE", clickedRef.current, structureRef.current);
+  const prependForPortal = (isRename: boolean) => {
     if (!clickedRef.current) return;
     if (clickedRef.current === structureRef.current) {
       appendTo.current = structureRef.current.childNodes[0] as HTMLElement;
-      // if (!isNew) {
-      //   appendTo.current = structureRef.current.childNodes[0] as HTMLElement;
-      //   if (!appendTo.current) {
-      //     appendTo.current = structureRef.current;
-      //   }
-      // } else {
-      //   appendTo.current = structureRef.current;
-      // }
+      setInputPadding(0);
     } else {
-      // if (isNew) {
-      //   const itemType = clickedRef.current.getAttribute("typeof-item");
-      //   if (itemType === "folder") {
-      //     dispatch(
-      //       collapseOrExpand({
-      //         item: { id: clickedRef.current.id, type: "folder" },
-      //         collapse: false,
-      //       })
-      //     );
-      //     setInputPadding(1);
-      //   } else {
-      //     setInputPadding(0);
-      //   }
-      // }
-      // // @ts-ignore
-      // const parent = clickedRef.current.parentElement;
-      // const childNodes = parent?.childNodes;
-      // appendTo.current = parent as HTMLElement;
-      // // console.log("ISNEW", isNew, childNodes, parent);
-      // if (isNew) {
-      //   // findPrependTo(childNodes, parent);
-      // } else {
-      //   // findPrependToRename(parent);
-      // }
+      if (!isRename) {
+        dispatch(
+          collapseOrExpand({
+            item: { id: clickedRef.current.id, type: "folder" },
+            collapse: false,
+          })
+        );
+      }
+
+      appendTo.current = clickedRef.current.parentElement as HTMLElement;
+      if (isRename) {
+        clickedRef.current.classList.add("hide-input");
+        setInputPadding(0);
+      } else {
+        findPrependTo(
+          clickedRef.current.parentElement?.childNodes,
+          clickedRef.current.parentElement
+        );
+        setInputPadding(1);
+      }
     }
   };
 
   const createFileInput = () => {
-    console.log("CR FILE INP");
-    if (!clickedRef.current) return;
-
-    prependForPortal(true);
-
+    prependForPortal(false);
     setShowInput(true);
   };
 
   const createFileInputForRename = () => {
-    // loop through children of folder to find nth element === clicked ref
-    // insert input into nth position
-    // input display hidden
-    prependForPortal(false);
+    prependForPortal(true);
     setShowInput(true);
   };
 
@@ -195,32 +190,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   ): NodeJS.Timeout => {
     const timeout = setTimeout(() => {
       if (childNodes) {
-        const input = childNodes[2];
+        const input = childNodes[0];
         const body = childNodes[1] as HTMLElement;
-        if (body.classList.contains("sub-folder")) {
-          parent?.insertBefore(input, body);
+        if (body.classList.contains("clickable")) {
+          parent?.insertBefore(body, input);
         }
-      }
-    }, 0);
-    return timeout;
-  };
-
-  const findPrependToRename = (
-    parentNode: ParentNode | undefined | null
-  ): NodeJS.Timeout => {
-    const timeout = setTimeout(() => {
-      if (parentNode && parentNode.childNodes) {
-        const childNodes = parentNode.childNodes;
-        const top = childNodes[0];
-        let idx = childNodes.length - 1;
-        // console.log("XXX", childNodes)
-        // for (let i = 1; i < childNodes.length; i++) {
-        //   if (childNodes[i] === clickedRef.current) {
-        //     idx = i;
-        //     break;
-        //   }
-        // }
-        parentNode.insertBefore(top, childNodes[idx]);
       }
     }, 0);
     return timeout;
@@ -230,16 +204,16 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (!clickedRef.current) return;
 
     if (isRename === true || value === false) {
-      // console.log("DISPATCHING");
-      // dispatch(renameNode());
-
       setShowInput(false);
       clickedRef.current?.classList.remove("hide-input");
+      if (isRename === true && value !== false) {
+        dispatch(renameNode({ value }));
+      }
       setIsRename(false);
       return;
+    } else {
+      dispatch(addNode({ value, inputType }));
     }
-
-    dispatch(addNode({ value, inputType }));
 
     // structureRef.current?.classList.remove('dont-overflow')
     setShowInput(false);
@@ -261,11 +235,11 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   }, [isRename, showInput]);
 
-  const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    e.preventDefault();
+  const handleContext = (
+    e: { clientY: number; clientX: number },
+    elem: HTMLElement
+  ) => {
     if (!structureRef.current) return;
-    const elem = e.target as HTMLElement;
-
     const type = elem.getAttribute("typeof-item") as "file" | "folder" | "";
     const parentId = elem.getAttribute("parent-id") as string;
 
@@ -282,25 +256,14 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     if (!elem.classList.contains("main-nav")) {
       item = structureRef.current.querySelector(`#${parentId}`);
-      console.log("ITAM 1", item);
+      // console.log("ITAM 1", item);
     } else {
       item = structureRef.current;
-      console.log("ITAM 2", item);
+      // console.log("ITAM 2", item);
     }
 
     clickedRef.current = item as HTMLElement;
 
-    // const clickedId = elem.id;
-    // console.log("TYPE", item)
-
-    // console.log("XX", elem)
-    // if (clickedRef.current?.classList.contains("sidebar-container")) {
-    //   console.log("SIDEBAR");
-    // } else {
-    //   console.log("IN");
-    //   clickedRef.current = elem.parentElement?.parentElement as HTMLElement;
-    // }
-    // @ts-ignore
     if (e.clientY > 300) {
       setPoints({
         x: e.clientY - 265,
@@ -313,9 +276,33 @@ const Sidebar: React.FC<SidebarProps> = ({
       });
     }
 
-    setSelectedType(elem.classList.contains("main-nav") ? "main" : type);
+    setSelectedType(elem.classList.contains("main-nav") ? "head" : type);
     setShowContext(true);
   };
+  const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    e.preventDefault();
+    if (!structureRef.current) return;
+    const elem = e.target as HTMLElement;
+
+    handleContext(
+      { clientY: e.clientY, clientX: e.clientX },
+      elem as HTMLElement
+    );
+    const parentId = elem.getAttribute("parent-id") as string;
+    const type = elem.getAttribute("typeof-item") as "file" | "folder" | "";
+
+    dispatch(contextClick({ id: parentId, type: type, threeDot: false }));
+  };
+
+  useEffect(() => {
+    if (!contextSelectedE) return;
+    const elem = structureRef.current?.querySelector(`#${contextSelectedId}`)
+      ?.childNodes[0] as HTMLElement;
+    handleContext(
+      { clientY: contextSelectedE.x, clientX: contextSelectedE.y },
+      elem
+    );
+  }, [contextSelectedE]);
 
   return (
     <div
@@ -353,7 +340,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
         <nav
           className="flex select-none flex-col flex-grow main-nav"
-          onContextMenu={contextHandler}
+          onContextMenu={(e) => contextHandler(e)}
         >
           <div
             className={
@@ -371,31 +358,38 @@ const Sidebar: React.FC<SidebarProps> = ({
           setShowContext={setShowContext}
           actions={actions}
         />
-        {
-          // appendTo.current &&
-          usePrependPortal(
-            <CustomInput
-              closeCallback={() => {
-                setShowInput(false);
-              }}
-              submit={(value) => {
-                inputSubmit(value);
-              }}
-              padding={inputPadding}
-              show={clickedRef.current && showInput}
-              item={{
-                type: inputType,
-                rename: isRename,
-              }}
-              container={structureRef.current}
-            />,
-            appendTo.current as HTMLElement
-          )
-        }
+        {usePrependPortal(
+          <CustomInput
+            closeCallback={() => {
+              setShowInput(false);
+            }}
+            submit={(value) => {
+              inputSubmit(value);
+            }}
+            padding={inputPadding}
+            show={clickedRef.current && showInput}
+            item={{
+              type: inputType,
+              rename: isRename ? thisItem : undefined,
+            }}
+            container={structureRef.current}
+          />,
+          appendTo.current as HTMLElement
+        )}
 
         {showDialog &&
           createPortal(
-            <Dialog close={setShowDialog} />,
+            <Dialog
+              title={`Delete ${selectedType}?`}
+              content={`Are you sure you want to delete this ${selectedType}? This action cannot be
+            undone.`}
+              actionText={`Yes, delete ${selectedType}`}
+              close={setShowDialog}
+              action={() => {
+                dispatch(removeNode({}));
+                setShowDialog(false);
+              }}
+            />,
             document.getElementById("root") as HTMLElement
           )}
         {!collapsed && (

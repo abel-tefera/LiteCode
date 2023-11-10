@@ -111,22 +111,6 @@
     width: 235px;
 }
 
-.js-logo {
-    background-image: url("../assets/js.svg");
-}
-
-.css-logo {
-    background-image: url("../assets/css.svg");
-}
-
-.jsx-logo {
-    background-image: url("../assets/jsx.svg");
-}
-
-.md-logo {
-    background-image: url("../assets/readme.svg");
-}
-
 .opened-folder {
     background-image: url("../assets/opened-folder.svg");
 }
