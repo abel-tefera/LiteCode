@@ -102,8 +102,11 @@ body {
 .span-logo {
     background-size: contain;
     background-repeat: no-repeat;
-    width: 1rem;
     background-position-y: center;
+}
+
+.span-logo-width {
+    width: 1rem;
 }
 
 .custom-scrollbar::-webkit-scrollbar-button:vertical:start:increment,
@@ -147,6 +150,10 @@ body {
 
 .md-logo {
     background-image: url("../assets/readme.svg");
+}
+
+.rename-logo {
+    background-image: url("../assets/rename.svg");
 }
 
 /* iframe#webpack-dev-server-client-overlay {

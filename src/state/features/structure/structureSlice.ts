@@ -49,61 +49,61 @@ const initialState = {
     name: "head",
     type: "folder",
     collapsed: false,
-    children: [],
-    // children: [
-    //   {
-    //     id: "folder1Id",
-    //     name: "Folder 1",
-    //     children: [
-    //       {
-    //         id: "folder2Id",
-    //         name: "Folder 2",
-    //         children: [
-    //           {
-    //             id: "folder3Id",
-    //             name: "Folder 3",
-    //             type: "folder",
-    //             collapsed: true,
-    //             children: [],
-    //           },
-    //           {
-    //             id: "file1Id",
-    //             name: "File1.js",
-    //             type: "file",
-    //             extension: "js",
-    //           },
-    //         ],
-    //         type: "folder",
-    //         collapsed: true,
-    //       },
-    //       {
-    //         id: "folder4Id",
-    //         name: "Folder 4",
-    //         type: "folder",
-    //         collapsed: false,
-    //         children: [
-    //           {
-    //             id: "folder5Id",
-    //             name: "Folder 5",
-    //             type: "folder",
-    //             collapsed: true,
-    //             children: [],
-    //           },
-    //           {
-    //             id: "file2Id",
-    //             name: "File2.js",
-    //             type: "file",
-    //             extension: "js",
-    //           },
-    //         ],
-    //       },
-    //     ],
-    //     type: "folder",
-    //     collapsed: false,
-    //   },
-    // ],
+    // children: [],
+    children: [
+      {
+        id: "folder1Id",
+        name: "Folder 1",
+        children: [
+          {
+            id: "folder2Id",
+            name: "Folder 2",
+            children: [
+              {
+                id: "folder3Id",
+                name: "Folder 3",
+                type: "folder",
+                collapsed: true,
+                children: [],
+              },
+              {
+                id: "file1Id",
+                name: "File1.js",
+                type: "file",
+                extension: "js",
+              },
+            ],
+            type: "folder",
+            collapsed: true,
+          },
+          {
+            id: "folder4Id",
+            name: "Folder 4",
+            type: "folder",
+            collapsed: false,
+            children: [
+              {
+                id: "folder5Id",
+                name: "Folder 5",
+                type: "folder",
+                collapsed: true,
+                children: [],
+              },
+              {
+                id: "file2Id",
+                name: "File2.js",
+                type: "file",
+                extension: "js",
+              },
+            ],
+          },
+        ],
+        type: "folder",
+        collapsed: false,
+      },
+    ],
   },
-  selected: null,
+  selected: "head",
   contextSelected: {
     id: null,
     type: null,
@@ -196,7 +196,7 @@ export const structureSlice = createSlice({
       };
       mapStructureRecursively(state.initialFolder.children, state.normalized);
     },
-
+   
     collapseOrExpand: (state, action) => {
       if (action.payload.item.type === "folder") {
         const { item, collapse } = action.payload;
@@ -211,6 +211,9 @@ export const structureSlice = createSlice({
           state.selected = action.payload.item.id;
           state.contextSelected.id = null;
         }
+      } else if (action.payload.item.type === "file") {
+        state.selected = action.payload.item.id;
+        state.contextSelected.id = null;
       }
     },
 
@@ -265,7 +268,9 @@ export const structureSlice = createSlice({
       state.normalized[`${newNode.type}s`].byId[newNode.id] = newNode;
       state.normalized[`${newNode.type}s`].allIds.push(newNode.id);
 
-      state.toCopy = { id: null, type: null, isCut: null };
+      if (state.toCopy.isCut) {
+        state.toCopy = { id: null, type: null, isCut: null };
+      }
     },
 
     setSelected: (state, action) => {

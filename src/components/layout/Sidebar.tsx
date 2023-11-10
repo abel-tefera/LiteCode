@@ -27,6 +27,7 @@ import {
   clipboard,
   folderIds,
   fileIds,
+  selectedItem
 } from "../../state/features/structure/structureSlice";
 import { useTypedDispatch } from "../../state/hooks";
 import { useDispatch } from "react-redux";
@@ -47,6 +48,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const contextSelectedE = useSelector(contextSelectedEvent);
   const contextSelectedId = useSelector(contextSelectedItem);
   const contextSelectedType = useSelector(contextSelectedItemType);
+  const selectedI = useSelector(selectedItem);
   const thisItem = useSelector(getItem);
   const clipboardExists = useSelector(clipboard);
   const allFileIds = useSelector(fileIds);
@@ -159,6 +161,30 @@ const Sidebar: React.FC<SidebarProps> = ({
       disabled: selectedType === "head",
     },
   ];
+
+  const setClickedCurrent = () => {
+    let elem = structureRef.current?.querySelector(`#${selectedI}`);
+    if (!elem){
+      elem = structureRef.current;
+    }
+    clickedRef.current = elem as HTMLElement;
+  }
+
+  const fileActions = {
+    newFile: () => {
+      setInputType("file");
+      setClickedCurrent();
+      createFileInput();
+    },
+
+    newFolder: () => {
+      setInputType("folder");
+      setClickedCurrent();
+      createFileInput();
+    },
+
+    download: () => {},
+  };
 
   const prependForPortal = (isRename: boolean) => {
     if (!clickedRef.current) return;
@@ -379,7 +405,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               !collapsed && visibility ? "block main-content" : "display-none-c"
             }
           >
-            <FileActions />
+            <FileActions {...fileActions} />
             <Structure ref={structureRef} />
           </div>
         </nav>

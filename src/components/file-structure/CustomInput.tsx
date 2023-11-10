@@ -222,16 +222,16 @@ const CustomInput: React.FC<CustomInputProps> = ({
           alt="new file icon"
         /> */}
         <span
-          className={`span-logo mr-1 ml-[2px] ${logo}`}
+          className={`span-logo ml-[3px] ${logo} w-[14px]`}
         >
           &nbsp;
         </span>
-        <div className="flex relative flex-col w-[80%] max-w-[10rem]">
+        <div className="flex mx-1 relative flex-col w-[80%] max-w-[10rem]">
           <input
-            className={`border px-1 mx-1 w-full border-monaco-color bg-monaco-color text-white focus:outline-none ${
+            className={`outline px-1 w-full border-monaco-color bg-monaco-color text-white ${
               error && errorMessage !== ""
-                ? "focus:border-red-500"
-                : "focus:border-cyan-500"
+                ? "focus:outline-red-500"
+                : "focus:outline-cyan-500"
             }`}
             value={value}
             autoFocus
