@@ -49,66 +49,61 @@ const initialState = {
     name: "head",
     type: "folder",
     collapsed: false,
-    selected: false,
-    children: [
-      {
-        id: "folder1Id",
-        name: "Folder 1",
-        children: [
-          {
-            id: "folder2Id",
-            name: "Folder 2",
-            children: [
-              {
-                id: "folder3Id",
-                name: "Folder 3",
-                type: "folder",
-                selected: false,
-                collapsed: true,
-                children: [],
-              },
-              {
-                id: "file1Id",
-                name: "File1.js",
-                type: "file",
-                extension: "js",
-              },
-            ],
-            type: "folder",
-            selected: false,
-            collapsed: true,
-          },
-          {
-            id: "folder4Id",
-            name: "Folder 4",
-            type: "folder",
-            selected: false,
-            collapsed: false,
-            children: [
-              {
-                id: "folder5Id",
-                name: "Folder 5",
-                type: "folder",
-                selected: true,
-                collapsed: true,
-                children: [],
-              },
-              {
-                id: "file2Id",
-                name: "File2.js",
-                type: "file",
-                extension: "js",
-              },
-            ],
-          },
-        ],
-        type: "folder",
-        collapsed: false,
-        selected: false,
-      },
-    ],
+    children: [],
+    // children: [
+    //   {
+    //     id: "folder1Id",
+    //     name: "Folder 1",
+    //     children: [
+    //       {
+    //         id: "folder2Id",
+    //         name: "Folder 2",
+    //         children: [
+    //           {
+    //             id: "folder3Id",
+    //             name: "Folder 3",
+    //             type: "folder",
+    //             collapsed: true,
+    //             children: [],
+    //           },
+    //           {
+    //             id: "file1Id",
+    //             name: "File1.js",
+    //             type: "file",
+    //             extension: "js",
+    //           },
+    //         ],
+    //         type: "folder",
+    //         collapsed: true,
+    //       },
+    //       {
+    //         id: "folder4Id",
+    //         name: "Folder 4",
+    //         type: "folder",
+    //         collapsed: false,
+    //         children: [
+    //           {
+    //             id: "folder5Id",
+    //             name: "Folder 5",
+    //             type: "folder",
+    //             collapsed: true,
+    //             children: [],
+    //           },
+    //           {
+    //             id: "file2Id",
+    //             name: "File2.js",
+    //             type: "file",
+    //             extension: "js",
+    //           },
+    //         ],
+    //       },
+    //     ],
+    //     type: "folder",
+    //     collapsed: false,
+    //   },
+    // ],
   },
-  selected: "main",
+  selected: null,
   contextSelected: {
     id: null,
     type: null,
@@ -129,7 +124,6 @@ export const structureSlice = createSlice({
         type: inputType,
         extension:
           inputType === "file" ? value.split(".").reverse()[0] : undefined,
-        selected: false,
         collapsed: inputType === "folder" ? true : undefined,
         children: inputType === "folder" ? [] : undefined,
       };
@@ -239,25 +233,24 @@ export const structureSlice = createSlice({
 
       const newNode = {
         ...toCopy,
+        collapsed: state.toCopy.type === "folder" ? false : undefined,
         id: state.toCopy.isCut ? toCopy.id : `${state.toCopy.type}-${uuidv4()}`,
       };
 
       if (state.toCopy.type === "folder" && state.toCopy.isCut !== true) {
         dfs(toCopy.children, (item) => {
           item.id = `${item.type}-${uuidv4()}`;
-          item.selected = false;
         });
-      } else if (
-        state.toCopy.type === "folder" &&
-        state.toCopy.isCut === true
-      ) {
-        const children = dfs(toCopy.children, () => {});
-        const recursiveCut = children.find(
-          (child) => child === state.contextSelected.id
-        );
-        if (recursiveCut) {
-          state.toCopy = { id: null, type: null, isCut: null };
-          return;
+      } else if (state.toCopy.isCut === true) {
+        if (state.toCopy.type === "folder") {
+          const children = dfs(toCopy.children, () => {});
+          const recursiveCut = children.filter(
+            (child) => child === state.contextSelected.id
+          );
+          if (recursiveCut.length > 0) {
+            state.toCopy = { id: null, type: null, isCut: null };
+            return;
+          }
         }
         structureSlice.caseReducers.removeNode(state, {
           payload: { ...state.toCopy },
@@ -276,11 +269,15 @@ export const structureSlice = createSlice({
     },
 
     setSelected: (state, action) => {
-      state.selected = action.payload.id;
+      if (state.selected !== action.payload.id) {
+        state.selected = action.payload.id;
+      }
     },
 
     contextClick: (state, action) => {
       const { id, type, threeDot } = action.payload;
+      // Don't run this if the user clicks on the same item
+      // if (id === state.contextSelected.id) return;
       if (id !== null) {
         state.contextSelected.id = id;
         state.contextSelected.type = type;
@@ -313,6 +310,10 @@ export const contextSelectedItem = (state: any) =>
 
 export const contextSelectedItemType = (state: any) =>
   state.structure.contextSelected.type;
+
+export const fileIds = (state: any) => state.structure.normalized.files.allIds;
+export const folderIds = (state: any) =>
+  state.structure.normalized.folders.allIds;
 
 export const clipboard = (state: any) => state.structure.toCopy;
 

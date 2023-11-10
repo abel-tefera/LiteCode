@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
-import newFileIcon from "../../assets/new-file-colored.svg";
 import useOutsideAlerter from "../../hooks/useOutsideAlerter";
-import jsLogo from "../../assets/js.svg";
-import cssLogo from "../../assets/css.svg";
-import mdLogo from "../../assets/readme.svg";
-import jsxLogo from "../../assets/jsx.svg";
-import errorIcon from "../../assets/error.png";
-import addFolderIcon from "../../assets/folder.svg";
-import renameIcon from "../../assets/rename.svg";
+
+const newFileIcon = "new-file-logo";
+const jsLogo = "js-logo";
+const cssLogo = "css-logo";
+const mdLogo = "readme-logo";
+const jsxLogo = "jsx-logo";
+const errorIcon = "error-logo";
+const addFolderIcon = "closed-folder";
+const renameIcon = "rename-logo";
 
 interface CustomInputProps {
   closeCallback: React.Dispatch<React.SetStateAction<boolean>>;
@@ -208,21 +209,26 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   return (
     <div
-      className={`py-1 ${show ? "block" : "hidden"} ${
+      className={`py-[0.32rem] ${show ? "block" : "hidden"} ${
         padding === 0 ? "mx-1 pr-1 pl-[0.3rem]" : "pl-[1.3rem]"
       }`}
       ref={containerRef}
       style={{ wordWrap: "break-word" }}
     >
       <div className="flex flex-row">
-        <img
-          className="w-4 h-4 mr-2 ml-[0.125rem] self-center"
+        {/* <img
+          className="w-4 h-4 self-center"
           src={logo}
           alt="new file icon"
-        />
+        /> */}
+        <span
+          className={`span-logo mr-1 ml-[2px] ${logo}`}
+        >
+          &nbsp;
+        </span>
         <div className="flex relative flex-col w-[80%] max-w-[10rem]">
           <input
-            className={`border w-full border-monaco-color bg-monaco-color text-white focus:outline-none ${
+            className={`border px-1 mx-1 w-full border-monaco-color bg-monaco-color text-white focus:outline-none ${
               error && errorMessage !== ""
                 ? "focus:border-red-500"
                 : "focus:border-cyan-500"

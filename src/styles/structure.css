@@ -96,27 +96,12 @@
     
 }
 
-.span-logo {
-    background-size: contain;
-    background-repeat: no-repeat;
-    width: 1rem;
-    background-position-y: center;
-}
-
 .clickable:hover .three-dots {
     opacity: 1;
 }
 
 .measurable {
     width: 235px;
-}
-
-.opened-folder {
-    background-image: url("../assets/opened-folder.svg");
-}
-
-.closed-folder {
-    background-image: url("../assets/folder.svg");
 }
 
 .three-dots {
@@ -130,10 +115,6 @@
 .not-seen {
     position: absolute;
     visibility: hidden;
-}
-
-.display-none {
-    display: none;
 }
 
 @media screen and (min-width: 768px) {

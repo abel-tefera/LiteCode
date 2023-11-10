@@ -6,10 +6,11 @@ import {
   collapseOrExpand,
   removeNode,
   renameNode,
-  selectedItem,
   contextSelectedItem,
+  selectedItem,
   contextClick,
   clipboard,
+  setSelected,
 } from "../../state/features/structure/structureSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -29,90 +30,113 @@ const Folder: any = ({ data }) => {
     }
   };
 
+  const emptyHandler = (e) => {
+    dispatch(setSelected({ id: "head" }));
+    dispatch(
+      contextClick({
+        id: "head",
+        type: "folder",
+        threeDot: { x: e.clientY, y: e.clientX },
+      })
+    );
+  };
+
   return (
     <div className="w-full">
-      {data.map((item) => {
-        return (
-          <div key={item.id} className={`flex flex-col`}>
-            <div
-              id={item.id}
-              typeof-item={item.type}
-              className={`transition-colors flex flex-row hover:cursor-pointer rounded-r-sms clickable hover:bg-dark-hover rounded-r-sm  ${
-                selected === item.id
-                  ? "bg-vscode-overlay hover:bg-vscode-blue"
-                  : ""
-              } ${
-                contextSelected === item.id
-                  ? "bg-slate-700 hover:bg-slate-600"
-                  : ""
-              } ${
-                cutItem.isCut && cutItem.id === item.id
-                  ? "bg-slate-700 hover:bg-slate-600 opacity-50"
-                  : ""
-              } }`}
-            >
+      {data.length > 0 ? (
+        data.map((item) => {
+          return (
+            <div key={item.id} className={`flex flex-col`}>
               <div
-                onClick={() =>
-                  dispatch(collapseOrExpand({ item, collapse: true }))
-                }
-                parent-id={item.id}
+                id={item.id}
                 typeof-item={item.type}
-                className="w-full py-[0.32rem] pl-3 flex flex-row justify-between items-center collapsable"
-              >
-                {
-                  <span
-                    typeof-item={item.type}
-                    parent-id={item.id}
-                    className={`span-logo ${findLogo(item)}`}
-                  >
-                    &nbsp;
-                  </span>
-                }
-                <span
-                  typeof-item={item.type}
-                  parent-id={item.id}
-                  className="w-full px-1 mx-1 "
-                >
-                  {trimName(item.name, false)}
-                </span>
-              </div>
-              <button
-                typeof-item={item.type}
-                parent-id={item.id}
-                onClick={(e) =>
-                  dispatch(
-                    contextClick({
-                      id: item.id,
-                      type: item.type,
-                      threeDot: { x: e.clientY, y: e.clientX },
-                    })
-                  )
-                }
-                className={`three-dots px-2 transition-opacity rounded-r-sm ${
+                className={`transition-colors flex flex-row hover:cursor-pointer rounded-r-sms clickable hover:bg-dark-hover rounded-r-sm  ${
                   selected === item.id
-                    ? "hover:bg-blue-400"
-                    : "hover:bg-slate-500"
-                }`}
+                    ? "bg-vscode-overlay hover:bg-vscode-blue"
+                    : ""
+                } ${
+                  contextSelected === item.id
+                    ? "bg-slate-700 hover:bg-slate-600"
+                    : ""
+                } ${
+                  cutItem.isCut && cutItem.id === item.id
+                    ? "bg-slate-700 hover:bg-slate-600 opacity-50"
+                    : ""
+                } }`}
               >
-                &nbsp;
-              </button>
-            </div>
-            {item.children && !item.collapsed && (
-              <div className="flex flex-row w-full sub-folder">
-                <button
-                  parent-id={item.id}
-                  typeof-item={item.type}
+                <div
                   onClick={() =>
                     dispatch(collapseOrExpand({ item, collapse: true }))
                   }
-                  className="transition-colors w-[14px] border-r hover:border-vscode-blue border-monaco-color"
-                ></button>
-                <Folder data={item.children} />
+                  parent-id={item.id}
+                  typeof-item={item.type}
+                  className="w-full py-[0.32rem] pl-3 flex flex-row justify-between items-center collapsable"
+                >
+                  {
+                    <span
+                      typeof-item={item.type}
+                      parent-id={item.id}
+                      className={`span-logo ${findLogo(item)}`}
+                    >
+                      &nbsp;
+                    </span>
+                  }
+                  <span
+                    typeof-item={item.type}
+                    parent-id={item.id}
+                    className="w-full px-1 mx-1 "
+                  >
+                    {trimName(item.name, false)}
+                  </span>
+                </div>
+                <button
+                  typeof-item={item.type}
+                  parent-id={item.id}
+                  onClick={(e) =>
+                    dispatch(
+                      contextClick({
+                        id: item.id,
+                        type: item.type,
+                        threeDot: { x: e.clientY, y: e.clientX },
+                      })
+                    )
+                  }
+                  className={`three-dots px-2 transition-opacity rounded-r-sm ${
+                    selected === item.id
+                      ? "hover:bg-blue-400"
+                      : "hover:bg-slate-500"
+                  }`}
+                >
+                  &nbsp;
+                </button>
               </div>
-            )}
-          </div>
-        );
-      })}
+              {item.children && !item.collapsed && (
+                <div className="flex flex-row w-full sub-folder">
+                  <button
+                    parent-id={item.id}
+                    typeof-item={item.type}
+                    onClick={() =>
+                      dispatch(collapseOrExpand({ item, collapse: true }))
+                    }
+                    className="transition-colors w-[14px] border-r hover:border-vscode-blue border-monaco-color"
+                  ></button>
+                  <Folder data={item.children} />
+                </div>
+              )}
+            </div>
+          );
+        })
+      ) : (
+        <div
+          id="welcome"
+          onContextMenu={(e) => emptyHandler(e)}
+          className="flex h-[40vh] w-full items-center px-4"
+        >
+          <span className="text-base text-center w-fit mx-auto p-3 rounded-lg border">
+            Start developing with LiteCode...
+          </span>
+        </div>
+      )}
     </div>
   );
 };

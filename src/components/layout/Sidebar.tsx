@@ -24,7 +24,9 @@ import {
   setToCopy,
   copyNode,
   contextSelectedItemType,
-  clipboard
+  clipboard,
+  folderIds,
+  fileIds,
 } from "../../state/features/structure/structureSlice";
 import { useTypedDispatch } from "../../state/hooks";
 import { useDispatch } from "react-redux";
@@ -47,7 +49,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   const contextSelectedType = useSelector(contextSelectedItemType);
   const thisItem = useSelector(getItem);
   const clipboardExists = useSelector(clipboard);
-  
+  const allFileIds = useSelector(fileIds);
+  const allFolderIds = useSelector(folderIds);
+
   const [visibility, setVisibility] = useState(collapsed);
   const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
 
@@ -57,7 +61,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     "file" | "folder" | "head" | ""
   >("");
 
-  const [selectedItemId, setSelectedItemId] = useState("");
   const [points, setPoints] = useState({
     x: 0,
     y: 0,
@@ -100,14 +103,26 @@ const Sidebar: React.FC<SidebarProps> = ({
     {
       title: "Cut",
       handler: () => {
-        dispatch(setToCopy({ id: contextSelectedId, type: contextSelectedType, isCut: true }));
+        dispatch(
+          setToCopy({
+            id: contextSelectedId,
+            type: contextSelectedType,
+            isCut: true,
+          })
+        );
       },
       disabled: selectedType === "head",
     },
     {
       title: "Copy",
       handler: () => {
-        dispatch(setToCopy({ id: contextSelectedId, type: contextSelectedType, isCut: false }));
+        dispatch(
+          setToCopy({
+            id: contextSelectedId,
+            type: contextSelectedType,
+            isCut: false,
+          })
+        );
       },
       disabled: selectedType === "head",
     },
@@ -174,14 +189,26 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
+  const showInputHandler = (v: boolean) => {
+    setShowInput(v);
+    if (allFileIds.length === 0 && allFolderIds.length === 0) {
+      const welcome = document.getElementById("welcome") as HTMLElement;
+      if (v && !welcome.classList.contains("display-none-c")) {
+        welcome.classList.add("display-none-c");
+      } else if (!v && welcome.classList.contains("display-none-c")) {
+        welcome.classList.remove("display-none-c");
+      }
+    }
+  };
+
   const createFileInput = () => {
     prependForPortal(false);
-    setShowInput(true);
+    showInputHandler(true);
   };
 
   const createFileInputForRename = () => {
     prependForPortal(true);
-    setShowInput(true);
+    showInputHandler(true);
   };
 
   const findPrependTo = (
@@ -204,7 +231,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     if (!clickedRef.current) return;
 
     if (isRename === true || value === false) {
-      setShowInput(false);
+      showInputHandler(false);
       clickedRef.current?.classList.remove("hide-input");
       if (isRename === true && value !== false) {
         dispatch(renameNode({ value }));
@@ -216,7 +243,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     }
 
     // structureRef.current?.classList.remove('dont-overflow')
-    setShowInput(false);
+    showInputHandler(false);
   };
 
   useEffect(() => {
@@ -296,8 +323,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   useEffect(() => {
     if (!contextSelectedE) return;
-    const elem = structureRef.current?.querySelector(`#${contextSelectedId}`)
-      ?.childNodes[0] as HTMLElement;
+    let elem: HTMLElement;
+    if (contextSelectedId === "head") {
+      elem = document.querySelector(".main-nav") as HTMLElement;
+    } else {
+      elem = structureRef.current?.querySelector(`#${contextSelectedId}`)
+        ?.childNodes[0] as HTMLElement;
+    }
     handleContext(
       { clientY: contextSelectedE.x, clientX: contextSelectedE.y },
       elem
@@ -344,7 +376,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         >
           <div
             className={
-              !collapsed && visibility ? "block main-content" : "display-none"
+              !collapsed && visibility ? "block main-content" : "display-none-c"
             }
           >
             <FileActions />
@@ -361,7 +393,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {usePrependPortal(
           <CustomInput
             closeCallback={() => {
-              setShowInput(false);
+              showInputHandler(false);
             }}
             submit={(value) => {
               inputSubmit(value);
