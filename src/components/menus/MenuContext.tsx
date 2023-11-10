@@ -4,8 +4,8 @@ import useOutsideAlerter from "../../hooks/useOutsideAlerter";
 interface MenuContextProps {
   top: number;
   left: number;
-  clicked: boolean;
-  setClicked: React.Dispatch<React.SetStateAction<boolean>>;
+  showContext: boolean;
+  setShowContext: React.Dispatch<React.SetStateAction<boolean>>;
   actions: (
     | {
         title: string;
@@ -25,18 +25,18 @@ interface MenuContextProps {
 const MenuContext: React.FC<MenuContextProps> = ({
   top,
   left,
-  clicked,
-  setClicked,
+  showContext,
+  setShowContext,
   actions,
 }) => {
   const contextRef = useRef<HTMLDivElement>(null);
-  useOutsideAlerter(contextRef, setClicked);
+  useOutsideAlerter(contextRef, setShowContext);
 
   return (
     <div
       ref={contextRef}
       className={`absolute bg-monaco-color rounded-md px-1 py-2 w-48 box-border text-sm ${
-        clicked ? `flex` : `hidden`
+        showContext ? `flex` : `hidden`
       }`}
       style={{ top: `${top}px`, left: `${left}px` }}
     >
@@ -53,7 +53,7 @@ const MenuContext: React.FC<MenuContextProps> = ({
                 onClick={() => {
                   if (!action.disabled) {
                     action.handler();
-                    setClicked(false);
+                    setShowContext(false);
                   }
                 }}
                 className={`rounded-md px-7 py-1 ${

@@ -7,6 +7,7 @@ import {
   removeNode,
   renameNode,
   selectedItem,
+  contextClick,
 } from "../../state/features/structure/structureSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -31,23 +32,44 @@ const Folder: any = ({ data }) => {
           <div key={item.id} className={`flex flex-col`}>
             <div
               id={item.id}
-              onClick={() =>
-                dispatch(collapseOrExpand({ item, collapse: true }))
-              }
               typeof-item={item.type}
               className={`transition-colors flex flex-row hover:cursor-pointer rounded-r-sms clickable hover:bg-dark-hover rounded-r-sm  ${
-                selected === item.id && "bg-vscode-overlay hover:bg-vscode-blue"
+                selected === item.id
+                  ? "bg-vscode-overlay hover:bg-vscode-blue"
+                  : ""
               }`}
             >
-              <div className="w-full py-[0.32rem] pl-3 flex flex-row justify-between items-center ">
-                {<span className={`span-logo ${findLogo(item)}`}>&nbsp;</span>}
-                <span className="w-full px-1 mx-1 ">
+              <div
+                onClick={() =>
+                  dispatch(collapseOrExpand({ item, collapse: true }))
+                }
+                parent-id={item.id}
+                typeof-item={item.type}
+                className="w-full py-[0.32rem] pl-3 flex flex-row justify-between items-center collapsable"
+              >
+                {
+                  <span
+                    typeof-item={item.type}
+                    parent-id={item.id}
+                    className={`span-logo ${findLogo(item)}`}
+                  >
+                    &nbsp;
+                  </span>
+                }
+                <span
+                  typeof-item={item.type}
+                  parent-id={item.id}
+                  className="w-full px-1 mx-1 "
+                >
                   {trimName(item.name, false)}
                 </span>
               </div>
               <button
-                className={`three-dots px-2 hover:bg-slate-600 transition-opacity rounded-r-sm ${
-                  selected === item.id && "hover:bg-blue-400"
+                typeof-item={item.type}
+                parent-id={item.id}
+                onClick={(e) => dispatch(contextClick({ id: item.id, e }))}
+                className={`three-dots px-2 transition-opacity rounded-r-sm ${
+                  selected === item.id ? "hover:bg-blue-400" : 'hover:bg-slate-600'
                 }`}
               >
                 &nbsp;
@@ -56,6 +78,8 @@ const Folder: any = ({ data }) => {
             {item.children && !item.collapsed && (
               <div className="flex flex-row w-full sub-folder">
                 <button
+                  parent-id={item.id}
+                  typeof-item={item.type}
                   onClick={() =>
                     dispatch(collapseOrExpand({ item, collapse: true }))
                   }

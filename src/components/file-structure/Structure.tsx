@@ -27,6 +27,7 @@ const Structure = forwardRef<any>((props, fileSysRef) => {
 
   return (
     <div
+      id="structure-container"
       className="pl-1 pr-2"
       ref={fileSysRef}
       // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}

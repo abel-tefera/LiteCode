@@ -17,10 +17,13 @@ import Dialog from "../menus/Dialog";
 import {
   addNode,
   collapseOrExpand,
+  contextSelectedId,
   renameNode,
 } from "../../state/features/structure/structureSlice";
 import { useTypedDispatch } from "../../state/hooks";
 import { useDispatch } from "react-redux";
+import { usePrependPortal } from "../../hooks/usePrependPortal";
+import { useSelector } from "react-redux";
 
 type SidebarProps = {
   collapsed: boolean;
@@ -33,11 +36,17 @@ const Sidebar: React.FC<SidebarProps> = ({
   shown,
   setCollapsed,
 }) => {
+  const contextSelected = useSelector(contextSelectedId);
+
   const [visibility, setVisibility] = useState(collapsed);
   const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
 
-  const [clicked, setClicked] = useState(false);
+  const [showContext, setShowContext] = useState(false);
   const clickedRef = useRef<HTMLElement>();
+  const [selectedType, setSelectedType] = useState<
+    "file" | "folder" | "main" | ""
+  >("");
+
   const [points, setPoints] = useState({
     x: 0,
     y: 0,
@@ -63,7 +72,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         setInputType("file");
         createFileInput();
       },
-      disabled: false,
+      disabled: selectedType === "file",
     },
     {
       title: "New Folder",
@@ -71,7 +80,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         setInputType("folder");
         createFileInput();
       },
-      disabled: true,
+      disabled: selectedType === "file",
     },
     {
       type: "hr",
@@ -80,17 +89,17 @@ const Sidebar: React.FC<SidebarProps> = ({
     {
       title: "Cut",
       handler: () => {},
-      disabled: false,
+      disabled: selectedType === "main",
     },
     {
       title: "Copy",
       handler: () => {},
-      disabled: false,
+      disabled: selectedType === "main",
     },
     {
       title: "Paste",
       handler: () => {},
-      disabled: false,
+      disabled: selectedType === "file",
     },
     {
       type: "hr",
@@ -100,71 +109,71 @@ const Sidebar: React.FC<SidebarProps> = ({
       title: "Rename",
       handler: () => {
         if (!clickedRef.current) return;
-        clickedRef.current?.classList.add("hide-input");
-        const type = clickedRef.current.classList.contains("folder")
-          ? "folder"
-          : "file";
-        setInputType(type);
+        // clickedRef.current?.classList.add("hide-input");
+
+        // setInputType(type);
         createFileInputForRename();
         setIsRename(true);
       },
-      disabled: false,
+      disabled: selectedType === "main",
     },
     {
       title: "Delete",
       handler: () => {
         setShowDialog(true);
       },
-      disabled: false,
+      disabled: selectedType === "main",
     },
   ];
 
+  useEffect(() => {
+    if (!contextSelected) return;
+    contextHandler(contextSelected.e);
+  }, [contextSelected]);
+
   const prependForPortal = (isNew: boolean) => {
+    console.log("HERE", clickedRef.current, structureRef.current);
     if (!clickedRef.current) return;
-    console.log("HERE", clickedRef.current);
-    if (
-      clickedRef.current.classList.contains("main-nav") ||
-      clickedRef.current === structureRef.current
-    ) {
-      if (!structureRef.current) return;
-
-      if (!isNew) {
-        appendTo.current = structureRef.current.childNodes[0] as HTMLElement;
-        if (!appendTo.current) {
-          appendTo.current = structureRef.current;
-        }
-      } else {
-        appendTo.current = structureRef.current;
-      }
+    if (clickedRef.current === structureRef.current) {
+      appendTo.current = structureRef.current.childNodes[0] as HTMLElement;
+      // if (!isNew) {
+      //   appendTo.current = structureRef.current.childNodes[0] as HTMLElement;
+      //   if (!appendTo.current) {
+      //     appendTo.current = structureRef.current;
+      //   }
+      // } else {
+      //   appendTo.current = structureRef.current;
+      // }
     } else {
-      if (isNew) {
-        const itemType = clickedRef.current.getAttribute("typeof-item");
-        if (itemType === "folder") {
-          dispatch(
-            collapseOrExpand({
-              item: { id: clickedRef.current.id, type: "folder" },
-              collapse: false,
-            })
-          );
-          setInputPadding(1);
-        } else {
-          setInputPadding(0);
-        }
-      }
-      // @ts-ignore
-      const parent = clickedRef.current.parentElement;
-      const childNodes = parent?.childNodes;
-      appendTo.current = parent as HTMLElement;
-
-      if (isNew) {
-        findPrependTo(childNodes, parent);
-      } else {
-        findPrependToRename(parent);
-      }
+      // if (isNew) {
+      //   const itemType = clickedRef.current.getAttribute("typeof-item");
+      //   if (itemType === "folder") {
+      //     dispatch(
+      //       collapseOrExpand({
+      //         item: { id: clickedRef.current.id, type: "folder" },
+      //         collapse: false,
+      //       })
+      //     );
+      //     setInputPadding(1);
+      //   } else {
+      //     setInputPadding(0);
+      //   }
+      // }
+      // // @ts-ignore
+      // const parent = clickedRef.current.parentElement;
+      // const childNodes = parent?.childNodes;
+      // appendTo.current = parent as HTMLElement;
+      // // console.log("ISNEW", isNew, childNodes, parent);
+      // if (isNew) {
+      //   // findPrependTo(childNodes, parent);
+      // } else {
+      //   // findPrependToRename(parent);
+      // }
     }
   };
 
   const createFileInput = () => {
+    console.log("CR FILE INP");
     if (!clickedRef.current) return;
 
     prependForPortal(true);
@@ -204,7 +213,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         const childNodes = parentNode.childNodes;
         const top = childNodes[0];
         let idx = childNodes.length - 1;
-        console.log("XXX", childNodes)
+        // console.log("XXX", childNodes)
         // for (let i = 1; i < childNodes.length; i++) {
         //   if (childNodes[i] === clickedRef.current) {
         //     idx = i;
@@ -254,12 +263,43 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
+    if (!structureRef.current) return;
     const elem = e.target as HTMLElement;
-    if (clickedRef.current?.classList.contains("sidebar-container")) {
-      console.log("SIDEBAR");
-    } else {
-      clickedRef.current = elem.parentElement?.parentElement as HTMLElement;
+
+    const type = elem.getAttribute("typeof-item") as "file" | "folder" | "";
+    const parentId = elem.getAttribute("parent-id") as string;
+
+    if (type === null || parentId === null) {
+      if (!elem.classList.contains("main-nav")) {
+        return;
+      } else {
+        // actions[3].disabled = true;
+        clickedRef.current = elem as HTMLElement;
+      }
     }
+
+    let item: HTMLElement | null = null;
+
+    if (!elem.classList.contains("main-nav")) {
+      item = structureRef.current.querySelector(`#${parentId}`);
+      console.log("ITAM 1", item);
+    } else {
+      item = structureRef.current;
+      console.log("ITAM 2", item);
+    }
+
+    clickedRef.current = item as HTMLElement;
+
+    // const clickedId = elem.id;
+    // console.log("TYPE", item)
+
+    // console.log("XX", elem)
+    // if (clickedRef.current?.classList.contains("sidebar-container")) {
+    //   console.log("SIDEBAR");
+    // } else {
+    //   console.log("IN");
+    //   clickedRef.current = elem.parentElement?.parentElement as HTMLElement;
+    // }
     // @ts-ignore
     if (e.clientY > 300) {
       setPoints({
@@ -273,7 +313,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       });
     }
 
-    setClicked(true);
+    setSelectedType(elem.classList.contains("main-nav") ? "main" : type);
+    setShowContext(true);
   };
 
   return (
@@ -326,12 +367,13 @@ const Sidebar: React.FC<SidebarProps> = ({
         <MenuContext
           top={points.x}
           left={points.y}
-          clicked={clicked}
-          setClicked={setClicked}
+          showContext={showContext}
+          setShowContext={setShowContext}
           actions={actions}
         />
-        {appendTo.current &&
-          createPortal(
+        {
+          // appendTo.current &&
+          usePrependPortal(
             <CustomInput
               closeCallback={() => {
                 setShowInput(false);
@@ -348,7 +390,8 @@ const Sidebar: React.FC<SidebarProps> = ({
               container={structureRef.current}
             />,
             appendTo.current as HTMLElement
-          )}
+          )
+        }
 
         {showDialog &&
           createPortal(

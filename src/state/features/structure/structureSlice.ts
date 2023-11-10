@@ -109,6 +109,7 @@ const initialState = {
     ],
   },
   selected: null,
+  contextSelected: null,
 };
 
 export const structureSlice = createSlice({
@@ -191,6 +192,11 @@ export const structureSlice = createSlice({
     setSelected: (state, action) => {
       state.selected = action.payload.id;
     },
+
+    contextClick: (state, action) => {
+      const { id, e } = action.payload;
+      state.contextSelected = { id, e };
+    },
   },
 });
 
@@ -198,6 +204,8 @@ export const getInitialSet = (state: any) =>
   state.structure.initialFolder.children;
 
 export const selectedItem = (state: any) => state.structure.selected;
+export const contextSelectedId = (state: any) => state.structure.contextSelected;
+
 
 export const {
   addNode,
@@ -206,6 +214,7 @@ export const {
   collapseOrExpand,
   normalizeState,
   setSelected,
+  contextClick
 } = structureSlice.actions;
 
 export default structureSlice.reducer;
