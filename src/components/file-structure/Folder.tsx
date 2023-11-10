@@ -40,7 +40,7 @@ const Folder: any = ({ data }) => {
             <div
               id={item.id}
               typeof-item={item.type}
-              className={`transition-colors flex flex-row hover:cursor-pointer rounded-r-sms clickable hover:bg-dark-hover rounded-r-sm  ${
+              className={`transition-colors flex flex-row hover:cursor-pointer rounded-r-sms clickable hover:bg-dark-hover rounded-r-sm justify-between  ${
                 selected === item.id
                   ? "bg-vscode-overlay hover:bg-vscode-blue"
                   : ""
@@ -60,7 +60,7 @@ const Folder: any = ({ data }) => {
                 }
                 parent-id={item.id}
                 typeof-item={item.type}
-                className="w-full py-[0.32rem] pl-3 flex flex-row justify-between items-center collapsable"
+                className="py-[0.32rem] pl-3 flex flex-row justify-between items-center collapsable"
               >
                 {
                   <span
@@ -74,7 +74,7 @@ const Folder: any = ({ data }) => {
                 <span
                   typeof-item={item.type}
                   parent-id={item.id}
-                  className="w-full px-1 mx-1 "
+                  className="px-1 mx-1 "
                 >
                   {trimName(item.name, false)}
                 </span>
@@ -101,7 +101,7 @@ const Folder: any = ({ data }) => {
               </button>
             </div>
             {item.children && !item.collapsed && (
-              <div className="flex flex-row w-full sub-folder">
+              <div className="flex flex-row sub-folder">
                 <button
                   parent-id={item.id}
                   typeof-item={item.type}

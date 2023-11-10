@@ -157,6 +157,22 @@ export const structureSlice = createSlice({
           (child) => child.id !== item.id
         );
 
+        const deleteNodes = (subItems) => {
+          for (let item of subItems) {
+            const { id, type } = item;
+            state.normalized[type + "s"].byId[id] = undefined;
+            state.normalized[type + "s"].allIds = state.normalized[
+              type + "s"
+            ].allIds.filter((_id) => _id !== id);
+            if (item.type === "folder") {
+              deleteNodes(item.children);
+            }
+          }
+        };
+        if (item.type === "folder") {
+          deleteNodes(item.children);
+        }
+
         if (parent.children.length === 0) {
           parent.collapsed = true;
         }
@@ -196,7 +212,7 @@ export const structureSlice = createSlice({
       };
       mapStructureRecursively(state.initialFolder.children, state.normalized);
     },
-   
+
     collapseOrExpand: (state, action) => {
       if (action.payload.item.type === "folder") {
         const { item, collapse } = action.payload;

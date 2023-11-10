@@ -7,6 +7,7 @@ import {
   fileIds,
   folderIds,
   getInitialSet,
+  selectedItem,
   setSelected,
 } from "../../state/features/structure/structureSlice";
 import { useSelector } from "react-redux";
@@ -26,8 +27,12 @@ const Structure = forwardRef<any>((props, fileSysRef) => {
   const allFileIds = useSelector(fileIds);
   const allFolderIds = useSelector(folderIds);
 
+  const selectedI = useSelector(selectedItem);
+
   useOutsideAlerter(fileSysRef, () => {
-    dispatch(setSelected({ id: "head" }));
+    if (selectedI !== "head") {
+      dispatch(setSelected({ id: "head" }));
+    }
   });
 
   const emptyHandler = (e: any) => {
@@ -44,7 +49,7 @@ const Structure = forwardRef<any>((props, fileSysRef) => {
   return (
     <div
       id="structure-container"
-      className="pl-1 pr-2"
+      className="pl-1 pr-2 file-sys-container custom-scrollbar-2"
       ref={fileSysRef}
       // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
     >

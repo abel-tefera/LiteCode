@@ -216,6 +216,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const showInputHandler = (v: boolean) => {
+    if (v === showInput) return;
     setShowInput(v);
     if (allFileIds.length === 0 && allFolderIds.length === 0) {
       const welcome = document.getElementById("welcome") as HTMLElement;
@@ -297,7 +298,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const parentId = elem.getAttribute("parent-id") as string;
 
     if (type === null || parentId === null) {
-      if (!elem.classList.contains("main-nav")) {
+      if (!elem.classList.contains("file-sys-container")) {
         return;
       } else {
         // actions[3].disabled = true;
@@ -307,7 +308,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     let item: HTMLElement | null = null;
 
-    if (!elem.classList.contains("main-nav")) {
+    if (!elem.classList.contains("file-sys-container")) {
       item = structureRef.current.querySelector(`#${parentId}`);
       // console.log("ITAM 1", item);
     } else {
@@ -329,7 +330,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       });
     }
 
-    setSelectedType(elem.classList.contains("main-nav") ? "head" : type);
+    setSelectedType(elem.classList.contains("structure-container") ? "head" : type);
     setShowContext(true);
   };
   const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -344,6 +345,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     const parentId = elem.getAttribute("parent-id") as string;
     const type = elem.getAttribute("typeof-item") as "file" | "folder" | "";
 
+    console.log("XAcontext", parentId, type, elem)
     dispatch(contextClick({ id: parentId, type: type, threeDot: false }));
   };
 
