@@ -4,6 +4,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 import { v4 as uuidv4 } from "uuid";
 import { bfsNodeAction, dfsNodeAction } from "./utils/traversal";
+import { prepareSort } from "./utils/sorting";
 
 // type NestedRecord<T extends any[]>
 //     = T extends [any, ...infer R]
@@ -139,6 +140,10 @@ export const structureSlice = createSlice({
       }
       state.normalized[inputType + "s"].byId[newChild.id] = newChild;
       state.normalized[inputType + "s"].allIds.push(newChild.id);
+      const subTree = state.normalized.folders.byId[state.contextSelected.id];
+      structureSlice.caseReducers.sortStructure(_, {
+        payload: { ...subTree },
+      });
     },
 
     removeNode: (state, action) => {
@@ -185,19 +190,27 @@ export const structureSlice = createSlice({
     },
 
     renameNode: (state, action) => {
-      dfsNodeAction(
+      const parent = dfsNodeAction(
         state.initialFolder.children,
         state.contextSelected.id,
-        (item) => {
+        (item, parent) => {
           item.name = action.payload.value;
+          return parent;
         }
       );
       state.normalized[state.contextSelected.type + "s"].byId[
         state.contextSelected.id
       ].name = action.payload.value;
+      const subTree = state.normalized.folders.byId[parent.id];
+      structureSlice.caseReducers.sortStructure(_, {
+        payload: { ...subTree },
+      });
     },
 
     normalizeState: (state) => {
+      state.normalized.folders.byId["head"] = state.initialFolder;
+      state.normalized.folders.allIds.push("head");
+
       const mapStructureRecursively = (structure: any, normalized: any) => {
         for (let item of structure) {
           if (item.type === "folder") {
@@ -211,6 +224,9 @@ export const structureSlice = createSlice({
         }
       };
       mapStructureRecursively(state.initialFolder.children, state.normalized);
+      structureSlice.caseReducers.sortStructure(_, {
+        payload: { ...state.initialFolder },
+      });
     },
 
     collapseOrExpand: (state, action) => {
@@ -316,6 +332,19 @@ export const structureSlice = createSlice({
       state.toCopy.type = action.payload.type;
       state.toCopy.isCut = action.payload.isCut;
     },
+    sortStructure: (_, action) => {
+      prepareSort(action.payload, (children) => {
+        children.sort((a: any, b: any) => {
+          if (a.type === "folder" && b.type === "file") {
+            return -1;
+          } else if (a.type === "file" && b.type === "folder") {
+            return 1;
+          } else {
+            return a.name.localeCompare(b.name);
+          }
+        });
+      });
+    },
   },
 });
 
@@ -337,6 +366,12 @@ export const folderIds = (state: any) =>
   state.structure.normalized.folders.allIds;
 
 export const clipboard = (state: any) => state.structure.toCopy;
+
+// export const getChildren = (state: any, action) => {
+//   const { id } = action.payload;
+//   const folder = state.structure.normalized.folders.byId[id];
+//   return folder.children;
+// };
 
 export const getItem = (state) => {
   if (
