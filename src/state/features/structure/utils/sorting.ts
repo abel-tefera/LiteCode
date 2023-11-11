@@ -1,13 +1,15 @@
-const prepareSort = (structure: any, callback: any) => {
-  if (structure.type === "folder") {
+const findSortable = (structure: any, callback: any, id: any = null) => {
+  if (structure.type === "folder" && id === structure.id) {
+    return callback(structure);
+  } else if (structure.type === "folder"){
     callback(structure);
   }
   const children = structure.children as Array<any>;
   for (let item of children) {
     if (item.type === "folder") {
-      prepareSort(item, callback);
+      findSortable(item, callback, id);
     }
   }
 };
 
-export { prepareSort };
+export { findSortable };

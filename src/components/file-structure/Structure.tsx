@@ -55,11 +55,11 @@ const Structure = forwardRef<any>((props, fileSysRef) => {
     >
       <Folder data={structureData} />
 
-      {allFileIds.length === 0 && allFolderIds.length === 0 && (
+      {false && allFileIds.length === 0 && allFolderIds.length === 1 && (
         <div
           id="welcome"
           onContextMenu={(e) => emptyHandler(e)}
-          className="flex h-[40vh] w-full items-center px-4"
+          className="flex h-[40vh] items-center px-4"
         >
           <span className="text-base text-center w-fit mx-auto p-3 rounded-lg border">
             Start developing with LiteCode...

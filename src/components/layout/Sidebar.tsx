@@ -27,7 +27,9 @@ import {
   clipboard,
   folderIds,
   fileIds,
-  selectedItem
+  selectedItem,
+  setParentItemId,
+  getCurrentItems,
 } from "../../state/features/structure/structureSlice";
 import { useTypedDispatch } from "../../state/hooks";
 import { useDispatch } from "react-redux";
@@ -53,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const clipboardExists = useSelector(clipboard);
   const allFileIds = useSelector(fileIds);
   const allFolderIds = useSelector(folderIds);
-
+  const currentItems = useSelector(getCurrentItems);
   const [visibility, setVisibility] = useState(collapsed);
   const Icon = collapsed ? ChevronDoubleRightIcon : ChevronDoubleLeftIcon;
 
@@ -164,11 +166,11 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   const setClickedCurrent = () => {
     let elem = structureRef.current?.querySelector(`#${selectedI}`);
-    if (!elem){
+    if (!elem) {
       elem = structureRef.current;
     }
     clickedRef.current = elem as HTMLElement;
-  }
+  };
 
   const fileActions = {
     newFile: () => {
@@ -229,11 +231,13 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const createFileInput = () => {
+    dispatch(setParentItemId(contextSelectedId));
     prependForPortal(false);
     showInputHandler(true);
   };
 
   const createFileInputForRename = () => {
+    dispatch(setParentItemId(null));
     prependForPortal(true);
     showInputHandler(true);
   };
@@ -330,7 +334,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       });
     }
 
-    setSelectedType(elem.classList.contains("structure-container") ? "head" : type);
+    setSelectedType(
+      elem.classList.contains("structure-container") ? "head" : type
+    );
     setShowContext(true);
   };
   const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -432,6 +438,12 @@ const Sidebar: React.FC<SidebarProps> = ({
               rename: isRename ? thisItem : undefined,
             }}
             container={structureRef.current}
+            existingItems={
+              isRename
+                ? // @ts-ignore
+                  currentItems.filter(({ id }) => id !== thisItem.id)
+                : currentItems
+            }
           />,
           appendTo.current as HTMLElement
         )}

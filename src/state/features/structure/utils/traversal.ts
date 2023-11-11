@@ -19,7 +19,7 @@ const dfsNodeAction = (
   structure: any,
   id: any,
   callback: any,
-  parent: any[] = []
+  parent: any[] = [{ id: "head" }]
 ) => {
   for (let item of structure) {
     if (item.id === id) {

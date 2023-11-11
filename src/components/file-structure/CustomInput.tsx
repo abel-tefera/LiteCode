@@ -20,6 +20,7 @@ interface CustomInputProps {
     rename: any;
   };
   container: HTMLDivElement | null;
+  existingItems: any[];
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -29,6 +30,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   show,
   item,
   container,
+  existingItems
 }) => {
   const [value, setValue] = useState(item.rename ? item.rename.name : "");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -123,6 +125,16 @@ const CustomInput: React.FC<CustomInputProps> = ({
       const ext = matches[2];
       setExtension(ext);
       if (isValid && isLns && validFiles.includes(ext)) {
+        for (let {name, type} of existingItems) {
+          if (name === value && type === item.type && name.split('.').reverse()[0] === ext) {
+            setError(true);
+            setLogo(errorIcon);
+            setErrorMessage(
+              `A file with this name already exists. Please choose a different name.`
+            );
+            return;
+          }
+        } 
         switch (ext) {
           case "js":
             setLogo(jsLogo);
@@ -176,6 +188,16 @@ const CustomInput: React.FC<CustomInputProps> = ({
     const isValid = value.match(regex);
 
     if (isValid || value === "") {
+      for (let {name, type} of existingItems) {
+        if (name === value && type === "folder") {
+          setError(true);
+          setLogo(errorIcon);
+          setErrorMessage(
+            `A folder with this name already exists. Please choose a different name.`
+          );
+          return;
+        }
+      }
       setError(false);
       setErrorMessage("");
       setLogo(originalLogo);
@@ -187,6 +209,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       );
     }
   };
+
   const validate = (preValidate: true | undefined) => {
     if (item.type === "file") {
       validateFile(preValidate);
