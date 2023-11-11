@@ -345,7 +345,6 @@ const Sidebar: React.FC<SidebarProps> = ({
     const parentId = elem.getAttribute("parent-id") as string;
     const type = elem.getAttribute("typeof-item") as "file" | "folder" | "";
 
-    console.log("XAcontext", parentId, type, elem)
     dispatch(contextClick({ id: parentId, type: type, threeDot: false }));
   };
 

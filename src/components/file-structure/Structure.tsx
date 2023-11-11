@@ -12,7 +12,7 @@ import {
 } from "../../state/features/structure/structureSlice";
 import { useSelector } from "react-redux";
 // import { mapStructureRecursively } from "../../state/features/structure/utils/traversal";
-import FolderStructure from "./Folder";
+import Folder from "./Folder";
 import useOutsideAlerter from "../../hooks/useOutsideAlerter";
 import { useDispatch } from "react-redux";
 // import { useTypedSelector, useTypedDispatch } from '../../state/hooks';
@@ -53,7 +53,7 @@ const Structure = forwardRef<any>((props, fileSysRef) => {
       ref={fileSysRef}
       // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
     >
-      <FolderStructure data={structureData} />
+      <Folder data={structureData} />
 
       {allFileIds.length === 0 && allFolderIds.length === 0 && (
         <div
