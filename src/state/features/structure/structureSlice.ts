@@ -41,8 +41,16 @@ const initialState = {
       allIds: [],
     },
     folders: {
-      byId: {},
-      allIds: [],
+      byId: {
+        head: {
+          id: "head",
+          name: "head",
+          type: "folder",
+          collapsed: false,
+          childrenFlat: [],
+        },
+      },
+      allIds: ["head"],
     },
   },
   initialFolder: {
@@ -50,7 +58,7 @@ const initialState = {
     name: "head",
     type: "folder",
     collapsed: false,
-    children: [],
+    childrenIdsAndType: [],
     // children: [
     //   {
     //     id: "folder1Id",
@@ -122,7 +130,7 @@ const initialState = {
     type: null,
     e: null,
   },
-  toCopy: { id: null, type: null, isCut: null },
+  toCopy: { id: null, type: null, childrenIdsAndType: null, isCut: null },
   parentItemId: null,
 };
 
@@ -139,35 +147,41 @@ export const structureSlice = createSlice({
         extension:
           inputType === "file" ? value.split(".").reverse()[0] : undefined,
         collapsed: inputType === "folder" ? true : undefined,
-        children: inputType === "folder" ? [] : undefined,
+        childrenFlat: inputType === "folder" ? [] : undefined,
       };
       if (state.contextSelected.id === "head") {
-        state.initialFolder.children = [
-          ...state.initialFolder.children,
-          newChild,
+        state.initialFolder.childrenIdsAndType = [
+          ...state.initialFolder.childrenIdsAndType,
+          {
+            id: newChild.id,
+            type: newChild.type,
+            childrenIdsAndType: newChild.type === "folder" ? [] : null,
+          },
         ];
-        state.normalized.folders.byId["head"].childrenTrimmed = [
-          ...state.normalized.folders.byId["head"].childrenTrimmed,
-          { id: newChild.id, name: newChild.name, type: newChild.type },
+        state.normalized.folders.byId["head"].childrenFlat = [
+          ...state.normalized.folders.byId["head"].childrenFlat,
+          { id: newChild.id, type: newChild.type },
         ];
       } else if (state.contextSelected.id !== null) {
         bfsNodeAction(state.initialFolder, state.contextSelected.id, (item) => {
-          state.normalized.folders.byId[
-            state.contextSelected.id
-          ].childrenTrimmed = [
-            ...state.normalized.folders.byId[state.contextSelected.id]
-              .childrenTrimmed,
-            { id: newChild.id, name: newChild.name, type: newChild.type },
-          ];
+          state.normalized.folders.byId[state.contextSelected.id].childrenFlat =
+            [
+              ...state.normalized.folders.byId[state.contextSelected.id]
+                .childrenFlat,
+              { id: newChild.id, type: newChild.type },
+            ];
 
-          item.children = [...item.children, newChild];
+          item.childrenIdsAndType = [
+            ...item.childrenIdsAndType,
+            {
+              id: newChild.id,
+              type: newChild.type,
+              childrenIdsAndType: newChild.type === "folder" ? [] : null,
+            },
+          ];
         });
       }
-      state.normalized[inputType + "s"].byId[newChild.id] = {
-        ...newChild,
-        children: undefined,
-        childrenTrimmed: inputType === "folder" ? [] : undefined,
-      };
+      state.normalized[inputType + "s"].byId[newChild.id] = newChild;
       state.normalized[inputType + "s"].allIds = [
         ...state.normalized[inputType + "s"].allIds,
         newChild.id,
@@ -185,42 +199,46 @@ export const structureSlice = createSlice({
       const type = action.payload.type
         ? action.payload.type
         : state.contextSelected.type;
-
-      dfsNodeAction(state.initialFolder.children, id, (item, parent) => {
-        if (!parent) {
-          parent = state.initialFolder;
-        }
-        parent.children = parent.children.filter(
-          (child) => child.id !== item.id
-        );
-        const parentId = parent.id;
-        state.normalized.folders.byId[parentId].childrenTrimmed =
-          state.normalized.folders.byId[parentId].childrenTrimmed.filter(
-            ({ id: _id }) => _id !== parentId
-          );
-
-        const deleteNodes = (subItems) => {
-          for (let item of subItems) {
-            const { id, type } = item;
-            state.normalized[type + "s"].byId[id] = undefined;
-            state.normalized[type + "s"].allIds = state.normalized[
-              type + "s"
-            ].allIds.filter((_id) => _id !== id);
-            if (item.type === "folder") {
-              deleteNodes(item.children);
+      dfsNodeAction(
+        state.initialFolder.childrenIdsAndType,
+        id,
+        (item, parent) => {
+          parent.childrenIdsAndType = parent.childrenIdsAndType.filter(
+            ({ id }) => {
+              return id !== item.id;
             }
+          );
+          const parentId = parent.id;
+          state.normalized.folders.byId[parentId].childrenFlat =
+            state.normalized.folders.byId[parentId].childrenFlat.filter(
+              ({ id: _id }) => _id !== item.id
+            );
+
+          const deleteNodes = (subItems) => {
+            for (let item of subItems) {
+              const { id, type } = item;
+              // state.normalized[type + "s"].byId[id] = undefined;
+              state.normalized[type + "s"].allIds = state.normalized[
+                type + "s"
+              ].allIds.filter((_id) => _id !== id);
+              if (item.type === "folder") {
+                deleteNodes(item.childrenIdsAndType);
+              }
+            }
+          };
+          if (item.type === "folder") {
+            deleteNodes(item.childrenIdsAndType);
           }
-        };
-        if (item.type === "folder") {
-          deleteNodes(item.children);
-        }
 
-        if (parent.children.length === 0) {
-          parent.collapsed = true;
-        }
-      });
+          if (parent.childrenIdsAndType.length === 0) {
+            state.normalized.folders.byId[parentId].collapsed = true;
+            parent.collapsed = true;
+          }
+        },
+        [state.initialFolder]
+      );
 
-      state.normalized[type + "s"].byId[id] = undefined;
+      // state.normalized[type + "s"].byId[id] = undefined;
       state.normalized[type + "s"].allIds = state.normalized[
         type + "s"
       ].allIds.filter((_id) => _id !== id);
@@ -229,132 +247,258 @@ export const structureSlice = createSlice({
     renameNode: (state, action) => {
       let parentId = null;
       dfsNodeAction(
-        state.initialFolder.children,
+        state.initialFolder.childrenIdsAndType,
         state.contextSelected.id,
-        (item, parent) => {
-          item.name = action.payload.value;
+        (_, parent) => {
+          // item.name = action.payload.value;
           parentId = parent.id;
           return;
-        }
+        },
+        [state.initialFolder]
       );
       state.normalized[state.contextSelected.type + "s"].byId[
         state.contextSelected.id
       ].name = action.payload.value;
+
+      if (state.contextSelected.type === "file") {
+        state.normalized[state.contextSelected.type + "s"].byId[
+          state.contextSelected.id
+        ].extension = action.payload.value.split(".").reverse()[0];
+      }
+
       structureSlice.caseReducers.sortStructure(state, {
         payload: { id: parentId },
       });
     },
 
-    normalizeState: (state) => {
-      state.normalized.folders.byId["head"] = {
-        ...state.initialFolder,
-        children: undefined,
-        childrenTrimmed: state.initialFolder.children.map((child) => {
-          return { id: child.id, name: child.name, type: child.type };
-        }),
-      };
-      state.normalized.folders.allIds = ["head"];
+    // normalizeState: (state) => {
+    //   state.normalized.folders.byId["head"] = {
+    //     ...state.initialFolder,
+    //     childrenIds: undefined,
+    //     childrenFlat: [],
+    //   };
+    //   state.normalized.folders.allIds = ["head"];
 
-      const mapStructureRecursively = (structure: any, normalized: any) => {
-        for (let item of structure) {
-          if (item.type === "folder") {
-            normalized.folders.byId[item.id] = {
-              ...item,
-              children: undefined,
-              childrenTrimmed: item.children.map((child) => {
-                return { id: child.id, name: child.name, type: child.type };
-              }),
-            };
-            normalized.folders.allIds = [...normalized.folders.allIds, item.id];
-            mapStructureRecursively(item.children, normalized);
-          } else if (item.type === "file") {
-            normalized.files.byId[item.id] = item;
-            normalized.files.allIds = [...normalized.files.allIds, item.id];
-          }
-        }
-      };
-      mapStructureRecursively(state.initialFolder.children, state.normalized);
-      structureSlice.caseReducers.sortStructure(state, {
-        payload: { id: null },
-      });
-    },
+    //   const mapStructureRecursively = (structure: any, normalized: any) => {
+    //     for (let item of structure) {
+    //       if (item.type === "folder") {
+    //         normalized.folders.byId[item.id] = {
+    //           ...item,
+    //           childrenIds: undefined,
+    //           childrenFlat: item.children.map((child) => {
+    //             return { id: child.id, name: child.name, type: child.type };
+    //           }),
+    //         };
+    //         normalized.folders.allIds = [...normalized.folders.allIds, item.id];
+    //         mapStructureRecursively(item.children, normalized);
+    //       } else if (item.type === "file") {
+    //         normalized.files.byId[item.id] = item;
+    //         normalized.files.allIds = [...normalized.files.allIds, item.id];
+    //       }
+    //     }
+    //   };
+    //   mapStructureRecursively(state.initialFolder.children, state.normalized);
+    //   structureSlice.caseReducers.sortStructure(state, {
+    //     payload: { id: null },
+    //   });
+    // },
 
     collapseOrExpand: (state, action) => {
       if (action.payload.item.type === "folder") {
         const { item, collapse } = action.payload;
-        bfsNodeAction(state.initialFolder, item.id, (folder) => {
-          if (collapse) {
-            folder.collapsed = !folder.collapsed;
-          } else {
-            folder.collapsed = false;
-          }
-        });
-        if (action.payload.collapse) {
-          state.selected = action.payload.item.id;
-          state.contextSelected.id = null;
+        // bfsNodeAction(state.initialFolder, item.id, (folder) => {
+        //   if (collapse) {
+        //     folder.collapsed = !folder.collapsed;
+        //   } else {
+        //     folder.collapsed = false;
+        //   }
+        // });
+        if (collapse) {
+          state.selected = item.id;
+          // state.contextSelected.id = null;
+        }
+        if (collapse) {
+          state.normalized.folders.byId[item.id].collapsed =
+            !state.normalized.folders.byId[item.id].collapsed;
+        } else {
+          state.normalized.folders.byId[item.id].collapsed = false;
         }
       } else if (action.payload.item.type === "file") {
         state.selected = action.payload.item.id;
-        state.contextSelected.id = null;
+        // state.contextSelected.id = null;
       }
     },
 
     copyNode: (state) => {
-      const toCopy =
-        state.normalized[state.toCopy.type + "s"].byId[state.toCopy.id];
-      const dfs = (node: any, callback: any, children: any[] = []) => {
+      const dfs = (node: any, callback: any, childrenIds: any[] = []) => {
+        if (childrenIds.length === 0) {
+          childrenIds = node.map(({ id }) => id);
+        }
         for (let item of node) {
           callback(item);
           if (item.collapsed !== undefined) {
             item.collapsed = true;
           }
+          const childIds = item.childrenIdsAndType.map(({ id }) => id);
+          childrenIds.push(...childIds);
           if (item.type === "folder") {
-            children.push(item.id);
-            dfs(item.children, callback, children);
+            dfs(item.childrenIdsAndType, callback, childrenIds);
           }
         }
-        return children;
+        return childrenIds;
       };
 
-      const newNode = {
-        ...toCopy,
-        collapsed: state.toCopy.type === "folder" ? false : undefined,
-        id: state.toCopy.isCut ? toCopy.id : `${state.toCopy.type}-${uuidv4()}`,
-      };
-
-      if (state.toCopy.type === "folder" && state.toCopy.isCut !== true) {
-        dfs(toCopy.children, (item) => {
-          item.id = `${item.type}-${uuidv4()}`;
-        });
-      } else if (state.toCopy.isCut === true) {
+      if (state.toCopy.isCut === true) {
         if (state.toCopy.type === "folder") {
-          const children = dfs(toCopy.children, () => {});
+          const children = dfs(state.toCopy.childrenIdsAndType, () => {});
           const recursiveCut = children.filter(
-            (child) => child === state.contextSelected.id
+            (id) => id === state.contextSelected.id
           );
-          if (recursiveCut.length > 0) {
-            state.toCopy = { id: null, type: null, isCut: null };
+          if (
+            recursiveCut.length > 0 ||
+            state.toCopy.id === state.contextSelected.id
+          ) {
+            state.toCopy = {
+              id: null,
+              type: null,
+              childrenIdsAndType: null,
+              isCut: null,
+            };
+            return;
+          }
+        } else {
+          const sameCut = state.normalized.folders.byId[
+            state.contextSelected.id
+          ].childrenFlat.find(({ id }) => id === state.toCopy.id);
+          if (sameCut) {
+            state.toCopy = {
+              id: null,
+              type: null,
+              childrenIdsAndType: null,
+              isCut: null,
+            };
             return;
           }
         }
+      }
+      const toCopyItem = {
+        ...state.normalized[state.toCopy.type + "s"].byId[state.toCopy.id],
+        // childrenIdsAndType: state.toCopy.childrenIdsAndType
+        //   ? state.toCopy.childrenIdsAndType
+        //   : undefined,
+        id: `${state.toCopy.type}-${uuidv4()}`,
+      };
+
+      const knownNames = state.normalized.folders.byId[
+        `${state.contextSelected.id}`
+      ].childrenFlat.map(({ id, type }) => {
+        return state.normalized[`${type}s`].byId[id].name;
+      });
+      let newName = toCopyItem.name;
+
+      const isNameTaken =
+        knownNames.filter((knownName) => knownName === toCopyItem.name).length >
+        0;
+      if (isNameTaken) {
+        let i = 1;
+        while (
+          knownNames.filter(
+            (knownName) => knownName === `${toCopyItem.name} - Copy (${i})`
+          ).length > 0
+        ) {
+          i++;
+        }
+        if (state.toCopy.type === "folder") {
+          newName = `${toCopyItem.name} - Copy (${i})`;
+        } else if (state.toCopy.type === "file") {
+          newName = `${toCopyItem.name.split(".")[0]} - Copy (${i}).${
+            toCopyItem.name.split(".")[1]
+          }`;
+        }
+      }
+
+      const newNode = {
+        ...toCopyItem,
+        name: newName,
+        // name: toCopyItem.name + " - Copy",
+        childrenIdsAndType: state.toCopy.type === "folder" ? [] : null,
+        collapsed: state.toCopy.type === "folder" ? false : undefined,
+      };
+
+      if (state.toCopy.type === "folder") {
+        let copyOftoCopy;
+        dfs(state.toCopy.childrenIdsAndType, (item) => {
+          copyOftoCopy = { ...state.normalized[`${item.type}s`].byId[item.id] };
+          copyOftoCopy.id = `${item.type}-${uuidv4()}`;
+          state.normalized[`${item.type}s`].byId[item.id] = copyOftoCopy;
+          state.normalized[`${item.type}s`].allIds = [
+            ...state.normalized[`${item.type}s`].allIds,
+            copyOftoCopy.id,
+          ];
+        });
+      }
+
+      if (state.toCopy.isCut === true) {
         structureSlice.caseReducers.removeNode(state, {
           payload: { ...state.toCopy },
         });
       }
 
-      bfsNodeAction(state.initialFolder, state.contextSelected.id, (folder) => {
-        folder.collapsed = false;
-        folder.children = [...folder.children, newNode];
-      });
+      if (state.contextSelected.id !== "head") {
+        dfsNodeAction(
+          state.initialFolder.childrenIdsAndType,
+          state.contextSelected.id,
+          (parent) => {
+            parent.childrenIdsAndType = [
+              ...parent.childrenIdsAndType,
+              {
+                id: newNode.id,
+                type: newNode.type,
+                childrenIdsAndType:
+                  newNode.type === "folder"
+                    ? state.toCopy.childrenIdsAndType
+                    : null,
+              },
+            ];
+          },
+          [state.initialFolder]
+        );
+      } else {
+        state.initialFolder.childrenIdsAndType = [
+          ...state.initialFolder.childrenIdsAndType,
+          {
+            id: newNode.id,
+            type: newNode.type,
+            childrenIdsAndType:
+              newNode.type === "folder"
+                ? state.toCopy.childrenIdsAndType
+                : null,
+          },
+        ];
+      }
 
+      state.normalized.folders.byId[state.contextSelected.id].collapsed = false;
+      state.normalized.folders.byId[state.contextSelected.id].childrenFlat = [
+        ...state.normalized.folders.byId[state.contextSelected.id].childrenFlat,
+        { id: newNode.id, type: newNode.type },
+      ];
       state.normalized[`${newNode.type}s`].byId[newNode.id] = newNode;
       state.normalized[`${newNode.type}s`].allIds = [
         ...state.normalized[`${newNode.type}s`].allIds,
         newNode.id,
       ];
 
+      structureSlice.caseReducers.sortStructure(state, {
+        payload: { id: state.contextSelected.id },
+      });
+
       if (state.toCopy.isCut) {
-        state.toCopy = { id: null, type: null, isCut: null };
+        state.toCopy = {
+          id: null,
+          type: null,
+          childrenIdsAndType: null,
+          isCut: null,
+        };
       }
     },
 
@@ -380,8 +524,33 @@ export const structureSlice = createSlice({
       }
     },
     setToCopy: (state, action) => {
+      let parentId = null;
       state.toCopy.id = action.payload.id;
       state.toCopy.type = action.payload.type;
+      // dfs action to get all children ids
+      let childrenIds = [];
+
+      dfsNodeAction(
+        state.initialFolder.childrenIdsAndType,
+        action.payload.id,
+        (toCopyFolder, parent) => {
+          // item.name = action.payload.value;
+          childrenIds = toCopyFolder.childrenIdsAndType;
+          parentId = parent.id;
+        },
+        [state.initialFolder]
+      );
+      if (action.payload.type === "folder") {
+        state.toCopy.childrenIdsAndType = childrenIds;
+      } else {
+        state.toCopy.childrenIdsAndType = undefined;
+      }
+      state.toCopy.parentId = parentId;
+
+      // state.toCopy.childrenIds =
+      //   state.normalized[`${action.payload.type}s`].byId[
+      //     action.payload.id
+      //   ].childrenIdsAndType;
       state.toCopy.isCut = action.payload.isCut;
     },
     setParentItemId: (state, action) => {
@@ -390,12 +559,13 @@ export const structureSlice = createSlice({
       } else {
         let parentId = null;
         dfsNodeAction(
-          state.initialFolder.children,
+          state.initialFolder.childrenIdsAndType,
           state.contextSelected.id,
           (_, parent) => {
             parentId = parent.id;
             return;
-          }
+          },
+          [state.initialFolder]
         );
         state.parentItemId = parentId;
       }
@@ -410,7 +580,14 @@ export const structureSlice = createSlice({
             action.payload.id === null ||
             structure.id === action.payload.id
           ) {
-            const toSort = [...structure.children];
+            const toSort = structure.childrenIdsAndType.map(
+              ({ id, type, childrenIdsAndType }) => {
+                return {
+                  ...state.normalized[`${type}s`].byId[id],
+                  childrenIdsAndType,
+                };
+              }
+            );
             toSort.sort((a: any, b: any) => {
               if (a.type === "folder" && b.type === "file") {
                 return -1;
@@ -420,7 +597,11 @@ export const structureSlice = createSlice({
                 return a.name.localeCompare(b.name);
               }
             });
-            structure.children = toSort;
+            structure.childrenIdsAndType = toSort.map(
+              ({ id, type, childrenIdsAndType }) => {
+                return { id, type, childrenIdsAndType };
+              }
+            );
           }
         },
         action.payload.id
@@ -430,7 +611,7 @@ export const structureSlice = createSlice({
 });
 
 export const getInitialSet = (state: any) =>
-  state.structure.initialFolder.children;
+  state.structure.initialFolder.childrenIdsAndType;
 
 export const selectedItem = (state: any) => state.structure.selected;
 export const contextSelectedEvent = (state: any) =>
@@ -469,11 +650,12 @@ export const getItem = (state) => {
 };
 
 export const getCurrentItems = (state) => {
-  if (!state.structure.normalized || !state.structure.parentItemId) return;
-  console.log("H", state.structure.parentItemId);
+  if (!state.structure.normalized || !state.structure.parentItemId) return [];
   return state.structure.normalized.folders.byId[
     `${state.structure.parentItemId}`
-  ].childrenTrimmed;
+  ].childrenFlat.map(({ id, type }) => {
+    return state.structure.normalized[`${type}s`].byId[id];
+  });
 };
 
 export const {
@@ -481,7 +663,7 @@ export const {
   removeNode,
   renameNode,
   collapseOrExpand,
-  normalizeState,
+  // normalizeState,
   setSelected,
   contextClick,
   setToCopy,

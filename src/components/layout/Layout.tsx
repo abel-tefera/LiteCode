@@ -3,17 +3,17 @@ import React, { PropsWithChildren, useState, useEffect } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { useDispatch } from "react-redux";
-import { normalizeState } from "../../state/features/structure/structureSlice";
+// import { normalizeState } from "../../state/features/structure/structureSlice";
 
 const Layout: React.FC<PropsWithChildren> = (props) => {
   const [collapsed, setSidebarCollapsed] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(normalizeState());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(normalizeState());
+  // }, [dispatch]);
 
   return (
     <div

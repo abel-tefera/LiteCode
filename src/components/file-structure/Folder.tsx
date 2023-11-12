@@ -21,6 +21,12 @@ const Folder: any = ({ data }) => {
   const selected = useSelector(selectedItem);
   const contextSelected = useSelector(contextSelectedItem);
   const cutItem = useSelector(clipboard);
+  const children = useSelector((state) => {
+    const allData = data.map(({id: itemId, type}) => {
+      return state.structure.normalized[`${type}s`].byId[itemId];
+    })
+    return allData;
+  });
 
   const findLogo = (item) => {
     if (item.type === "folder") {
@@ -30,11 +36,9 @@ const Folder: any = ({ data }) => {
     }
   };
 
-
-
   return (
     <div className="w-full">
-      {data.map((item) => {
+      {children.map((item) => {
         return (
           <div key={item.id} className={`flex flex-col`}>
             <div
@@ -100,7 +104,7 @@ const Folder: any = ({ data }) => {
                 &nbsp;
               </button>
             </div>
-            {item.children && !item.collapsed && (
+            {item.childrenFlat && !item.collapsed && (
               <div className="flex flex-row sub-folder">
                 <button
                   parent-id={item.id}
@@ -110,7 +114,12 @@ const Folder: any = ({ data }) => {
                   }
                   className="transition-colors w-[14px] border-r hover:border-vscode-blue border-monaco-color"
                 ></button>
-                <Folder data={item.children} />
+                <Folder data={(() => {
+                  const childFolder = data.find((newItem) => {
+                    return newItem.id === item.id
+                  });
+                  return childFolder.childrenIdsAndType;
+                })()} />
               </div>
             )}
           </div>

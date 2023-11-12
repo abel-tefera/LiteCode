@@ -114,6 +114,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             isCut: true,
           })
         );
+
       },
       disabled: selectedType === "head",
     },
@@ -127,6 +128,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             isCut: false,
           })
         );
+
       },
       disabled: selectedType === "head",
     },
@@ -220,14 +222,14 @@ const Sidebar: React.FC<SidebarProps> = ({
   const showInputHandler = (v: boolean) => {
     if (v === showInput) return;
     setShowInput(v);
-    if (allFileIds.length === 0 && allFolderIds.length === 0) {
-      const welcome = document.getElementById("welcome") as HTMLElement;
-      if (v && !welcome.classList.contains("display-none-c")) {
-        welcome.classList.add("display-none-c");
-      } else if (!v && welcome.classList.contains("display-none-c")) {
-        welcome.classList.remove("display-none-c");
-      }
-    }
+    // if (allFileIds.length === 0 && allFolderIds.length === 1) {
+    //   const welcome = document.getElementById("welcome") as HTMLElement;
+    //   if (v && !welcome.classList.contains("display-none-c")) {
+    //     welcome.classList.add("display-none-c");
+    //   } else if (!v && welcome.classList.contains("display-none-c")) {
+    //     welcome.classList.remove("display-none-c");
+    //   }
+    // }
   };
 
   const createFileInput = () => {
