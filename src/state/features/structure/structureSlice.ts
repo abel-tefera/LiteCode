@@ -12,12 +12,14 @@ import { findSortable } from "./utils/sorting";
 
 export type ItemType = "file" | "folder";
 
+export type validExtensions = "js" | "jsx" | "css" | "md";
+
 export type FileStructure = {
   id: string;
   name: string;
   type: "file";
   content: string;
-  extension: string;
+  extension: validExtensions;
 };
 
 export type NormalizedFolder = {
@@ -36,7 +38,7 @@ type FileOrFolder = {
   collapsed?: boolean;
   childrenFlat?: Identifier[];
   content?: string;
-  extension?: string;
+  extension?: validExtensions;
 };
 
 type Identifier = {
@@ -76,7 +78,7 @@ type ContextSelected = {
         y: number;
       }
     | false;
-} | null;
+};
 
 type ToCopy = {
   id: string;
@@ -127,7 +129,11 @@ const initialState: FileSystem = {
     childrenIdsAndType: [] as Directory[],
   },
   selected: "head",
-  contextSelected: null,
+  contextSelected: {
+    id: "head",
+    type: "folder",
+    e: false
+  },
   toCopy: null,
   parentItemId: null,
 };
@@ -140,14 +146,16 @@ export const structureSlice = createSlice({
       state,
       action: PayloadAction<{ value: string; inputType: ItemType }>
     ) => {
-      if (!state.contextSelected) return;
+      // if (!state.contextSelected) return;
       const { value, inputType } = action.payload;
       const newChild: FileOrFolder = {
         id: `${inputType}-${uuidv4()}`,
-        name: value,
+        name: inputType === "file" ? value.split(".")[0] : value,
         type: inputType,
         extension:
-          inputType === "file" ? value.split(".").reverse()[0] : undefined,
+          inputType === "file"
+            ? (value.split(".").reverse()[0] as validExtensions)
+            : undefined,
         collapsed: inputType === "folder" ? true : undefined,
         childrenFlat: inputType === "folder" ? [] : undefined,
         content: inputType === "file" ? "" : undefined,
@@ -165,9 +173,8 @@ export const structureSlice = createSlice({
           ...state.normalized.folders.byId[state.initialFolder.id].childrenFlat,
           { id: newChild.id, type: newChild.type },
         ];
-      } else if (state.contextSelected) {
+      } else {
         bfsNodeAction(state.initialFolder, state.contextSelected.id, (item) => {
-          if (!state.contextSelected) return;
           state.normalized.folders.byId[state.contextSelected.id].childrenFlat =
             [
               ...state.normalized.folders.byId[state.contextSelected.id]
@@ -262,7 +269,6 @@ export const structureSlice = createSlice({
 
     renameNode: (state, action: PayloadAction<{ value: string }>) => {
       let parentId = "";
-      if (!state.contextSelected) return;
       dfsNodeAction(
         state.initialFolder.childrenIdsAndType as Directory[],
         state.contextSelected.id,
@@ -279,7 +285,7 @@ export const structureSlice = createSlice({
 
       if (state.contextSelected.type === "file") {
         state.normalized.files.byId[state.contextSelected.id].extension =
-          action.payload.value.split(".").reverse()[0];
+          action.payload.value.split(".").reverse()[0] as validExtensions;
       }
 
       structureSlice.caseReducers.sortStructure(state, {
@@ -334,7 +340,7 @@ export const structureSlice = createSlice({
         //   }
         // });
         if (collapse) {
-          state.selected = item.id;
+          // state.selected = item.id;
           // state.contextSelected.id = null;
         }
         if (collapse) {
@@ -344,13 +350,13 @@ export const structureSlice = createSlice({
           state.normalized.folders.byId[item.id].collapsed = false;
         }
       } else if (action.payload.item.type === "file") {
-        state.selected = action.payload.item.id;
         // state.contextSelected.id = null;
       }
+      // state.selected = action.payload.item.id;
     },
 
     copyNode: (state) => {
-      if (!state.toCopy || !state.contextSelected) return;
+      if (!state.toCopy) return;
       const dfs = (
         node: Directory[],
         callback: (item: Directory, parentId: string) => void,
@@ -386,7 +392,7 @@ export const structureSlice = createSlice({
             state.toCopy.childrenIdsAndType.map(({ id }) => id)
           );
           const recursiveCut = children.filter(
-            (id) => id === state.contextSelected?.id
+            (id) => id === state.contextSelected.id
           );
           if (
             recursiveCut.length > 0 ||
@@ -470,7 +476,7 @@ export const structureSlice = createSlice({
           id: newNode.id,
           name: newNode.name,
           type: "file",
-          extension: "js",
+          extension: newNode.extension,
           content: newNode.content,
         };
       }
@@ -601,12 +607,14 @@ export const structureSlice = createSlice({
       // Don't run this if the user clicks on the same item
       // if (id === state.contextSelected.id) return;
       const newContext = {
-        id: "null",
-        type: "null",
-        e: {
-          x: 0,
-          y: 0,
-        },
+        id: "",
+        type: "",
+        e: threeDot
+          ? {
+              x: threeDot.x,
+              y: threeDot.y,
+            }
+          : false,
       };
       if (id !== null) {
         newContext.id = id;
@@ -622,6 +630,7 @@ export const structureSlice = createSlice({
           newContext.e = threeDot;
         }
       }
+
       state.contextSelected = newContext as ContextSelected;
     },
     setToCopy: (
@@ -658,7 +667,6 @@ export const structureSlice = createSlice({
       state.toCopy = newCopy;
     },
     setParentItemId: (state, action: PayloadAction<string>) => {
-      if (!state.contextSelected) return;
       if (action.payload !== null) {
         state.parentItemId = action.payload;
       } else {
@@ -748,17 +756,26 @@ export const clipboard = (state: RootState) => state.structure.toCopy;
 // };
 
 export const getItem = (state: RootState) => {
-  if (
-    !state.structure.normalized ||
-    !state.structure.contextSelected?.id ||
-    !state.structure.contextSelected.type
-  )
-    return;
+  if (!state.structure.contextSelected)
+    return { id: undefined, name: undefined };
   const item =
     state.structure.normalized[`${state.structure.contextSelected.type}s`].byId[
       state.structure.contextSelected.id
     ];
-  return item;
+  if (item.type === "file") {
+    return {
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      extension: item.extension,
+    };
+  } else {
+    return {
+      id: item.id,
+      name: item.name,
+      type: item.type,
+    };
+  }
 };
 
 export const getCurrentItems = (state: RootState) => {

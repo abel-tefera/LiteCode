@@ -10,6 +10,7 @@ import parse from "html-react-parser";
 // import structureData from "./structureData";
 import {
   Directory,
+  FileInFolder,
   ItemType,
   getInitialSet,
   setSelected,
@@ -291,12 +292,10 @@ const Structure = () => {
     const parentId = elem.getAttribute("parent-id") as string;
 
     if (type === null || parentId === null) {
-      if (!elem.classList.contains("file-sys-container")) {
+      if (!elem.classList.contains("welcome")) {
         return;
-      } else {
-        // actions[3].disabled = true;
+      } else if (elem.classList.contains("file-sys-ref"))
         clickedRef.current = elem as HTMLElement;
-      }
     }
 
     let item: HTMLElement | null = null;
@@ -371,16 +370,17 @@ const Structure = () => {
     }
   });
 
-  const emptyHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    dispatch(setSelected({ id: "head" }));
-    dispatch(
-      contextClick({
-        id: "head",
-        type: "folder",
-        threeDot: { x: e.clientY, y: e.clientX },
-      })
-    );
-  };
+  // const emptyHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  //   e.preventDefault();
+  //   dispatch(setSelected({ id: "head" }));
+  //   dispatch(
+  //     contextClick({
+  //       id: "head",
+  //       type: "folder",
+  //       threeDot: { x: e.clientY, y: e.clientX },
+  //     })
+  //   );
+  // };
 
   return (
     <>
@@ -388,20 +388,27 @@ const Structure = () => {
 
       <div
         id="structure-container"
+        parent-id={"head"}
+        typeof-item={"folder"}
         className="pl-1 pr-2 file-sys-container custom-scrollbar-2"
         ref={fileSysRef}
         onContextMenu={(e) => contextHandler(e)}
         // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
       >
-        <Folder data={structureData as Directory[]} />
+        <Folder data={structureData as (Directory | FileInFolder)[]} />
 
         {allFileIds.length === 0 && allFolderIds.length === 1 && (
           <div
             id="welcome"
-            onContextMenu={(e) => emptyHandler(e)}
+            parent-id={"head"}
+            typeof-item={"folder"}
             className="flex h-[40vh] items-center px-4"
           >
-            <span className="text-base text-center w-fit mx-auto p-3 rounded-lg border">
+            <span
+              parent-id={"head"}
+              typeof-item={"folder"}
+              className="text-base text-center break-words p-3 rounded-lg border"
+            >
               Start developing with LiteCode...
             </span>
           </div>
@@ -435,7 +442,7 @@ const Structure = () => {
           show={clickedRef.current && showInput}
           item={{
             type: inputType,
-            rename: isRename ? { name: thisItem?.name } : undefined,
+            rename: isRename ? thisItem : undefined,
           }}
           container={fileSysRef.current}
           existingItems={

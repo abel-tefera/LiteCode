@@ -10,13 +10,14 @@ import {
   Directory,
   NormalizedFolder,
   FileStructure,
+  FileInFolder,
 } from "../../state/features/structure/structureSlice";
 import useOutsideAlerter from "../../hooks/useOutsideAlerter";
 import { RootState } from "../../state/store";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 
 interface FolderProps {
-  data: Directory[];
+  data: (Directory | FileInFolder)[];
 }
 
 const Folder: React.FC<FolderProps> = ({ data }) => {
@@ -50,29 +51,28 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
               className={`transition-colors flex flex-row hover:cursor-pointer rounded-r-sms clickable hover:bg-dark-hover rounded-r-sm justify-between  ${
                 selected === item.id
                   ? "bg-vscode-overlay hover:bg-vscode-blue"
-                  : ""
-              } ${
-                contextSelected === item.id
+                  : contextSelected === item.id
                   ? "bg-slate-700 hover:bg-slate-600"
                   : ""
-              } ${
+              }  ${
                 cutItem?.isCut && cutItem.id === item.id
-                  ? "bg-slate-700 hover:bg-slate-600 opacity-50"
+                  ? "opacity-50"
                   : ""
               } }`}
             >
               <div
-                onClick={() =>
+                onClick={() => {
+                  dispatch(setSelected({ id: item.id }));
                   dispatch(
                     collapseOrExpand({
                       item: { id: item.id, type: item.type },
                       collapse: true,
                     })
-                  )
-                }
+                  );
+                }}
                 parent-id={item.id}
                 typeof-item={item.type}
-                className="py-[0.32rem] pl-3 flex flex-row justify-between items-center collapsable"
+                className="w-full py-[0.32rem] pl-3 flex flex-row justify-start items-center collapsable"
               >
                 {
                   <span
@@ -88,7 +88,7 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
                   parent-id={item.id}
                   className="px-1 mx-1 "
                 >
-                  {trimName(item.name, false)}
+                  {trimName(item)}
                 </span>
               </div>
               <button
@@ -112,19 +112,20 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
                 &nbsp;
               </button>
             </div>
-            {item.childrenFlat && !item.collapsed && (
+            {item.type === "folder" && !item.collapsed && (
               <div className="flex flex-row sub-folder">
                 <button
                   parent-id={item.id}
                   typeof-item={item.type}
-                  onClick={() =>
+                  onClick={() => {
+                    dispatch(setSelected({ id: item.id }));
                     dispatch(
                       collapseOrExpand({
                         item: { id: item.id, type: item.type },
                         collapse: true,
                       })
-                    )
-                  }
+                    );
+                  }}
                   className="transition-colors w-[14px] border-r hover:border-vscode-blue border-monaco-color"
                 ></button>
                 <Folder

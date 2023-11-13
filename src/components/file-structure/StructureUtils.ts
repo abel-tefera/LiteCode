@@ -1,17 +1,23 @@
-const trimName = (name: string, isFile: boolean) => {
-  const [fname, ext] = name.split(".");
-  let newName: string = "";
-  if (isFile) {
+import {
+  FileStructure,
+  NormalizedFolder,
+} from "../../state/features/structure/structureSlice";
+
+const trimName = (item: NormalizedFolder | FileStructure) => {
+  let newName = "";
+  if (item.type === "file") {
+    const fullName = `${item.name}.${item.extension}`;
+    const [fname, ext] = fullName.split(".");
     if (fname.length > 10) {
       newName = `${fname.slice(0, 10)}...${ext}`;
     } else {
-      newName = name;
+      newName = fullName;
     }
-  } else {
-    if (fname.length > 12) {
-      newName = `${fname.slice(0, 12)}...`;
+  } else if (item.type === "folder") {
+    if (item.name.length > 12) {
+      newName = `${item.name.slice(0, 12)}...`;
     } else {
-      newName = name;
+      newName = item.name;
     }
   }
   // TODO Optimize Too many calls
@@ -41,7 +47,4 @@ const getLogo = (fileType: string) => {
   return logo;
 };
 
-export {
-  getLogo,
-  trimName
-};
+export { getLogo, trimName };
