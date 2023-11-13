@@ -8,7 +8,7 @@ interface DialogProps {
   content: string;
   actionText: string;
   close: (show: boolean) => void;
-  action: any;
+  action: () => void;
 }
 
 const Dialog: React.FC<DialogProps> = ({ title, content, actionText, close, action }) => {

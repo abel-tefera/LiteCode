@@ -1,34 +1,37 @@
-// @ts-nocheck
 import React, { useEffect } from "react";
 import { getLogo, trimName } from "./StructureUtils";
 import {
-  addNode,
   collapseOrExpand,
-  removeNode,
-  renameNode,
   contextSelectedItem,
   selectedItem,
   contextClick,
   clipboard,
   setSelected,
+  Directory,
+  NormalizedFolder,
+  FileStructure,
 } from "../../state/features/structure/structureSlice";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
 import useOutsideAlerter from "../../hooks/useOutsideAlerter";
+import { RootState } from "../../state/store";
+import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 
-const Folder: any = ({ data }) => {
-  const dispatch = useDispatch();
-  const selected = useSelector(selectedItem);
-  const contextSelected = useSelector(contextSelectedItem);
-  const cutItem = useSelector(clipboard);
-  const children = useSelector((state) => {
-    const allData = data.map(({id: itemId, type}) => {
+interface FolderProps {
+  data: Directory[];
+}
+
+const Folder: React.FC<FolderProps> = ({ data }) => {
+  const dispatch = useTypedDispatch();
+  const selected = useTypedSelector(selectedItem);
+  const contextSelected = useTypedSelector(contextSelectedItem);
+  const cutItem = useTypedSelector(clipboard);
+  const children = useTypedSelector((state: RootState) => {
+    const allData = data.map(({ id: itemId, type }) => {
       return state.structure.normalized[`${type}s`].byId[itemId];
-    })
+    });
     return allData;
   });
 
-  const findLogo = (item) => {
+  const findLogo = (item: FileStructure | NormalizedFolder) => {
     if (item.type === "folder") {
       return item.collapsed ? "closed-folder" : "opened-folder";
     } else if (item.type === "file") {
@@ -53,14 +56,19 @@ const Folder: any = ({ data }) => {
                   ? "bg-slate-700 hover:bg-slate-600"
                   : ""
               } ${
-                cutItem.isCut && cutItem.id === item.id
+                cutItem?.isCut && cutItem.id === item.id
                   ? "bg-slate-700 hover:bg-slate-600 opacity-50"
                   : ""
               } }`}
             >
               <div
                 onClick={() =>
-                  dispatch(collapseOrExpand({ item, collapse: true }))
+                  dispatch(
+                    collapseOrExpand({
+                      item: { id: item.id, type: item.type },
+                      collapse: true,
+                    })
+                  )
                 }
                 parent-id={item.id}
                 typeof-item={item.type}
@@ -110,16 +118,23 @@ const Folder: any = ({ data }) => {
                   parent-id={item.id}
                   typeof-item={item.type}
                   onClick={() =>
-                    dispatch(collapseOrExpand({ item, collapse: true }))
+                    dispatch(
+                      collapseOrExpand({
+                        item: { id: item.id, type: item.type },
+                        collapse: true,
+                      })
+                    )
                   }
                   className="transition-colors w-[14px] border-r hover:border-vscode-blue border-monaco-color"
                 ></button>
-                <Folder data={(() => {
-                  const childFolder = data.find((newItem) => {
-                    return newItem.id === item.id
-                  });
-                  return childFolder.childrenIdsAndType;
-                })()} />
+                <Folder
+                  data={(() => {
+                    const childFolder = data.find((newItem) => {
+                      return newItem.id === item.id;
+                    });
+                    return childFolder?.childrenIdsAndType as Directory[];
+                  })()}
+                />
               </div>
             )}
           </div>

@@ -17,10 +17,12 @@ interface CustomInputProps {
   show: boolean | undefined;
   item: {
     type: "file" | "folder" | "";
-    rename: any;
+    rename: {
+      name?: string;
+    } | undefined;
   };
   container: HTMLDivElement | null;
-  existingItems: any[];
+  existingItems: {name: string, type: string}[];
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -32,7 +34,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   container,
   existingItems,
 }) => {
-  const [value, setValue] = useState(item.rename ? item.rename.name : "");
+  const [value, setValue] = useState(item.rename && item.rename.name ? item.rename.name : "");
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
@@ -96,9 +98,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
     setTimeout(() => {
       inputRef.current?.focus();
       if (item.rename) {
-        const idx = item.rename.name.lastIndexOf(".");
+        const idx = item.rename.name?.lastIndexOf(".");
         inputRef.current?.select();
-        if (idx !== -1) {
+        if (idx !== undefined && idx !== -1) {
           inputRef.current?.setSelectionRange(0, idx);
         }
       }
@@ -197,7 +199,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           setError(true);
           setLogo(errorIcon);
           setErrorMessage(
-            `A folder with this name already exists. Please choose a different name.`
+            `A folder with this name already exists in this directory. Please choose a different name.`
           );
           return;
         }
