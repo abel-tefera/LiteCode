@@ -30,7 +30,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   show,
   item,
   container,
-  existingItems
+  existingItems,
 }) => {
   const [value, setValue] = useState(item.rename ? item.rename.name : "");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -125,16 +125,20 @@ const CustomInput: React.FC<CustomInputProps> = ({
       const ext = matches[2];
       setExtension(ext);
       if (isValid && isLns && validFiles.includes(ext)) {
-        for (let {name, type} of existingItems) {
-          if (name === value && type === item.type && name.split('.').reverse()[0] === ext) {
+        for (let { name, type } of existingItems) {
+          if (
+            name === value &&
+            type === item.type &&
+            name.split(".").reverse()[0] === ext
+          ) {
             setError(true);
             setLogo(errorIcon);
             setErrorMessage(
-              `A file with this name already exists. Please choose a different name.`
+              `A file with this name already exists in this directory. Please choose a different name.`
             );
             return;
           }
-        } 
+        }
         switch (ext) {
           case "js":
             setLogo(jsLogo);
@@ -188,7 +192,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     const isValid = value.match(regex);
 
     if (isValid || value === "") {
-      for (let {name, type} of existingItems) {
+      for (let { name, type } of existingItems) {
         if (name === value && type === "folder") {
           setError(true);
           setLogo(errorIcon);
@@ -244,9 +248,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           src={logo}
           alt="new file icon"
         /> */}
-        <span
-          className={`span-logo ml-[3px] ${logo} w-[14px] mr-[6px]`}
-        >
+        <span className={`span-logo ml-[3px] ${logo} w-[14px] mr-[6px]`}>
           &nbsp;
         </span>
         <div className="flex mx-1 relative flex-col w-[80%] max-w-[10rem]">

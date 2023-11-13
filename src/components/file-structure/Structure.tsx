@@ -55,7 +55,7 @@ const Structure = forwardRef<any>((props, fileSysRef) => {
     >
       <Folder data={structureData} />
 
-      {false && allFileIds.length === 0 && allFolderIds.length === 1 && (
+      {allFileIds.length === 0 && allFolderIds.length === 1 && (
         <div
           id="welcome"
           onContextMenu={(e) => emptyHandler(e)}
