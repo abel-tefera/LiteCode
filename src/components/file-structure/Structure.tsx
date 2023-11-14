@@ -50,6 +50,8 @@ import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 
 const Structure = () => {
   const fileSysRef = useRef<HTMLDivElement>(null);
+  const structureRef = useRef<HTMLDivElement>(null);
+
   const contextSelectedE = useTypedSelector(contextSelectedEvent);
   const contextSelectedId = useTypedSelector(contextSelectedItem);
   const contextSelectedType = useTypedSelector(contextSelectedItemType);
@@ -60,6 +62,9 @@ const Structure = () => {
   const allFolderIds = useTypedSelector(folderIds);
   const currentItems = useTypedSelector(getCurrentItems);
 
+  useEffect(() => {
+    console.log("CHANGE", currentItems);
+  }, [currentItems]);
   const [showContext, setShowContext] = useState(false);
   const clickedRef = useRef<HTMLElement>();
   const [selectedType, setSelectedType] = useState<
@@ -187,9 +192,15 @@ const Structure = () => {
   };
 
   const prependForPortal = (isRename: boolean) => {
-    if (!clickedRef.current) return;
+    if (!clickedRef.current) {
+      setClickedCurrent();
+    }
+    if (!clickedRef.current) {
+      return;
+    }
     if (clickedRef.current === fileSysRef.current) {
       appendTo.current = fileSysRef.current.childNodes[0] as HTMLElement;
+
       setInputPadding(0);
     } else {
       if (!isRename) {
@@ -322,16 +333,13 @@ const Structure = () => {
       });
     }
 
-    setSelectedType(
-      elem.classList.contains("structure-container") ? "head" : type
-    );
+    setSelectedType(parentId === "head" ? "head" : type);
     setShowContext(true);
   };
   const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
     if (!fileSysRef.current) return;
     const elem = e.target as HTMLElement;
-
     handleContext(
       { clientY: e.clientY, clientX: e.clientX },
       elem as HTMLElement
@@ -364,9 +372,9 @@ const Structure = () => {
   // const structure = mapStructureRecursively(structureData);
   const dispatch = useTypedDispatch();
 
-  useOutsideAlerter(fileSysRef, () => {
+  useOutsideAlerter(structureRef, () => {
     if (selectedI !== "head") {
-      dispatch(setSelected({ id: "head" }));
+      dispatch(setSelected({ id: "head", type: 'folder' }));
     }
   });
 
@@ -395,24 +403,31 @@ const Structure = () => {
         onContextMenu={(e) => contextHandler(e)}
         // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
       >
-        <Folder data={structureData as (Directory | FileInFolder)[]} />
+        <div
+          parent-id={"head"}
+          typeof-item={"folder"}
+          ref={structureRef}
+          className="content flex items-center justify-between"
+        >
+          <Folder data={structureData as (Directory | FileInFolder)[]} />
 
-        {allFileIds.length === 0 && allFolderIds.length === 1 && (
-          <div
-            id="welcome"
-            parent-id={"head"}
-            typeof-item={"folder"}
-            className="flex h-[40vh] items-center px-4"
-          >
-            <span
+          {allFileIds.length === 0 && allFolderIds.length === 1 && (
+            <div
+              id="welcome"
               parent-id={"head"}
               typeof-item={"folder"}
-              className="text-base text-center break-words p-3 rounded-lg border"
+              className="flex h-[40vh] items-center px-4"
             >
-              Start developing with LiteCode...
-            </span>
-          </div>
-        )}
+              <span
+                parent-id={"head"}
+                typeof-item={"folder"}
+                className="text-base text-center break-words p-3 rounded-lg border"
+              >
+                Start developing with LiteCode...
+              </span>
+            </div>
+          )}
+        </div>
       </div>
       {showDialog &&
         createPortal(
@@ -442,14 +457,34 @@ const Structure = () => {
           show={clickedRef.current && showInput}
           item={{
             type: inputType,
-            rename: isRename ? thisItem : undefined,
+            rename: isRename
+              ? {
+                  wholeName:
+                    thisItem.type === "file"
+                      ? `${thisItem.name}.${thisItem.extension}`
+                      : thisItem.name,
+                }
+              : undefined,
           }}
           container={fileSysRef.current}
-          existingItems={
-            isRename
-              ? currentItems.filter(({ id }) => id !== thisItem?.id)
-              : currentItems
-          }
+          existingItems={(() => {
+            const items = currentItems.map((item) => {
+              return {
+                id: item.id,
+                type: item.type,
+                wholeName:
+                  item.type === "file"
+                    ? `${item.name}.${item.extension}`
+                    : item.name,
+              };
+            });
+
+            if (isRename) {
+              return items.filter(({ id }) => id !== thisItem?.id);
+            } else {
+              return items;
+            }
+          })()}
         />,
         appendTo.current as HTMLElement
       )}

@@ -62,7 +62,7 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
             >
               <div
                 onClick={() => {
-                  dispatch(setSelected({ id: item.id }));
+                  dispatch(setSelected({ id: item.id, type: item.type }));
                   dispatch(
                     collapseOrExpand({
                       item: { id: item.id, type: item.type },
@@ -118,7 +118,7 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
                   parent-id={item.id}
                   typeof-item={item.type}
                   onClick={() => {
-                    dispatch(setSelected({ id: item.id }));
+                    dispatch(setSelected({ id: item.id, type: item.type }));
                     dispatch(
                       collapseOrExpand({
                         item: { id: item.id, type: item.type },

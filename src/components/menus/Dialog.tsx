@@ -15,7 +15,7 @@ const Dialog: React.FC<DialogProps> = ({ title, content, actionText, close, acti
   const dialogRef = useRef<HTMLDivElement>(null);
   useOutsideAlerter(dialogRef, close);
   return (
-    <div className="backdrop-brightness-50 absolute top-0 z-50 flex w-full h-full justify-center items-start pt-6">
+    <div className="backdrop-brightness-50 absolute top-0 z-50 flex w-full h-full justify-center items-start pt-6 select-none">
       <div
         ref={dialogRef}
         className="dialog-content bg-dark-hover border border-slate-600 shadow-sm p-4 rounded-lg flex flex-col my-2 h-fit w-96"
@@ -31,7 +31,7 @@ const Dialog: React.FC<DialogProps> = ({ title, content, actionText, close, acti
             />
           </span>
         </div>
-        <div className="text-sm my-4 select-none text-white">
+        <div className="text-sm my-4 text-white">
           {content}
         </div>
         <div className="flex justify-between my-2">

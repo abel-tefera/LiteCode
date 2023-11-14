@@ -17,12 +17,14 @@ interface CustomInputProps {
   show: boolean | undefined;
   item: {
     type: "file" | "folder" | "";
-    rename: {
-      name?: string;
-    } | undefined;
+    rename:
+      | {
+        wholeName?: string;
+        }
+      | undefined;
   };
   container: HTMLDivElement | null;
-  existingItems: {name: string, type: string}[];
+  existingItems: { wholeName: string; type: string }[];
 }
 
 const CustomInput: React.FC<CustomInputProps> = ({
@@ -34,7 +36,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
   container,
   existingItems,
 }) => {
-  const [value, setValue] = useState(item.rename && item.rename.name ? item.rename.name : "");
+  const [value, setValue] = useState(
+    item.rename && item.rename.wholeName ? item.rename.wholeName : ""
+  );
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
@@ -98,7 +102,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     setTimeout(() => {
       inputRef.current?.focus();
       if (item.rename) {
-        const idx = item.rename.name?.lastIndexOf(".");
+        const idx = item.rename.wholeName?.lastIndexOf(".");
         inputRef.current?.select();
         if (idx !== undefined && idx !== -1) {
           inputRef.current?.setSelectionRange(0, idx);
@@ -127,7 +131,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       const ext = matches[2];
       setExtension(ext);
       if (isValid && isLns && validFiles.includes(ext)) {
-        for (let { name, type } of existingItems) {
+        for (let { wholeName: name, type } of existingItems) {
           if (
             name === value &&
             type === item.type &&
@@ -136,7 +140,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
             setError(true);
             setLogo(errorIcon);
             setErrorMessage(
-              `A file with this name already exists in this directory. Please choose a different name.`
+              `A file with this name already exists. Please choose a different name.`
             );
             return;
           }
@@ -194,12 +198,12 @@ const CustomInput: React.FC<CustomInputProps> = ({
     const isValid = value.match(regex);
 
     if (isValid || value === "") {
-      for (let { name, type } of existingItems) {
+      for (let { wholeName:name, type } of existingItems) {
         if (name === value && type === "folder") {
           setError(true);
           setLogo(errorIcon);
           setErrorMessage(
-            `A folder with this name already exists in this directory. Please choose a different name.`
+            `A folder with this name already exists. Please choose a different name.`
           );
           return;
         }
