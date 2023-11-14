@@ -55,9 +55,7 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
                   ? "bg-slate-700 hover:bg-slate-600"
                   : ""
               }  ${
-                cutItem?.isCut && cutItem.id === item.id
-                  ? "opacity-50"
-                  : ""
+                cutItem?.isCut && cutItem.id === item.id ? "opacity-50" : ""
               } }`}
             >
               <div
@@ -112,32 +110,35 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
                 &nbsp;
               </button>
             </div>
-            {item.type === "folder" && !item.collapsed && (
-              <div className="flex flex-row sub-folder">
-                <button
-                  parent-id={item.id}
-                  typeof-item={item.type}
-                  onClick={() => {
-                    dispatch(setSelected({ id: item.id, type: item.type }));
-                    dispatch(
-                      collapseOrExpand({
-                        item: { id: item.id, type: item.type },
-                        collapse: true,
-                      })
-                    );
-                  }}
-                  className="transition-colors w-[14px] border-r hover:border-vscode-blue border-monaco-color"
-                ></button>
-                <Folder
-                  data={(() => {
-                    const childFolder = data.find((newItem) => {
-                      return newItem.id === item.id;
-                    });
-                    return childFolder?.childrenIdsAndType as Directory[];
-                  })()}
-                />
-              </div>
-            )}
+            <>
+              <div id={`ghost-input-${item.id}`}></div>
+              {item.type === "folder" && !item.collapsed && (
+                <div className="flex flex-row sub-folder">
+                  <button
+                    parent-id={item.id}
+                    typeof-item={item.type}
+                    onClick={() => {
+                      dispatch(setSelected({ id: item.id, type: item.type }));
+                      dispatch(
+                        collapseOrExpand({
+                          item: { id: item.id, type: item.type },
+                          collapse: true,
+                        })
+                      );
+                    }}
+                    className="transition-colors w-[14px] border-r hover:border-vscode-blue border-monaco-color"
+                  ></button>
+                  <Folder
+                    data={(() => {
+                      const childFolder = data.find((newItem) => {
+                        return newItem.id === item.id;
+                      });
+                      return childFolder?.childrenIdsAndType as Directory[];
+                    })()}
+                  />
+                </div>
+              )}
+            </>
           </div>
         );
       })}

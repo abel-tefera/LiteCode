@@ -25,7 +25,6 @@ interface MenuContextProps {
 const MenuContext: React.FC<MenuContextProps> = ({
   top,
   left,
-  showContext,
   setShowContext,
   actions,
 }) => {
@@ -35,9 +34,7 @@ const MenuContext: React.FC<MenuContextProps> = ({
   return (
     <div
       ref={contextRef}
-      className={`absolute bg-monaco-color rounded-md px-1 py-2 w-48 box-border text-sm ${
-        showContext ? `flex` : `hidden`
-      }`}
+      className={`absolute bg-monaco-color rounded-md px-1 py-2 w-48 box-border text-sm`}
       style={{ top: `${top}px`, left: `${left}px` }}
     >
       <ul className="w-full">

@@ -1,13 +1,6 @@
-import React, {
-  useRef,
-  forwardRef,
-  PropsWithRef,
-  useEffect,
-  useState,
-} from "react";
+import React, { useRef, useEffect, useState } from "react";
 import "../../styles/structure.css";
-import parse from "html-react-parser";
-// import structureData from "./structureData";
+
 import {
   Directory,
   FileInFolder,
@@ -15,10 +8,8 @@ import {
   getInitialSet,
   setSelected,
 } from "../../state/features/structure/structureSlice";
-// import { mapStructureRecursively } from "../../state/features/structure/utils/traversal";
 import Folder from "./Folder";
 import useOutsideAlerter from "../../hooks/useOutsideAlerter";
-// import { useTypedSelector, useTypedDispatch } from '../../state/hooks';
 
 import MenuContext from "../menus/MenuContext";
 import CustomInput from "../file-structure/CustomInput";
@@ -51,7 +42,11 @@ import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 const Structure = () => {
   const fileSysRef = useRef<HTMLDivElement>(null);
   const structureRef = useRef<HTMLDivElement>(null);
+  const clickedRef = useRef<HTMLElement>();
 
+  const dispatch = useTypedDispatch();
+
+  const structureData = useTypedSelector(getInitialSet);
   const contextSelectedE = useTypedSelector(contextSelectedEvent);
   const contextSelectedId = useTypedSelector(contextSelectedItem);
   const contextSelectedType = useTypedSelector(contextSelectedItemType);
@@ -62,11 +57,7 @@ const Structure = () => {
   const allFolderIds = useTypedSelector(folderIds);
   const currentItems = useTypedSelector(getCurrentItems);
 
-  useEffect(() => {
-    console.log("CHANGE", currentItems);
-  }, [currentItems]);
   const [showContext, setShowContext] = useState(false);
-  const clickedRef = useRef<HTMLElement>();
   const [selectedType, setSelectedType] = useState<
     "file" | "folder" | "head" | ""
   >("");
@@ -199,7 +190,7 @@ const Structure = () => {
       return;
     }
     if (clickedRef.current === fileSysRef.current) {
-      appendTo.current = fileSysRef.current.childNodes[0] as HTMLElement;
+      appendTo.current = fileSysRef.current as HTMLElement;
 
       setInputPadding(0);
     } else {
@@ -212,15 +203,12 @@ const Structure = () => {
         );
       }
 
-      appendTo.current = clickedRef.current.parentElement as HTMLElement;
       if (isRename) {
+      appendTo.current = clickedRef.current.parentElement as HTMLElement;
         clickedRef.current.classList.add("hide-input");
         setInputPadding(0);
       } else {
-        findPrependTo(
-          clickedRef.current.parentElement?.childNodes,
-          clickedRef.current.parentElement
-        );
+        appendTo.current = structureRef.current?.querySelector("#ghost-input-" + clickedRef.current.id) as HTMLElement;
         setInputPadding(1);
       }
     }
@@ -251,22 +239,6 @@ const Structure = () => {
     showInputHandler(true);
   };
 
-  const findPrependTo = (
-    childNodes: NodeListOf<ChildNode> | undefined,
-    parent: HTMLElement | null
-  ): NodeJS.Timeout => {
-    const timeout = setTimeout(() => {
-      if (childNodes) {
-        const input = childNodes[0];
-        const body = childNodes[1] as HTMLElement;
-        if (body.classList.contains("clickable")) {
-          parent?.insertBefore(body, input);
-        }
-      }
-    }, 0);
-    return timeout;
-  };
-
   const inputSubmit = (value: string | false) => {
     if (!clickedRef.current) return;
 
@@ -282,7 +254,6 @@ const Structure = () => {
       dispatch(addNode({ value, inputType: inputType as ItemType }));
     }
 
-    // structureRef.current?.classList.remove('dont-overflow')
     showInputHandler(false);
   };
 
@@ -313,10 +284,8 @@ const Structure = () => {
 
     if (!elem.classList.contains("file-sys-container")) {
       item = fileSysRef.current.querySelector(`#${parentId}`);
-      // console.log("ITAM 1", item);
     } else {
       item = fileSysRef.current;
-      // console.log("ITAM 2", item);
     }
 
     clickedRef.current = item as HTMLElement;
@@ -365,33 +334,14 @@ const Structure = () => {
     );
   }, [contextSelectedE]);
 
-  // const fileSysRef = useRef<HTMLDivElement>(null);
-  // const count = useTypedSelector((state) => state.counter.value)
-  // const dispatch = useTypedDispatch()
-  const structureData = useTypedSelector(getInitialSet);
-  // const structure = mapStructureRecursively(structureData);
-  const dispatch = useTypedDispatch();
-
   useOutsideAlerter(structureRef, () => {
     if (selectedI !== "head") {
-      dispatch(setSelected({ id: "head", type: 'folder' }));
+      dispatch(setSelected({ id: "head", type: "folder" }));
     }
   });
 
-  // const emptyHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-  //   e.preventDefault();
-  //   dispatch(setSelected({ id: "head" }));
-  //   dispatch(
-  //     contextClick({
-  //       id: "head",
-  //       type: "folder",
-  //       threeDot: { x: e.clientY, y: e.clientX },
-  //     })
-  //   );
-  // };
-
   return (
-    <>
+    <div id="file-system">
       <FileActions {...fileActions} />
 
       <div
@@ -478,7 +428,6 @@ const Structure = () => {
                     : item.name,
               };
             });
-
             if (isRename) {
               return items.filter(({ id }) => id !== thisItem?.id);
             } else {
@@ -489,14 +438,18 @@ const Structure = () => {
         appendTo.current as HTMLElement
       )}
 
-      <MenuContext
-        top={points.x}
-        left={points.y}
-        showContext={showContext}
-        setShowContext={setShowContext}
-        actions={actions}
-      />
-    </>
+      {showContext &&
+        createPortal(
+          <MenuContext
+            top={points.x}
+            left={points.y}
+            showContext={showContext}
+            setShowContext={setShowContext}
+            actions={actions}
+          />,
+          document.getElementById("file-system") as HTMLElement
+        )}
+    </div>
   );
 };
 

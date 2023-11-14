@@ -100,13 +100,6 @@ interface FileSystem {
   tabs: Tabs;
 }
 
-// // Define a type for the slice state
-// interface StructureState {
-//   value: number;
-//   structure: NestedRecord<string[]>;
-// }
-
-// Define the initial state using that type
 const initialState: FileSystem = {
   normalized: {
     files: {
@@ -129,7 +122,7 @@ const initialState: FileSystem = {
   initialFolder: {
     id: "head",
     type: "folder",
-    childrenIdsAndType: [] as (Directory | FileInFolder)[],
+    childrenIdsAndType: [],
   },
   selected: "head",
   contextSelected: {

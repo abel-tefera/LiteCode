@@ -38,7 +38,7 @@ const getLogo = (fileType: string) => {
       logo = "css-logo";
       break;
     case "md":
-      logo = "md-logo";
+      logo = "readme-logo";
       break;
     default:
       logo = "file-logo";
