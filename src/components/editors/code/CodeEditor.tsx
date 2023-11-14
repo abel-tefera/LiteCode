@@ -49,11 +49,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
         defaultValue={initialValue}
         theme="vs-dark"
         defaultLanguage="javascript"
+        // height={}
         options={{
-          wordWrap: "on",
-          minimap: { enabled: false },
+          // wordWrap: "on",
+          minimap: { enabled: true },
           showUnused: true,
-          folding: true,
+          // folding: true,
           lineNumbersMinChars: 3,
           fontSize: 16,
           scrollBeyondLastLine: true,

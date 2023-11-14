@@ -1,4 +1,4 @@
-.react-resizable-handle {
+/* .react-resizable-handle {
   display: block;
   background-color: #37414b;
   background-repeat: no-repeat;
@@ -24,4 +24,103 @@
   height: 100%;
   cursor: col-resize;
   background-image: url('../assets/resize.svg');
+}
+
+.react-resizable-handle-w {
+  width: 10px;
+  min-width: 10px;
+  height: 100%;
+  cursor: col-resize;
+  background-image: url('../assets/resize.svg');
+} */
+
+.react-resizable {
+  position: relative;
+}
+
+.react-resizable-handle {
+  position: absolute;
+  /* background-color: red; */
+  top: 0;
+  width: 5px;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  background-image: url('../assets/line-gray.svg');
+  background-position: center;
+  background-size: 35px;
+  cursor: ew-resize;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.react-resizable-handle:hover {
+  background-image: url('../assets/line.svg');
+}
+
+.react-resizable-handle:active {
+  background-color: #4078CE;
+  background-size: 0;
+
+}
+
+/* .react-resizable-handle-sw {
+  bottom: 0;
+  left: 0;
+  cursor: sw-resize;
+  transform: rotate(90deg);
+}
+.react-resizable-handle-se {
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+}
+.react-resizable-handle-nw {
+  top: 0;
+  left: 0;
+  cursor: nw-resize;
+  transform: rotate(180deg);
+}
+.react-resizable-handle-ne {
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+  transform: rotate(270deg);
+}
+
+.react-resizable-handle-w {
+  left: 0;
+  transform: rotate(135deg);
+}
+
+.react-resizable-handle-n,
+.react-resizable-handle-s {
+  left: 50%;
+  margin-left: -10px;
+  cursor: ns-resize;
+}
+.react-resizable-handle-n {
+  top: 0;
+  transform: rotate(225deg);
+}
+.react-resizable-handle-s {
+  bottom: 0;
+  transform: rotate(45deg);
+} */
+
+.react-resizable-handle-w,
+.react-resizable-handle-e {
+  top: 0;
+  /* margin-top: -10px; */
+}
+
+.react-resizable-handle-e {
+  right: 0;
+  /* transform: rotate(315deg); */
+}
+
+.rezisable .react-resizable-handle {
+  top: 60px
 }

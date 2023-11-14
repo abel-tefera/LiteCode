@@ -1,9 +1,9 @@
 .file-sys-container {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    /* width: 100%; */
     overflow-x: scroll;
-    text-wrap: nowrap;
+    /* text-wrap: nowrap; */
     max-height: calc(50vh + 18px);
     min-height: calc(50vh + 18px);
     /* background-color: orange; */
@@ -119,7 +119,7 @@
 
 @media screen and (min-width: 768px) {
     .file-sys-container {
-        max-width: 205px;
+        /* max-width: 205px; */
         max-height: calc(55vh + 18px);
         min-height: calc(55vh + 18px);
     }

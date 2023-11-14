@@ -11,15 +11,20 @@ import { store } from "./state/store";
 const App = () => {
   return (
     <Provider store={store}>
-      <div className="App bg-dark-bg text-white font-roboto">
-        <Layout>
+      <div className="App bg-dark-bg text-white font-roboto flex flex-row">
+        {/* <Layout>
           <Tabs />
           <CodeCell />
-        </Layout>
+        </Layout> */}
         {/* <Structure /> */}
         {/* <h1>XYZ Code</h1>
         <CodeCell /> */}
         {/* <TextEditor /> */}
+        {/* <Structure /> */}
+        <div className="flex flex-col w-full h-full">
+          {/* <Tabs /> */}
+          <CodeCell />
+        </div>
       </div>
     </Provider>
   );

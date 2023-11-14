@@ -69,7 +69,6 @@ const Sidebar: React.FC<SidebarProps> = ({
               !collapsed && visibility ? "block main-content" : "display-none-c"
             }
           >
-            <Structure />
           </div>
         </nav>
 

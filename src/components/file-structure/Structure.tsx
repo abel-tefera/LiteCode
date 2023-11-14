@@ -357,7 +357,7 @@ const Structure = () => {
           parent-id={"head"}
           typeof-item={"folder"}
           ref={structureRef}
-          className="content flex items-center justify-between"
+          className="content flex items-center"
         >
           <Folder data={structureData as (Directory | FileInFolder)[]} />
 
@@ -366,7 +366,7 @@ const Structure = () => {
               id="welcome"
               parent-id={"head"}
               typeof-item={"folder"}
-              className="flex h-[40vh] items-center px-4"
+              className="flex h-[40vh] items-center px-4 mx-auto"
             >
               <span
                 parent-id={"head"}

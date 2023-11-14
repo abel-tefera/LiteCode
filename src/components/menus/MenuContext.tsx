@@ -34,7 +34,7 @@ const MenuContext: React.FC<MenuContextProps> = ({
   return (
     <div
       ref={contextRef}
-      className={`absolute bg-monaco-color rounded-md px-1 py-2 w-48 box-border text-sm`}
+      className={`absolute bg-monaco-color rounded-md px-1 py-2 w-48 box-border text-sm z-50`}
       style={{ top: `${top}px`, left: `${left}px` }}
     >
       <ul className="w-full">
