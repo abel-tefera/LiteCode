@@ -1,24 +1,14 @@
-import {
-  PayloadAction,
-  createAsyncThunk,
-  createDraftSafeSelector,
-  createSlice,
-} from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
-import {
-  FileStructure,
-  Normalized,
-  ValidExtensions,
-} from "../structure/structureSlice";
-import { useSelector } from "react-redux";
+import { FileStructure, Normalized } from "../structure/structureSlice";
 
-type Tab = { id: string; isSelected: boolean };
+export type Tab = { id: string; isSelected: boolean };
 
 interface TabSlice {
-  tabs: Tab[];
+  open: Tab[];
 }
 const initialState: TabSlice = {
-  tabs: [],
+  open: [],
 };
 
 export const removeTabAsync = createAsyncThunk(
@@ -53,7 +43,7 @@ export const tabsSlice = createSlice({
   initialState,
   reducers: {
     selectTab: (state, action: PayloadAction<string>) => {
-      state.tabs = state.tabs.map((tab) => {
+      state.open = state.open.map((tab) => {
         if (tab.id !== action.payload) {
           return {
             ...tab,
@@ -67,15 +57,14 @@ export const tabsSlice = createSlice({
       });
     },
     closeTab: (state, action: PayloadAction<string>) => {
-      state.tabs = state.tabs.filter(({ id }) => id !== action.payload);
+      state.open = state.open.filter(({ id }) => id !== action.payload);
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(removeTabAsync.fulfilled, (state, action) => {
         const normalized = action.payload;
-
-        state.tabs = state.tabs.filter(
+        state.open = state.open.filter(
           (tab) =>
             normalized.files.allIds.find((id) => id === tab.id) !== undefined
         );
@@ -88,18 +77,18 @@ export const tabsSlice = createSlice({
           // @ts-ignore
           normalized.files.byId[tabId] as FileStructure;
 
-        if (state.tabs.filter(({ id }) => id === item.id).length === 0) {
-          state.tabs = [
-            ...state.tabs.map((tab) => {
+        if (state.open.filter(({ id }) => id === item.id).length === 0) {
+          state.open = [
+            ...state.open.map((tab) => {
               return { ...tab, isSelected: false };
             }),
             // @ts-ignore
             { id: item.id, extension: item.extension, isSelected: true },
           ];
         } else if (
-          state.tabs.find(({ id }) => id === item.id)?.isSelected === false
+          state.open.find(({ id }) => id === item.id)?.isSelected === false
         ) {
-          state.tabs = state.tabs.map((tab) => {
+          state.open = state.open.map((tab) => {
             if (tab.id !== item.id) {
               return { ...tab, isSelected: false };
             }
@@ -118,7 +107,7 @@ export const { closeTab, selectTab } = tabsSlice.actions;
 export default tabsSlice.reducer;
 
 export const activeTabs = (state: RootState) => {
-  return state.tabs.tabs.map((tab) => {
+  return state.tabs.open.map((tab) => {
     const item = state.structure.normalized.files.byId[tab.id];
     return {
       ...tab,
@@ -126,4 +115,17 @@ export const activeTabs = (state: RootState) => {
       wholeName: `${item.name}.${item.extension}`,
     };
   });
+};
+
+export const selectedTab = (state: RootState) => {
+  return state.tabs.open
+    .map((tab) => {
+      const item = state.structure.normalized.files.byId[tab.id];
+      return {
+        ...tab,
+        extension: item.extension,
+        wholeName: `${item.name}.${item.extension}`,
+      };
+    })
+    .find(({ isSelected }) => isSelected)?.id;
 };

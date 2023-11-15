@@ -787,21 +787,6 @@ export const structureSlice = createSlice({
         action.payload.id
       );
     },
-
-    // selectTab: (state, action: PayloadAction<string>) => {
-    //   state.tabs = state.tabs.map((tab) => {
-    //     if (tab.id !== action.payload) {
-    //       return {
-    //         ...tab,
-    //         isSelected: false,
-    //       };
-    //     }
-    //     return {
-    //       ...tab,
-    //       isSelected: true,
-    //     };
-    //   });
-    // },
   },
 });
 
@@ -874,8 +859,6 @@ export const {
   setToCopy,
   copyNode,
   setParentItemId,
-  // closeTab,
-  // selectTab,
 } = structureSlice.actions;
 
 export default structureSlice.reducer;

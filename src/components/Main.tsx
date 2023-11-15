@@ -7,11 +7,12 @@ import CodeCell from "./editors/CodeCell";
 import { useTypedDispatch, useTypedSelector } from "../state/hooks";
 import { setEditorWidthAdjusted } from "../state/features/editor/editorSlice";
 import throttle from "../utils/throttle";
+import { activeTabs } from "../state/features/tabs/tabsSlice";
 // import { activeTabs } from "../state/features/structure/structureSlice";
 
 const Main = () => {
   const dispatch = useTypedDispatch();
-  // const tabs = useTypedSelector(activeTabs);
+  const tabs = useTypedSelector(activeTabs);
   const setWidthAdjusted = throttle((width: number) => {
     dispatch(setEditorWidthAdjusted(width));
   }, 500);
@@ -53,17 +54,8 @@ const Main = () => {
 
       <div className="w-full h-full flex flex-col">
         <Tabs />
-        <button onClick={() => {
-          // @ts-ignore
-          // dispatch(closeTabsAsync('1'));
-        }}>BUTT</button>
-        {/* {tabs.map(({ id }) => {
-          return (
-            <CodeCell
-              currentTab={id}
-            />
-          );
-        })} */}
+
+        {tabs.length > 0 && <CodeCell />}
       </div>
     </div>
   );

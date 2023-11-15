@@ -8,6 +8,7 @@ import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 
 import { trimName } from "../file-structure/StructureUtils";
 import { activeTabs, closeTab, selectTab } from "../../state/features/tabs/tabsSlice";
+import { setActiveEditorAsync, removeActiveEditor } from "../../state/features/editor/editorSlice";
 
 const Tabs = () => {
   const dispatch = useTypedDispatch();
@@ -16,9 +17,15 @@ const Tabs = () => {
   const onSelect = (id: string) => {
     // alert(`Tab ${i} selected`);
     dispatch(selectTab(id));
+    // @ts-ignore
+    dispatch(setActiveEditorAsync(id))
+    
   };
 
   const onClose = (id: string) => {
+    // @ts-ignore
+    dispatch(removeActiveEditor(id))
+
     dispatch(closeTab(id));
   };
   return (

@@ -16,6 +16,7 @@ import useOutsideAlerter from "../../hooks/useOutsideAlerter";
 import { RootState } from "../../state/store";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 import { setActiveTabAsync } from "../../state/features/tabs/tabsSlice";
+import { setActiveEditorAsync } from "../../state/features/editor/editorSlice";
 
 interface FolderProps {
   data: (Directory | FileInFolder)[];
@@ -42,7 +43,7 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
   };
 
   return (
-    <div className={`${children.length > 0 && 'w-full'}`}>
+    <div className={`${children.length > 0 && "w-full"}`}>
       {children.map((item) => {
         return (
           <div key={item.id} className={`flex flex-col`}>
@@ -62,14 +63,19 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
               <div
                 onClick={() => {
                   dispatch(setSelected({ id: item.id, type: item.type }));
-                  // @ts-ignore
-                  dispatch(setActiveTabAsync(item.id));
-                  dispatch(
-                    collapseOrExpand({
-                      item: { id: item.id, type: item.type },
-                      collapse: true,
-                    })
-                  );
+                  if (item.type === "file") {
+                    // @ts-ignore
+                    dispatch(setActiveTabAsync(item.id));
+                    // @ts-ignore
+                    dispatch(setActiveEditorAsync(item.id));
+                  } else {
+                    dispatch(
+                      collapseOrExpand({
+                        item: { id: item.id, type: item.type },
+                        collapse: true,
+                      })
+                    );
+                  }
                 }}
                 parent-id={item.id}
                 typeof-item={item.type}

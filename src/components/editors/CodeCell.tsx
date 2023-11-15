@@ -9,10 +9,10 @@ import Resizable from "../Resizable";
 import throttle from "../../utils/throttle";
 
 interface CodeCellProps {
-  currentTab: string;
+  // currentTab: string;
 }
 // import { Resizable } from "re-resizable";
-const CodeCell: React.FC<CodeCellProps> = ({ currentTab }) => {
+const CodeCell: React.FC<CodeCellProps> = () => {
   const [input, setInput] = useState("");
   const [code, setCode] = useState("");
   const [err, setErr] = useState("");
