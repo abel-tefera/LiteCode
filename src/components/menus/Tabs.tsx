@@ -5,14 +5,9 @@ import uploadIcon from "../../assets/open-project.svg";
 
 import { Tooltip } from "react-tooltip";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
-import {
-  activeTabs,
-  closeTab,
-  selectTab,
-  selectedItem,
-  setSelected,
-} from "../../state/features/structure/structureSlice";
+
 import { trimName } from "../file-structure/StructureUtils";
+import { activeTabs, closeTab, selectTab } from "../../state/features/tabs/tabsSlice";
 
 const Tabs = () => {
   const dispatch = useTypedDispatch();

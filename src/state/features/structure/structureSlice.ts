@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createDraftSafeSelector, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 import { v4 as uuidv4 } from "uuid";
@@ -58,7 +58,7 @@ export type Directory = {
   childrenIdsAndType: (Directory | FileInFolder)[];
 };
 
-type Normalized = {
+export type Normalized = {
   folders: {
     byId: { [key: string]: NormalizedFolder };
     allIds: string[];
@@ -88,8 +88,6 @@ type ToCopy = {
   parentId: string;
 } | null;
 
-type Tabs = { id: string; extension: ValidExtensions; isSelected: boolean }[];
-
 interface FileSystem {
   normalized: Normalized;
   selected: string;
@@ -97,7 +95,7 @@ interface FileSystem {
   toCopy: ToCopy;
   parentItemId: string;
   initialFolder: Directory;
-  tabs: Tabs;
+  // tabs: Tabs;
 }
 
 const initialState: FileSystem = {
@@ -132,7 +130,7 @@ const initialState: FileSystem = {
   },
   toCopy: null,
   parentItemId: "head",
-  tabs: [],
+  // tabs: [],
 };
 
 export const structureSlice = createSlice({
@@ -269,11 +267,12 @@ export const structureSlice = createSlice({
           (type + "s") as keyof typeof state.normalized
         ].allIds.filter((_id) => _id !== id);
 
-      state.tabs = state.tabs.filter(
-        (tab) =>
-          state.normalized.files.allIds.find((id) => id === tab.id) !==
-          undefined
-      );
+      // remove Tab
+      // state.tabs = state.tabs.filter(
+      //   (tab) =>
+      //     state.normalized.files.allIds.find((id) => id === tab.id) !==
+      //     undefined
+      // );
     },
 
     renameNode: (state, action: PayloadAction<{ value: string }>) => {
@@ -312,19 +311,19 @@ export const structureSlice = createSlice({
         payload: { id: parentId },
         type: "",
       });
-
-      state.tabs = state.tabs.map((tab) => {
-        if (
-          state.normalized.files.allIds.find((id) => id === tab.id) !==
-          undefined
-        ) {
-          return {
-            ...tab,
-            extension: newExtension as ValidExtensions,
-          };
-        }
-        return tab;
-      });
+      // update tab
+      // state.tabs = state.tabs.map((tab) => {
+      //   if (
+      //     state.normalized.files.allIds.find((id) => id === tab.id) !==
+      //     undefined
+      //   ) {
+      //     return {
+      //       ...tab,
+      //       extension: newExtension as ValidExtensions,
+      //     };
+      //   }
+      //   return tab;
+      // });
     },
 
     // normalizeState: (state) => {
@@ -647,27 +646,6 @@ export const structureSlice = createSlice({
       if (state.selected !== item.id) {
         if (item.id === "head") {
           state.contextSelected = { id: "head", type: "folder", e: false };
-        } else if (item.type === "file") {
-          if (state.tabs.filter(({ id }) => id === item.id).length === 0) {
-            state.tabs = [
-              ...state.tabs.map((tab) => {
-                return { ...tab, isSelected: false };
-              }),
-              { id: item.id, extension: item.extension, isSelected: true },
-            ];
-          } else if (
-            state.tabs.find(({ id }) => id === item.id)?.isSelected === false
-          ) {
-            state.tabs = state.tabs.map((tab) => {
-              if (tab.id !== item.id) {
-                return { ...tab, isSelected: false };
-              }
-              return {
-                ...tab,
-                isSelected: true,
-              };
-            });
-          }
         }
         state.selected = action.payload.id;
       }
@@ -809,23 +787,21 @@ export const structureSlice = createSlice({
         action.payload.id
       );
     },
-    closeTab: (state, action: PayloadAction<string>) => {
-      state.tabs = state.tabs.filter(({ id }) => id !== action.payload);
-    },
-    selectTab: (state, action: PayloadAction<string>) => {
-      state.tabs = state.tabs.map((tab) => {
-        if (tab.id !== action.payload) {
-          return {
-            ...tab,
-            isSelected: false,
-          };
-        }
-        return {
-          ...tab,
-          isSelected: true,
-        };
-      });
-    },
+
+    // selectTab: (state, action: PayloadAction<string>) => {
+    //   state.tabs = state.tabs.map((tab) => {
+    //     if (tab.id !== action.payload) {
+    //       return {
+    //         ...tab,
+    //         isSelected: false,
+    //       };
+    //     }
+    //     return {
+    //       ...tab,
+    //       isSelected: true,
+    //     };
+    //   });
+    // },
   },
 });
 
@@ -848,16 +824,6 @@ export const folderIds = (state: RootState) =>
   state.structure.normalized.folders.allIds;
 
 export const clipboard = (state: RootState) => state.structure.toCopy;
-
-export const activeTabs = (state: RootState) => {
-  return state.structure.tabs.map((tab) => {
-    const item = state.structure.normalized.files.byId[tab.id];
-    return {
-      ...tab,
-      wholeName: `${item.name}.${item.extension}`,
-    };
-  });
-};
 
 // export const getChildren = (state: any, action) => {
 //   const { id } = action.payload;
@@ -908,8 +874,8 @@ export const {
   setToCopy,
   copyNode,
   setParentItemId,
-  closeTab,
-  selectTab,
+  // closeTab,
+  // selectTab,
 } = structureSlice.actions;
 
 export default structureSlice.reducer;
