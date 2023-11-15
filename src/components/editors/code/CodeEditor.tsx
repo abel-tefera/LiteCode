@@ -2,6 +2,8 @@ import React, { useRef, useCallback } from "react";
 import MonacoEditor, { OnChange } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
+import { useTypedSelector } from "../../../state/hooks";
+import { getCurrentEditor } from "../../../state/features/editor/editorSlice";
 // import * as prettier from "prettier/standalone";
 // import parserBabel from "prettier/plugins/babel";
 // import * as prettierPluginEstree from "prettier/plugins/estree";
@@ -15,6 +17,7 @@ interface CodeEditorProps {
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const editorData = useTypedSelector(getCurrentEditor);
 
   const handleEditorDidMount = useCallback(
     async (editor: editor.IStandaloneCodeEditor, monacoEditor: Monaco) => {
@@ -46,10 +49,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
         Format
       </button> */}
       <MonacoEditor
-        defaultValue={initialValue}
+        
+        defaultValue={editorData.initialValue}
         theme="vs-dark"
-        defaultLanguage="javascript"
-        // height={}
+        defaultLanguage={editorData.language}
+        height={"100%"}
         options={{
           // wordWrap: "on",
           minimap: { enabled: true },

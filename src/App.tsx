@@ -7,6 +7,7 @@ import Structure from "./components/file-structure/Structure";
 import Tabs from "./components/menus/Tabs";
 import Dialog from "./components/menus/Dialog";
 import { store } from "./state/store";
+import Main from "./components/Main";
 
 const App = () => {
   return (
@@ -23,7 +24,7 @@ const App = () => {
         {/* <Structure /> */}
         <div className="flex flex-col w-full h-full">
           {/* <Tabs /> */}
-          <CodeCell />
+          <Main />
         </div>
       </div>
     </Provider>

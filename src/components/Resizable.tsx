@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { ResizableBox, ResizableBoxProps } from "react-resizable";
 import "../styles/resizable.css";
 import throttle from "../utils/throttle";
+import { useTypedSelector } from "../state/hooks";
+import { getEditorWidthAdjusted } from "../state/features/editor/editorSlice";
 
 interface ResizableProps {
   // direction: "horizontal" | "vertical";
@@ -9,8 +11,8 @@ interface ResizableProps {
   maxRatio: number;
   children: React.ReactNode;
   initialRatio: number;
-  widthAdjusted?: number;
   resizableCall: (width: number) => void;
+  haveWidthAdjusted: boolean;
 }
 
 const Resizable: React.FC<ResizableProps> = ({
@@ -18,9 +20,8 @@ const Resizable: React.FC<ResizableProps> = ({
   minRatio,
   maxRatio,
   initialRatio,
-  widthAdjusted,
   resizableCall,
-  // widthAdjusted
+  haveWidthAdjusted,
 }) => {
   let resizableProps: ResizableBoxProps;
 
@@ -30,14 +31,15 @@ const Resizable: React.FC<ResizableProps> = ({
   const [resizableWidth, setResizableWidth] = useState(
     window.innerWidth * initialRatio
   );
-  const prevCountRef = useRef<number>(0);
+  const widthAdjusted = useTypedSelector(getEditorWidthAdjusted);
+  const prevCountRef = useRef<number>(widthAdjusted);
 
   useEffect(() => {
-    if (!widthAdjusted) return;
-    console.log("LOGGY", widthAdjusted - prevCountRef.current);
+    if (!haveWidthAdjusted) return;
     const moveX = widthAdjusted - prevCountRef.current;
-    // if (resizableWidth + moveX < innerWidth * minRatio) return;
-    // if (resizableWidth + moveX > innerWidth * maxRatio) return;
+    if (resizableWidth + moveX < innerWidth * minRatio) return;
+    if (resizableWidth + moveX > innerWidth * maxRatio) return;
+
     setResizableWidth(resizableWidth + moveX);
     prevCountRef.current = widthAdjusted;
   }, [widthAdjusted]);
@@ -47,7 +49,6 @@ const Resizable: React.FC<ResizableProps> = ({
   const handleResize = throttle((e: UIEvent) => {
     const width = window.innerWidth;
     const height = window.innerHeight;
-
     setInnerWidth(width);
     setInnerHeight(height);
 
@@ -64,9 +65,9 @@ const Resizable: React.FC<ResizableProps> = ({
   // if (direction === "horizontal") {
   resizableProps = {
     axis: "x",
-    className: `${widthAdjusted === undefined  && 'rezisable'}`,
+    className: `${!haveWidthAdjusted && "rezisable"}`,
     width: resizableWidth,
-    height: innerHeight * 0.8,
+    height: innerHeight * 0.783,
     // lockAspectRatio: true,
     resizeHandles: ["e"],
     minConstraints: [innerWidth * minRatio, Infinity],
