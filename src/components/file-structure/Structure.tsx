@@ -38,6 +38,10 @@ import {
 import { usePrependPortal } from "../../hooks/usePrependPortal";
 import FileActions from "./FileActions";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
+import {
+  removeTabAsync,
+  updateTabAsync,
+} from "../../state/features/tabs/tabsSlice";
 
 const Structure = () => {
   const fileSysRef = useRef<HTMLDivElement>(null);
@@ -204,11 +208,13 @@ const Structure = () => {
       }
 
       if (isRename) {
-      appendTo.current = clickedRef.current.parentElement as HTMLElement;
+        appendTo.current = clickedRef.current.parentElement as HTMLElement;
         clickedRef.current.classList.add("hide-input");
         setInputPadding(0);
       } else {
-        appendTo.current = structureRef.current?.querySelector("#ghost-input-" + clickedRef.current.id) as HTMLElement;
+        appendTo.current = structureRef.current?.querySelector(
+          "#ghost-input-" + clickedRef.current.id
+        ) as HTMLElement;
         setInputPadding(1);
       }
     }
@@ -246,6 +252,9 @@ const Structure = () => {
       showInputHandler(false);
       clickedRef.current?.classList.remove("hide-input");
       if (isRename === true && value !== false) {
+        if (inputType === "file") {
+          dispatch(updateTabAsync());
+        }
         dispatch(renameNode({ value }));
       }
       setIsRename(false);
@@ -389,6 +398,7 @@ const Structure = () => {
             close={setShowDialog}
             action={() => {
               dispatch(removeNode({ id: null, type: null }));
+              dispatch(removeTabAsync());
               setShowDialog(false);
             }}
           />,

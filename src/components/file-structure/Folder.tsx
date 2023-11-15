@@ -15,6 +15,7 @@ import {
 import useOutsideAlerter from "../../hooks/useOutsideAlerter";
 import { RootState } from "../../state/store";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
+import { setActiveTabAsync } from "../../state/features/tabs/tabsSlice";
 
 interface FolderProps {
   data: (Directory | FileInFolder)[];
@@ -61,6 +62,8 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
               <div
                 onClick={() => {
                   dispatch(setSelected({ id: item.id, type: item.type }));
+                  // @ts-ignore
+                  dispatch(setActiveTabAsync(item.id));
                   dispatch(
                     collapseOrExpand({
                       item: { id: item.id, type: item.type },
