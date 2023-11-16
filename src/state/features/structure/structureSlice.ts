@@ -694,11 +694,11 @@ export const structureSlice = createSlice({
           `${action.payload.type}s` as keyof typeof state.normalized
         ].byId[action.payload.id];
       if (state.selected !== item.id) {
-        // state.contextSelected = {
-        //   id: state.initialFolder.id,
-        //   type: "folder",
-        //   e: false,
-        // };
+        state.contextSelected = {
+          id: state.initialFolder.id,
+          type: "folder",
+          e: false,
+        };
         state.selected = action.payload.id;
       }
     },

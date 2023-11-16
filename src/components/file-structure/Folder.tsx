@@ -71,7 +71,8 @@ const Folder: React.FC<FolderProps> = ({
               } }`}
             >
               <div
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   dispatch(setSelected({ id: item.id, type: item.type }));
                   setShowBlue(true);
                   setShowGray(false);
@@ -114,6 +115,7 @@ const Folder: React.FC<FolderProps> = ({
                 typeof-item={item.type}
                 parent-id={item.id}
                 onClick={(e) => {
+                  e.stopPropagation();
                   setShowBlue(false);
                   setShowGray(true);
                   dispatch(
@@ -140,7 +142,8 @@ const Folder: React.FC<FolderProps> = ({
                   <button
                     parent-id={item.id}
                     typeof-item={item.type}
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setShowBlue(true);
                       setShowGray(false);
                       dispatch(setSelected({ id: item.id, type: item.type }));

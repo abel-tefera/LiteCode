@@ -176,14 +176,14 @@ const Structure = () => {
   const fileActions = {
     newFile: () => {
       setInputType("file");
-      dispatch(setContextSelectedForFileAction())
+      dispatch(setContextSelectedForFileAction());
       setClickedCurrent();
       createFileInput();
     },
 
     newFolder: () => {
       setInputType("folder");
-      dispatch(setContextSelectedForFileAction())
+      dispatch(setContextSelectedForFileAction());
       setClickedCurrent();
       createFileInput();
     },
@@ -369,6 +369,9 @@ const Structure = () => {
         typeof-item={"folder"}
         className="pl-1 pr-2 file-sys-container custom-scrollbar-2"
         ref={fileSysRef}
+        onClick={(e) => {
+          dispatch(setSelected({ id: "head", type: "folder" }));
+        }}
         onContextMenu={(e) => contextHandler(e)}
         // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
       >
@@ -390,7 +393,7 @@ const Structure = () => {
             <div
               id="welcome"
               parent-id={"head"}
-            typeof-item={"folder"}
+              typeof-item={"folder"}
               className="flex h-[40vh] items-center px-4 mx-auto"
             >
               <span

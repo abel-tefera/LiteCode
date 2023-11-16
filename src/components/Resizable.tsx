@@ -65,9 +65,9 @@ const Resizable: React.FC<ResizableProps> = ({
   // if (direction === "horizontal") {
   resizableProps = {
     axis: "x",
-    className: `${!haveWidthAdjusted && "rezisable"}`,
+    className: `${haveWidthAdjusted && "rezisable"}`,
     width: resizableWidth,
-    height: innerHeight * 0.783,
+    height: innerHeight * 0.642,
     // lockAspectRatio: true,
     resizeHandles: ["e"],
     minConstraints: [innerWidth * minRatio, Infinity],

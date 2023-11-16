@@ -4,10 +4,6 @@ import { ValidExtensions, validExtensions } from "../../state/features/structure
 import { getLogo } from "./StructureUtils";
 
 const newFileIcon = "new-file-logo";
-const jsLogo = "js-logo";
-const cssLogo = "css-logo";
-const mdLogo = "readme-logo";
-const jsxLogo = "jsx-logo";
 const errorIcon = "error-logo";
 const addFolderIcon = "closed-folder";
 const renameIcon = "rename-logo";

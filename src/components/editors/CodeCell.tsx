@@ -10,6 +10,8 @@ import throttle from "../../utils/throttle";
 import { updateFileContents } from "../../state/features/structure/structureSlice";
 import { idText } from "typescript";
 import { useTypedDispatch } from "../../state/hooks";
+import Tabs from "../menus/Tabs";
+import ProjectActions from "../menus/ProjectActions";
 
 interface CodeCellProps {
   // currentTab: string;
@@ -17,13 +19,12 @@ interface CodeCellProps {
 // import { Resizable } from "re-resizable";
 const CodeCell: React.FC<CodeCellProps> = () => {
   const [input, setInput] = useState("");
-  const [currentEditorId, setCurrentEditorId] = useState('');
+  const [currentEditorId, setCurrentEditorId] = useState("");
   const [code, setCode] = useState("");
   const [err, setErr] = useState("");
   const [direction, setDirection] = useState<
     "horizontal" | "vertical" | null
   >();
-  const [widthAdjusted, setWidthAdjusted] = useState(0);
 
   const esbuildRef = useRef<any>(null);
   const dispatch = useTypedDispatch();
@@ -71,7 +72,7 @@ const CodeCell: React.FC<CodeCellProps> = () => {
   }, [input]);
 
   const onEditorChange = (id: string, value: string) => {
-    if (currentEditorId !== id){
+    if (currentEditorId !== id) {
       setCurrentEditorId(id);
     }
     setInput(value);
@@ -89,12 +90,19 @@ const CodeCell: React.FC<CodeCellProps> = () => {
           // setCodeCellWidth(width);
         }}
       >
-        <CodeEditor
-          initialValue="console.log(123);"
-          onChange={onEditorChange}
-        />
+        <div className="flex flex-col w-full h-full">
+          <Tabs />
+
+          <CodeEditor
+            initialValue="console.log(123);"
+            onChange={onEditorChange}
+          />
+        </div>
       </Resizable>
-      <CodePreview code={code} err={err} />
+      <div className="flex flex-col w-full h-full">
+        <ProjectActions />
+        <CodePreview code={code} err={err} />
+      </div>
     </div>
   );
 };

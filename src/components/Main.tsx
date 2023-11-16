@@ -53,8 +53,6 @@ const Main = () => {
       </div>
 
       <div className="w-full h-full flex flex-col">
-        <Tabs />
-
         {tabs.length > 0 && <CodeCell />}
       </div>
     </div>
