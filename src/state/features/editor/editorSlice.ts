@@ -2,11 +2,12 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import { FileStructure } from "../structure/structureSlice";
 
+type KnownLanguages = "javascript" | "typescript" | "css" | "html" | "json";
 type EditorData = {
   id: string;
-  language: string;
+  language: KnownLanguages;
   line: number;
-  initialValue: string;
+  content: string;
 };
 
 interface EditorSlice {
@@ -19,9 +20,9 @@ const initialState: EditorSlice = {
   activeEditors: [],
   currentEditor: {
     id: "",
-    language: "",
+    language: "javascript",
     line: 1,
-    initialValue: "",
+    content: "",
   },
   editorWidthAdjusted: 0,
 };
@@ -52,11 +53,26 @@ export const editorSlice = createSlice({
     builder.addCase(setActiveEditorAsync.fulfilled, (state, action) => {
       const file = action.payload.file;
       if (file.id !== state.currentEditor.id){
+        let language;
+        switch (file.extension) {
+          case "js":
+            language = "javascript";
+            break;
+          case "ts":
+            language = "typescript";
+            break;
+          case "css":
+            language = "css";
+            break;
+          default:
+            language = "javascript";
+            break;
+        }
         state.currentEditor = {
           id: file.id,
-          language: file.extension,
+          language: language as KnownLanguages,
           line: 1,
-          initialValue: file.content,
+          content: file.content,
         };
         state.activeEditors = [...state.activeEditors, state.currentEditor];
       } 

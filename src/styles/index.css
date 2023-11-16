@@ -163,6 +163,10 @@ body {
     background-image: url("../assets/rename.svg");
 }
 
+.typescript-logo {
+    background-image: url("../assets/typescript.svg");
+}
+
 /* iframe#webpack-dev-server-client-overlay {
     display: none !important
 } */

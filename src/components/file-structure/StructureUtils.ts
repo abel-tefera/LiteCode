@@ -40,6 +40,10 @@ const getLogo = (fileType: string) => {
     case "md":
       logo = "readme-logo";
       break;
+    case "ts":
+    case "tsx":
+      logo = "typescript-logo";
+      break;
     default:
       logo = "file-logo";
       break;

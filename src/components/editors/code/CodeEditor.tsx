@@ -8,6 +8,28 @@ import { getCurrentEditor } from "../../../state/features/editor/editorSlice";
 // import parserBabel from "prettier/plugins/babel";
 // import * as prettierPluginEstree from "prettier/plugins/estree";
 
+const options = {
+  autoIndent: "full",
+  contextmenu: true,
+  fontFamily: "monospace",
+  fontSize: 13,
+  lineHeight: 24,
+  hideCursorInOverviewRuler: true,
+  matchBrackets: "always",
+  minimap: {
+    enabled: true,
+  },
+  scrollbar: {
+    horizontalSliderSize: 4,
+    verticalSliderSize: 18,
+  },
+  selectOnLineNumbers: true,
+  roundedSelection: false,
+  readOnly: false,
+  cursorStyle: "line",
+  automaticLayout: true,
+};
+
 type Monaco = typeof monaco;
 
 interface CodeEditorProps {
@@ -22,6 +44,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
   const handleEditorDidMount = useCallback(
     async (editor: editor.IStandaloneCodeEditor, monacoEditor: Monaco) => {
       editorRef.current = editor;
+      console.log("EDITORDIDMOUNT", editor, monacoEditor);
     },
     []
   );
@@ -49,10 +72,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
         Format
       </button> */}
       <MonacoEditor
-        
-        defaultValue={editorData.initialValue}
+        path={editorData.id}
+        // defaultLanguage={editorData.language}
+        // defaultValue={editorData.value}
         theme="vs-dark"
-        defaultLanguage={editorData.language}
+        language={editorData.language}
+        value={editorData.content}
         height={"100%"}
         options={{
           // wordWrap: "on",
@@ -67,6 +92,30 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
         }}
         onChange={onChange}
         onMount={handleEditorDidMount}
+        beforeMount={(monaco) => {
+          console.log("BEFOREMOUNT", monaco);
+          monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+            target: monaco.languages.typescript.ScriptTarget.ES2016,
+            allowNonTsExtensions: true,
+          });
+          monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+            target: monaco.languages.typescript.ScriptTarget.ES2016,
+            allowNonTsExtensions: true,
+          });
+          monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+            noSemanticValidation: false,
+            noSyntaxValidation: false,
+          });
+          monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+            noSemanticValidation: false,
+            noSyntaxValidation: false,
+          });
+          monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
+          // monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+        }}
+        onValidate={(markers) => {
+          console.log("ONVALIDATE", markers);
+        }}
       />
     </div>
   );

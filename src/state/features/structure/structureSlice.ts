@@ -12,8 +12,9 @@ import { findSortable } from "./utils/sorting";
 
 export type ItemType = "file" | "folder";
 
-export type ValidExtensions = "js" | "jsx" | "css" | "md";
+export type ValidExtensions = "js" | "jsx" | "css" | "md" | "ts" | "tsx";
 
+export const validExtensions = ["js", "jsx", "css", "md", "ts", "tsx"];
 export type FileStructure = {
   id: string;
   name: string;

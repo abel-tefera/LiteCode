@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import useOutsideAlerter from "../../hooks/useOutsideAlerter";
+import { ValidExtensions, validExtensions } from "../../state/features/structure/structureSlice";
+import { getLogo } from "./StructureUtils";
 
 const newFileIcon = "new-file-logo";
 const jsLogo = "js-logo";
@@ -125,10 +127,10 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
     // console.log(isValid, matches, isLns);
     if (matches && isLns) {
-      const validFiles = ["js", "jsx", "css", "md"];
+      const validFiles = validExtensions as ValidExtensions[];
 
       const filename = matches[1];
-      const ext = matches[2];
+      const ext = matches[2] as ValidExtensions;
       setExtension(ext);
       if (isValid && isLns && validFiles.includes(ext)) {
         for (let { wholeName: name, type } of existingItems) {
@@ -145,20 +147,8 @@ const CustomInput: React.FC<CustomInputProps> = ({
             return;
           }
         }
-        switch (ext) {
-          case "js":
-            setLogo(jsLogo);
-            break;
-          case "css":
-            setLogo(cssLogo);
-            break;
-          case "jsx":
-            setLogo(jsxLogo);
-            break;
-          case "md":
-            setLogo(mdLogo);
-            break;
-        }
+        setLogo(getLogo(ext));
+
         setError(false);
         setErrorMessage("");
       } else if (extension !== "" || !isValid) {
