@@ -6,6 +6,7 @@ import {
   FileInFolder,
   ItemType,
   getInitialSet,
+  setContextSelectedForFileAction,
   setSelected,
 } from "../../state/features/structure/structureSlice";
 import Folder from "./Folder";
@@ -60,6 +61,8 @@ const Structure = () => {
   const allFileIds = useTypedSelector(fileIds);
   const allFolderIds = useTypedSelector(folderIds);
   const currentItems = useTypedSelector(getCurrentItems);
+  const [showBlue, setShowBlue] = useState(true);
+  const [showGray, setShowGray] = useState(true);
 
   const [showContext, setShowContext] = useState(false);
   const [selectedType, setSelectedType] = useState<
@@ -173,12 +176,14 @@ const Structure = () => {
   const fileActions = {
     newFile: () => {
       setInputType("file");
+      dispatch(setContextSelectedForFileAction())
       setClickedCurrent();
       createFileInput();
     },
 
     newFolder: () => {
       setInputType("folder");
+      dispatch(setContextSelectedForFileAction())
       setClickedCurrent();
       createFileInput();
     },
@@ -299,14 +304,14 @@ const Structure = () => {
 
     clickedRef.current = item as HTMLElement;
 
-    if (e.clientY > 300) {
+    if (e.clientY > 335) {
       setPoints({
-        x: e.clientY - 265,
+        x: e.clientY - 310,
         y: e.clientX,
       });
     } else {
       setPoints({
-        x: e.clientY,
+        x: e.clientY - 70,
         y: e.clientX,
       });
     }
@@ -345,9 +350,14 @@ const Structure = () => {
 
   useOutsideAlerter(structureRef, () => {
     if (selectedI !== "head") {
-      dispatch(setSelected({ id: "head", type: "folder" }));
+      setShowBlue(false);
+      setShowGray(false);
     }
   });
+
+  useEffect(() => {
+    setShowBlue(true);
+  }, [selectedI]);
 
   return (
     <div id="file-system">
@@ -368,13 +378,19 @@ const Structure = () => {
           ref={structureRef}
           className="content flex items-center"
         >
-          <Folder data={structureData as (Directory | FileInFolder)[]} />
+          <Folder
+            data={structureData as (Directory | FileInFolder)[]}
+            showBlue={showBlue}
+            setShowBlue={setShowBlue}
+            showGray={showGray}
+            setShowGray={setShowGray}
+          />
 
           {allFileIds.length === 0 && allFolderIds.length === 1 && (
             <div
               id="welcome"
               parent-id={"head"}
-              typeof-item={"folder"}
+            typeof-item={"folder"}
               className="flex h-[40vh] items-center px-4 mx-auto"
             >
               <span

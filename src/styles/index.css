@@ -78,6 +78,10 @@ body {
     position: relative;
 }
 
+.bg-vscode-overlay > * {
+    z-index: 1;
+}
+
 .bg-vscode-overlay::before {
     content: "";
     position: absolute;
@@ -87,7 +91,6 @@ body {
     opacity: 0.6;
     width: 100%;
     height: 100%;
-    z-index: -1;
     border-top-right-radius: 0.125rem/* 2px */;
     border-bottom-right-radius: 0.125rem/* 2px */;
 }

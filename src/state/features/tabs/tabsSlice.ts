@@ -1,4 +1,9 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  PayloadAction,
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import { FileStructure, Normalized } from "../structure/structureSlice";
 
@@ -106,26 +111,34 @@ export const { closeTab, selectTab } = tabsSlice.actions;
 
 export default tabsSlice.reducer;
 
-export const activeTabs = (state: RootState) => {
-  return state.tabs.open.map((tab) => {
-    const item = state.structure.normalized.files.byId[tab.id];
-    return {
-      ...tab,
-      extension: item.extension,
-      wholeName: `${item.name}.${item.extension}`,
-    };
-  });
-};
-
-export const selectedTab = (state: RootState) => {
-  return state.tabs.open
-    .map((tab) => {
-      const item = state.structure.normalized.files.byId[tab.id];
+export const activeTabs = createSelector(
+  (state: RootState) => state.structure.normalized,
+  (state: RootState) => state.tabs.open,
+  (normalized: Normalized, openTabs: Tab[]) => {
+    return openTabs.map((tab) => {
+      const item = normalized.files.byId[tab.id];
       return {
         ...tab,
         extension: item.extension,
         wholeName: `${item.name}.${item.extension}`,
       };
-    })
-    .find(({ isSelected }) => isSelected)?.id;
-};
+    });
+  }
+);
+
+export const selectedTab = createSelector(
+  (state: RootState) => state.structure.normalized,
+  (state: RootState) => state.tabs.open,
+  (normalized: Normalized, openTabs: Tab[]) => {
+    return openTabs
+      .map((tab) => {
+        const item = normalized.files.byId[tab.id];
+        return {
+          ...tab,
+          extension: item.extension,
+          wholeName: `${item.name}.${item.extension}`,
+        };
+      })
+      .find(({ isSelected }) => isSelected)?.id;
+  }
+);

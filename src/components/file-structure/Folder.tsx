@@ -20,9 +20,19 @@ import { setActiveEditorAsync } from "../../state/features/editor/editorSlice";
 
 interface FolderProps {
   data: (Directory | FileInFolder)[];
+  showBlue: boolean;
+  setShowBlue: React.Dispatch<React.SetStateAction<boolean>>;
+  showGray: boolean;
+  setShowGray: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Folder: React.FC<FolderProps> = ({ data }) => {
+const Folder: React.FC<FolderProps> = ({
+  data,
+  showBlue,
+  setShowBlue,
+  showGray,
+  setShowGray,
+}) => {
   const dispatch = useTypedDispatch();
   const selected = useTypedSelector(selectedItem);
   const contextSelected = useTypedSelector(contextSelectedItem);
@@ -46,14 +56,14 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
     <div className={`${children.length > 0 && "w-full"}`}>
       {children.map((item) => {
         return (
-          <div key={item.id} className={`flex flex-col`}>
+          <div key={item.id} className={`flex flex-col select-none`}>
             <div
               id={item.id}
               typeof-item={item.type}
               className={`transition-colors flex flex-row hover:cursor-pointer rounded-r-sms clickable hover:bg-dark-hover rounded-r-sm justify-between  ${
-                selected === item.id
+                selected === item.id && showBlue
                   ? "bg-vscode-overlay hover:bg-vscode-blue"
-                  : contextSelected === item.id
+                  : contextSelected === item.id && showGray
                   ? "bg-slate-700 hover:bg-slate-600"
                   : ""
               }  ${
@@ -63,6 +73,8 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
               <div
                 onClick={() => {
                   dispatch(setSelected({ id: item.id, type: item.type }));
+                  setShowBlue(true);
+                  setShowGray(false);
                   if (item.type === "file") {
                     // @ts-ignore
                     dispatch(setActiveTabAsync(item.id));
@@ -101,17 +113,19 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
               <button
                 typeof-item={item.type}
                 parent-id={item.id}
-                onClick={(e) =>
+                onClick={(e) => {
+                  setShowBlue(false);
+                  setShowGray(true);
                   dispatch(
                     contextClick({
                       id: item.id,
                       type: item.type,
                       threeDot: { x: e.clientY, y: e.clientX },
                     })
-                  )
-                }
+                  );
+                }}
                 className={`three-dots px-2 transition-opacity rounded-r-sm ${
-                  selected === item.id
+                  selected === item.id && showBlue
                     ? "hover:bg-blue-400"
                     : "hover:bg-slate-500"
                 }`}
@@ -127,6 +141,8 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
                     parent-id={item.id}
                     typeof-item={item.type}
                     onClick={() => {
+                      setShowBlue(true);
+                      setShowGray(false);
                       dispatch(setSelected({ id: item.id, type: item.type }));
                       dispatch(
                         collapseOrExpand({
@@ -144,6 +160,10 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
                       });
                       return childFolder?.subFoldersAndFiles as Directory[];
                     })()}
+                    showBlue={showBlue}
+                    setShowBlue={setShowBlue}
+                    showGray={showGray}
+                    setShowGray={setShowGray}
                   />
                 </div>
               )}

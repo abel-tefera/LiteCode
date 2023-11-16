@@ -1,4 +1,8 @@
-import { createDraftSafeSelector, createSlice } from "@reduxjs/toolkit";
+import {
+  createDraftSafeSelector,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 import { v4 as uuidv4 } from "uuid";
@@ -338,9 +342,13 @@ export const structureSlice = createSlice({
       // });
     },
 
-    updateFileContents: (state, action: PayloadAction<{id: string, value: string}>) => {
-      console.log("FREQUENCY")
-      state.normalized.files.byId[action.payload.id].content = action.payload.value;
+    updateFileContents: (
+      state,
+      action: PayloadAction<{ id: string; value: string }>
+    ) => {
+      console.log("FREQUENCY");
+      state.normalized.files.byId[action.payload.id].content =
+        action.payload.value;
     },
 
     // normalizeState: (state) => {
@@ -435,18 +443,11 @@ export const structureSlice = createSlice({
 
       if (state.toCopy.isCut === true) {
         if (state.toCopy.type === "folder") {
-          const { childrenIds: children } = dfs(
-            state.toCopy.subFoldersAndFiles,
-            () => {},
-            state.toCopy.subFoldersAndFiles.map(({ id }) => id)
-          );
-          const recursiveCut = children.filter(
-            (id) => id === state.contextSelected.id
-          );
-          if (
-            recursiveCut.length > 0 ||
-            state.toCopy.id === state.contextSelected.id
-          ) {
+          const recursiveCut = state.normalized.folders.byId[
+            state.contextSelected.id
+          ].path.includes(state.toCopy.id);
+
+          if (recursiveCut || state.toCopy.id === state.contextSelected.id) {
             state.toCopy = null;
             return;
           }
@@ -561,7 +562,8 @@ export const structureSlice = createSlice({
 
       const actionOnChildren = (newNode: Directory) => {
         if (state.toCopy?.type === "folder") {
-          const toCopyFolderPath = state.normalized.folders.byId[newNode.id].path;
+          const toCopyFolderPath =
+            state.normalized.folders.byId[newNode.id].path;
           dfs(
             newNode.subFoldersAndFiles as Directory[],
             (item, parentIds) => {
@@ -692,14 +694,28 @@ export const structureSlice = createSlice({
           `${action.payload.type}s` as keyof typeof state.normalized
         ].byId[action.payload.id];
       if (state.selected !== item.id) {
-        if (item.id === state.initialFolder.id) {
-          state.contextSelected = {
-            id: state.initialFolder.id,
-            type: "folder",
-            e: false,
-          };
-        }
+        // state.contextSelected = {
+        //   id: state.initialFolder.id,
+        //   type: "folder",
+        //   e: false,
+        // };
         state.selected = action.payload.id;
+      }
+    },
+    setContextSelectedForFileAction: (state) => {
+      const selectedItem = state.selected;
+      if (state.normalized.files.allIds.includes(selectedItem)) {
+        state.contextSelected = {
+          id: state.initialFolder.id,
+          type: "folder",
+          e: false,
+        };
+      } else {
+        state.contextSelected = {
+          id: state.selected,
+          type: "folder",
+          e: false,
+        };
       }
     },
 
@@ -889,37 +905,42 @@ export const clipboard = (state: RootState) => state.structure.toCopy;
 //   return folder.children;
 // };
 
-export const getItem = (state: RootState) => {
-  if (!state.structure.contextSelected)
-    return { id: undefined, name: undefined };
-  const item =
-    state.structure.normalized[`${state.structure.contextSelected.type}s`].byId[
-      state.structure.contextSelected.id
-    ];
-  if (item.type === "file") {
-    return {
-      id: item.id,
-      name: item.name,
-      type: item.type,
-      extension: item.extension,
-    };
-  } else {
-    return {
-      id: item.id,
-      name: item.name,
-      type: item.type,
-    };
+export const getItem = createSelector(
+  (state: RootState) => state.structure.contextSelected,
+  (state: RootState) => state.structure.normalized,
+  (contextSelected: ContextSelected, normalized: Normalized) => {
+    if (!contextSelected) return { id: undefined, name: undefined };
+    const item =
+      normalized[`${contextSelected.type}s`].byId[contextSelected.id];
+    if (item.type === "file") {
+      return {
+        id: item.id,
+        name: item.name,
+        type: item.type,
+        extension: item.extension,
+      };
+    } else {
+      return {
+        id: item.id,
+        name: item.name,
+        type: item.type,
+      };
+    }
   }
-};
+);
 
-export const getCurrentItems = (state: RootState) => {
-  if (!state.structure.normalized || !state.structure.parentItemId) return [];
-  return state.structure.normalized.folders.byId[
-    `${state.structure.parentItemId}`
-  ].childrenFlat.map(({ id, type }) => {
-    return state.structure.normalized[`${type}s`].byId[id];
-  });
-};
+export const getCurrentItems = createSelector(
+  (state: RootState) => state.structure.normalized,
+  (state: RootState) => state.structure.parentItemId,
+  (normalized: Normalized, parentItemId: string) => {
+    if (!normalized || !parentItemId) return [];
+    return normalized.folders.byId[`${parentItemId}`].childrenFlat.map(
+      ({ id, type }) => {
+        return normalized[`${type}s`].byId[id];
+      }
+    );
+  }
+);
 
 export const {
   addNode,
@@ -933,6 +954,7 @@ export const {
   setToCopy,
   copyNode,
   setParentItemId,
+  setContextSelectedForFileAction,
 } = structureSlice.actions;
 
 export default structureSlice.reducer;

@@ -184,7 +184,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   };
 
   const validateFolder = () => {
-    const regex = /^[\w\s ']{1,}$/g;
+    const regex = /^[a-zA-Z0-9_-\s]+$/;
     const isValid = value.match(regex);
 
     if (isValid || value === "") {
@@ -280,7 +280,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           {error && errorMessage !== "" && (
             <div
               ref={errorRef}
-              className={`w-fit select-none absolute flex items-start p-1 border border-red-500 bg-red-900 text-sm ${
+              className={`w-fit select-none absolute flex items-start p-1 outline outline-red-500 bg-red-900 text-sm ${
                 position !== "top" ? "top-7" : "bottom-7"
               }`}
             >
