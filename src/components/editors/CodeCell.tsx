@@ -58,8 +58,9 @@ const CodeCell: React.FC<CodeCellProps> = () => {
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (!esbuildRef.current) return;
+      if (input === "") return;
       dispatch(updateFileContents({ id: currentEditorId, value: input }));
-      const resCode = await bundle(esbuildRef, input);
+      const resCode = await bundle(esbuildRef);
       setCode(resCode.code);
       setErr(resCode.err);
     }, 1000);
@@ -93,7 +94,7 @@ const CodeCell: React.FC<CodeCellProps> = () => {
           onChange={onEditorChange}
         />
       </Resizable>
-      {/* <CodePreview code={code} err={err} /> */}
+      <CodePreview code={code} err={err} />
     </div>
   );
 };

@@ -6,28 +6,31 @@ const packageCache = localforage.createInstance({
   name: "packcagecache",
 });
 
-export const fetchPlugin = (code: string) => {
+export const fetchPlugin = (tree: Record<string, string>) => {
+  const map = new Map(Object.entries(tree));
   return {
     name: "fetch-plugin",
     setup(build: esbuild.PluginBuild) {
-      build.onLoad({ filter: /^index\.js$/ }, () => {
+      build.onLoad({ filter: /^index\.js$/ }, (args: esbuild.OnLoadArgs) => {
+        console.log("FETCH INDEX", args);
         return {
           loader: "jsx",
-          contents: code,
+          contents: 'code',
         };
       });
 
       build.onLoad({ filter: /.*/ }, async (args: any) => {
+        console.log("DOT SLASH checking if cache");
         const cachedResult = await packageCache.getItem<esbuild.OnLoadResult>(
           args.path
         );
-
         if (cachedResult) {
           return cachedResult;
         }
       });
 
       build.onLoad({ filter: /.css$/ }, async (args: any) => {
+        console.log("css importing unpkg");
         const { data, request } = await axios.get(args.path);
 
         const escaped = data
@@ -52,6 +55,7 @@ export const fetchPlugin = (code: string) => {
       });
 
       build.onLoad({ filter: /.*/ }, async (args: any) => {
+        console.log("DOT SLASH importing unpkg");
         const { data, request } = await axios.get(args.path);
 
         const res: esbuild.OnLoadResult = {
