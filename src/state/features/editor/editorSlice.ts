@@ -8,6 +8,7 @@ type EditorData = {
   language: KnownLanguages;
   line: number;
   content: string;
+  path: string[];
 };
 
 interface EditorSlice {
@@ -23,16 +24,21 @@ const initialState: EditorSlice = {
     language: "javascript",
     line: 1,
     content: "",
+    path: []
   },
   editorWidthAdjusted: 0,
 };
 
 export const setActiveEditorAsync = createAsyncThunk(
   "setActiveEditorAsync",
-  async (id, { getState }) => {
+  async (id, { getState, fulfillWithValue }) => {
+
     // @ts-ignore
     const file = getState().structure.normalized.files.byId[id];
-    return { file: file as FileStructure };
+    // @ts-ignore
+    const actualPath = file.path.filter((id) => id !== "/" && id !== "head").map((id) => getState().structure.normalized.folders.byId[id].name)
+    actualPath.push(`${file.name}.${file.extension}`)
+    return { file: file as FileStructure, actualPath: actualPath };
   }
 );
 
@@ -52,6 +58,7 @@ export const editorSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(setActiveEditorAsync.fulfilled, (state, action) => {
       const file = action.payload.file;
+      const actualPath = action.payload.actualPath;
       if (file.id !== state.currentEditor.id){
         let language;
         switch (file.extension) {
@@ -73,6 +80,7 @@ export const editorSlice = createSlice({
           language: language as KnownLanguages,
           line: 1,
           content: file.content,
+          path: actualPath
         };
         state.activeEditors = [...state.activeEditors, state.currentEditor];
       } 

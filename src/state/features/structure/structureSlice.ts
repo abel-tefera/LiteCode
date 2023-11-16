@@ -21,6 +21,7 @@ export type FileStructure = {
   type: "file";
   content: string;
   extension: ValidExtensions;
+  path: string[];
 };
 
 export type NormalizedFolder = {
@@ -29,6 +30,7 @@ export type NormalizedFolder = {
   type: "folder";
   collapsed: boolean;
   childrenFlat: Identifier[];
+  path: string[];
   // childrenIdsAndType: FileStructure[] | FolderStructure[];
 };
 
@@ -40,6 +42,7 @@ type FileOrFolder = {
   childrenFlat?: Identifier[];
   content?: string;
   extension?: ValidExtensions;
+  path?: string[] | undefined;
 };
 
 type Identifier = {
@@ -113,6 +116,7 @@ const initialState: FileSystem = {
           type: "folder",
           collapsed: false,
           childrenFlat: [],
+          path: ["/"],
         },
       },
       allIds: ["head"],
@@ -203,6 +207,11 @@ export const structureSlice = createSlice({
         newChild.id,
       ];
 
+      structureSlice.caseReducers.setPath(state, {
+        payload: newChild.id,
+        type: "",
+      });
+
       structureSlice.caseReducers.sortStructure(state, {
         payload: { id: state.contextSelected.id },
         type: "",
@@ -225,7 +234,8 @@ export const structureSlice = createSlice({
       dfsNodeAction(
         state.initialFolder.childrenIdsAndType as Directory[],
         id as string,
-        (item, parent) => {
+        (item, parents) => {
+          const parent = parents[parents.length - 1];
           parent.childrenIdsAndType = parent.childrenIdsAndType.filter(
             ({ id }) => {
               return id !== item.id;
@@ -292,7 +302,8 @@ export const structureSlice = createSlice({
       dfsNodeAction(
         state.initialFolder.childrenIdsAndType as Directory[],
         state.contextSelected.id,
-        (_, parent) => {
+        (_, parents) => {
+          const parent = parents[parents.length - 1];
           // item.name = action.payload.value;
           parentId = parent.id;
           return;
@@ -392,12 +403,12 @@ export const structureSlice = createSlice({
       if (!state.toCopy) return;
       const dfs = (
         node: Directory[],
-        callback: (item: Directory, parentId: string) => void,
+        callback: (item: Directory | FileInFolder, parentIds: string[]) => void,
         childrenIds: string[] = [],
-        parentIds: string[] = ["head"]
+        parentIds: string[] = [state.initialFolder.id]
       ) => {
         for (let item of node) {
-          callback(item, parentIds[parentIds.length - 1]);
+          callback(item, parentIds);
           // if (item.collapsed !== undefined) {
           //   item.collapsed = true;
           // }
@@ -414,12 +425,12 @@ export const structureSlice = createSlice({
             parentIds.pop();
           }
         }
-        return childrenIds;
+        return { childrenIds, parentIds };
       };
 
       if (state.toCopy.isCut === true) {
         if (state.toCopy.type === "folder") {
-          const children = dfs(
+          const { childrenIds: children } = dfs(
             state.toCopy.childrenIdsAndType,
             () => {},
             state.toCopy.childrenIdsAndType.map(({ id }) => id)
@@ -455,8 +466,10 @@ export const structureSlice = createSlice({
         //   ? state.toCopy.childrenIdsAndType
         //   : undefined,
         id: `${state.toCopy.type}-${uuidv4()}`,
+
         wholeName:
           item.type === "file" ? `${item.name}.${item.extension}` : item.name,
+        // path: item.type === "file" ? [] : "",
       };
 
       const knownNames = state.normalized.folders.byId[
@@ -520,6 +533,7 @@ export const structureSlice = createSlice({
           type: "folder",
           collapsed: false,
           childrenFlat: newNode.childrenFlat,
+          path: [] as string[],
         };
       } else {
         state.normalized.files.byId[newNode.id] = {
@@ -528,6 +542,7 @@ export const structureSlice = createSlice({
           type: "file",
           extension: newNode.extension as ValidExtensions,
           content: newNode.content,
+          path: [] as string[],
         };
       }
       // state.normalized[`${newNode.type}s`].byId[newNode.id] = {
@@ -541,13 +556,17 @@ export const structureSlice = createSlice({
 
       const actionOnChildren = (newNode: Directory) => {
         if (state.toCopy?.type === "folder") {
+          const toCopyFolderPath = state.normalized.folders.byId[newNode.id].path;
           dfs(
             newNode.childrenIdsAndType as Directory[],
-            (item, parentId) => {
+            (item, parentIds) => {
+              const parentId = parentIds[parentIds.length - 1];
               const newItem = {
                 ...state.normalized[`${item.type}s`].byId[item.id],
               };
               newItem.id = `${newItem.type}-${uuidv4()}`;
+              newItem.path = [...toCopyFolderPath, ...parentIds];
+
               state.normalized[`${newItem.type}s`].byId[newItem.id] = newItem;
               state.normalized[`${newItem.type}s`].allIds = [
                 ...state.normalized[`${newItem.type}s`].allIds,
@@ -572,7 +591,15 @@ export const structureSlice = createSlice({
         return newNode;
       };
 
+      const inputTypeForNormalized =
+        `${newNode.type}s` as keyof typeof state.normalized;
+
       if (state.contextSelected.id === state.initialFolder.id) {
+        state.normalized[inputTypeForNormalized].byId[newNode.id].path = [
+          "/",
+          state.initialFolder.id,
+        ];
+
         const node = actionOnChildren(newNode as Directory);
         state.initialFolder.childrenIdsAndType = [
           ...state.initialFolder.childrenIdsAndType,
@@ -587,15 +614,30 @@ export const structureSlice = createSlice({
         dfsNodeAction(
           state.initialFolder.childrenIdsAndType as Directory[],
           state.contextSelected.id,
-          (parent) => {
+          (parent, beforeParents) => {
+            const parentPath = state.normalized.folders.byId[parent.id].path;
+            const parentsIds = [
+              ...beforeParents.map(({ id }) => id),
+              parent.id,
+            ];
+            state.normalized[inputTypeForNormalized].byId[newNode.id].path = [
+              "/",
+              ...parentsIds,
+            ];
             const node = actionOnChildren(newNode as Directory);
             parent.childrenIdsAndType = [
-              ...parent.childrenIdsAndType,
+              ...(parent.childrenIdsAndType as Directory[]),
               {
                 id: node.id,
                 type: node.type,
                 childrenIdsAndType: node.childrenIdsAndType,
               },
+            ];
+            const inputTypeForFetch =
+              `${newNode.type}s` as keyof typeof state.normalized;
+            state.normalized[inputTypeForFetch].byId[newNode.id].path = [
+              ...parentPath,
+              parent.id,
             ];
           },
           [state.initialFolder]
@@ -645,8 +687,12 @@ export const structureSlice = createSlice({
           `${action.payload.type}s` as keyof typeof state.normalized
         ].byId[action.payload.id];
       if (state.selected !== item.id) {
-        if (item.id === "head") {
-          state.contextSelected = { id: "head", type: "folder", e: false };
+        if (item.id === state.initialFolder.id) {
+          state.contextSelected = {
+            id: state.initialFolder.id,
+            type: "folder",
+            e: false,
+          };
         }
         state.selected = action.payload.id;
       }
@@ -717,7 +763,8 @@ export const structureSlice = createSlice({
         dfsNodeAction(
           state.initialFolder.childrenIdsAndType as Directory[],
           action.payload.id,
-          (toCopyFolder, parent) => {
+          (toCopyFolder, parents) => {
+            const parent = parents[parents.length - 1];
             newCopy.childrenIdsAndType =
               toCopyFolder.childrenIdsAndType as Directory[];
             newCopy.parentId = parent.id;
@@ -736,7 +783,8 @@ export const structureSlice = createSlice({
         dfsNodeAction(
           state.initialFolder.childrenIdsAndType as Directory[],
           state.contextSelected.id,
-          (_, parent) => {
+          (_, parents) => {
+            const parent = parents[parents.length - 1];
             parentId = parent.id;
             return;
           },
@@ -744,6 +792,25 @@ export const structureSlice = createSlice({
         );
         state.parentItemId = parentId;
       }
+    },
+    setPath: (state, action: PayloadAction<string>) => {
+      dfsNodeAction(
+        state.initialFolder.childrenIdsAndType as Directory[],
+        action.payload,
+        (item, parents) => {
+          const inputTypeForFetch =
+            `${item.type}s` as keyof typeof state.normalized;
+
+          const itemData = state.normalized[inputTypeForFetch].byId[item.id];
+          itemData.path = ["/", ...parents.map(({ id }) => id)];
+          // const filePath = parents
+          //   .map(({ id }) => state.normalized.folders.byId[id].name)
+          //   .join("/");
+          // fileData.path =
+          //   `${filePath}/${fileData.name}.${fileData.extension}`.split("/");
+        },
+        [state.initialFolder]
+      );
     },
     sortStructure: (state, action: PayloadAction<{ id: string }>) => {
       findSortable(

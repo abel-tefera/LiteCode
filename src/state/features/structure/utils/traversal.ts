@@ -19,23 +19,23 @@ const bfsNodeAction = (
 const dfsNodeAction = (
   structure: Directory[],
   id: string,
-  callback: (item: Directory, parent: Directory) => void,
-  parent: Directory[]
+  callback: (item: Directory | FileInFolder, parents: Directory[]) => void,
+  parents: Directory[]
 ) => {
   for (let item of structure) {
     if (item.id === id) {
-      return callback(item, parent[parent.length - 1]);
+      return callback(item, parents);
     } else if (item.type === "folder") {
-      parent.push(item);
+      parents.push(item);
       dfsNodeAction(
         item.childrenIdsAndType as Directory[],
         id,
         callback,
-        parent
+        parents
       );
     }
   }
-  parent.pop();
+  parents.pop();
 };
 
 export { dfsNodeAction, bfsNodeAction };

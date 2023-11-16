@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import MonacoEditor, { OnChange } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
@@ -71,6 +71,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
       >
         Format
       </button> */}
+      <div className="flex flex-row">
+        {editorData.path.map((path, i) => (
+          <div>
+            {path} {i !== editorData.path.length - 1 && "/"}{" "}
+          </div>
+        ))}
+      </div>
+
       <MonacoEditor
         path={editorData.id}
         // defaultLanguage={editorData.language}
@@ -110,7 +118,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
             noSemanticValidation: false,
             noSyntaxValidation: false,
           });
-          monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
+          monaco.languages.typescript.typescriptDefaults.setEagerModelSync(
+            true
+          );
           // monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
         }}
         onValidate={(markers) => {
