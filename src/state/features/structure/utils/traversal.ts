@@ -11,7 +11,7 @@ const bfsNodeAction = (
     if (currentItem.id === id) {
       return callback(currentItem);
     } else if (currentItem.type === "folder") {
-      queue.push(...currentItem.childrenIdsAndType);
+      queue.push(...currentItem.subFoldersAndFiles);
     }
   }
 };
@@ -28,7 +28,7 @@ const dfsNodeAction = (
     } else if (item.type === "folder") {
       parents.push(item);
       dfsNodeAction(
-        item.childrenIdsAndType as Directory[],
+        item.subFoldersAndFiles as Directory[],
         id,
         callback,
         parents

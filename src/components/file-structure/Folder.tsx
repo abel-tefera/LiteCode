@@ -142,7 +142,7 @@ const Folder: React.FC<FolderProps> = ({ data }) => {
                       const childFolder = data.find((newItem) => {
                         return newItem.id === item.id;
                       });
-                      return childFolder?.childrenIdsAndType as Directory[];
+                      return childFolder?.subFoldersAndFiles as Directory[];
                     })()}
                   />
                 </div>

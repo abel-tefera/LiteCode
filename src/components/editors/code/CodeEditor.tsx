@@ -4,6 +4,9 @@ import { editor } from "monaco-editor";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 import { useTypedSelector } from "../../../state/hooks";
 import { getCurrentEditor } from "../../../state/features/editor/editorSlice";
+import Breadcrumbs from "../navigation/Breadcrumbs";
+import { OnChange as MonacoOnChange } from "@monaco-editor/react";
+
 // import * as prettier from "prettier/standalone";
 // import parserBabel from "prettier/plugins/babel";
 // import * as prettierPluginEstree from "prettier/plugins/estree";
@@ -34,7 +37,7 @@ type Monaco = typeof monaco;
 
 interface CodeEditorProps {
   initialValue: string;
-  onChange: OnChange;
+  onChange: (value: string, id: string) => void;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
@@ -49,6 +52,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
     []
   );
 
+  const onChangeLocal: MonacoOnChange = (
+    value: string | undefined,
+    e: editor.IModelContentChangedEvent
+  ) => {
+    if (value) {
+      onChange(editorData.id, value);
+    }
+  };
   // const formatCode = async () => {
   //   if (!editorRef.current) return;
   //   const unformatted = editorRef.current.getValue();
@@ -71,13 +82,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
       >
         Format
       </button> */}
-      <div className="flex flex-row">
-        {editorData.path.map((path, i) => (
-          <div>
-            {path} {i !== editorData.path.length - 1 && "/"}{" "}
-          </div>
-        ))}
-      </div>
+      <Breadcrumbs editorPath={editorData.path} />
 
       <MonacoEditor
         path={editorData.id}
@@ -85,7 +90,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
         // defaultValue={editorData.value}
         theme="vs-dark"
         language={editorData.language}
-        value={editorData.content}
         height={"100%"}
         options={{
           // wordWrap: "on",
@@ -98,10 +102,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
           automaticLayout: true,
           tabSize: 2,
         }}
-        onChange={onChange}
+        onChange={onChangeLocal}
         onMount={handleEditorDidMount}
         beforeMount={(monaco) => {
-          console.log("BEFOREMOUNT", monaco);
           monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
             target: monaco.languages.typescript.ScriptTarget.ES2016,
             allowNonTsExtensions: true,

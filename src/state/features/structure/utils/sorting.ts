@@ -6,7 +6,7 @@ const findSortable = (structure: Directory, callback: (structure: Directory) => 
   } else if (structure.type === "folder"){
     callback(structure);
   }
-  const children = structure.childrenIdsAndType as Directory[];
+  const children = structure.subFoldersAndFiles as Directory[];
   for (let item of children) {
     if (item.type === "folder") {
       findSortable(item, callback, id);

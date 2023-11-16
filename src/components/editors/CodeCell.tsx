@@ -7,6 +7,9 @@ import CodePreview from "./code/CodePreview";
 import bundle from "../../bundler";
 import Resizable from "../Resizable";
 import throttle from "../../utils/throttle";
+import { updateFileContents } from "../../state/features/structure/structureSlice";
+import { idText } from "typescript";
+import { useTypedDispatch } from "../../state/hooks";
 
 interface CodeCellProps {
   // currentTab: string;
@@ -14,6 +17,7 @@ interface CodeCellProps {
 // import { Resizable } from "re-resizable";
 const CodeCell: React.FC<CodeCellProps> = () => {
   const [input, setInput] = useState("");
+  const [currentEditorId, setCurrentEditorId] = useState('');
   const [code, setCode] = useState("");
   const [err, setErr] = useState("");
   const [direction, setDirection] = useState<
@@ -22,6 +26,7 @@ const CodeCell: React.FC<CodeCellProps> = () => {
   const [widthAdjusted, setWidthAdjusted] = useState(0);
 
   const esbuildRef = useRef<any>(null);
+  const dispatch = useTypedDispatch();
 
   const findWidth = () => {
     const width = window.innerWidth;
@@ -53,6 +58,7 @@ const CodeCell: React.FC<CodeCellProps> = () => {
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (!esbuildRef.current) return;
+      dispatch(updateFileContents({ id: currentEditorId, value: input }));
       const resCode = await bundle(esbuildRef, input);
       setCode(resCode.code);
       setErr(resCode.err);
@@ -63,13 +69,11 @@ const CodeCell: React.FC<CodeCellProps> = () => {
     };
   }, [input]);
 
-  const onEditorChange: MonacoOnChange = (
-    value: string | undefined,
-    e: editor.IModelContentChangedEvent
-  ) => {
-    if (value) {
-      setInput(value);
+  const onEditorChange = (id: string, value: string) => {
+    if (currentEditorId !== id){
+      setCurrentEditorId(id);
     }
+    setInput(value);
   };
 
   return (
