@@ -689,11 +689,8 @@ export const structureSlice = createSlice({
         type: ItemType;
       }>
     ) => {
-      const item =
-        state.normalized[
-          `${action.payload.type}s` as keyof typeof state.normalized
-        ].byId[action.payload.id];
-      if (state.selected !== item.id) {
+      if (state.selected !== action.payload.id) {
+  
         state.contextSelected = {
           id: state.initialFolder.id,
           type: "folder",
@@ -904,6 +901,33 @@ export const clipboard = (state: RootState) => state.structure.toCopy;
 //   const folder = state.structure.normalized.folders.byId[id];
 //   return folder.children;
 // };
+
+export const contextSelectedObj = createSelector(
+  (state: RootState) => state.structure.contextSelected,
+  (state: RootState) => state.structure.normalized,
+  (contextSelected: ContextSelected, normalized: Normalized) => {
+    const item =
+      normalized[`${contextSelected?.type}s` as keyof typeof normalized].byId[
+        contextSelected?.id
+      ];
+
+    let wholeName = item.name;
+    if (item.type === "file") {
+      wholeName = `${item.name}.${item.extension}`;
+    }
+    const actualPath = `${item.path
+      .filter((id) => id !== "/" && id !== "head")
+      .map((id) => normalized.folders.byId[id].name)
+      .join("/")}/${wholeName}`;
+    return {
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      wholeName: wholeName,
+      actualPath: actualPath,
+    };
+  }
+);
 
 export const getItem = createSelector(
   (state: RootState) => state.structure.contextSelected,

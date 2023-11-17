@@ -94,7 +94,6 @@ const CodeCell: React.FC<CodeCellProps> = () => {
           <Tabs />
 
           <CodeEditor
-            initialValue="console.log(123);"
             onChange={onEditorChange}
           />
         </div>

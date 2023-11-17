@@ -29,6 +29,7 @@ import {
   setToCopy,
   copyNode,
   contextSelectedItemType,
+  contextSelectedObj,
   clipboard,
   folderIds,
   fileIds,
@@ -53,6 +54,7 @@ const Structure = () => {
 
   const structureData = useTypedSelector(getInitialSet);
   const contextSelectedE = useTypedSelector(contextSelectedEvent);
+  const contextSelectedItemProps = useTypedSelector(contextSelectedObj);
   const contextSelectedId = useTypedSelector(contextSelectedItem);
   const contextSelectedType = useTypedSelector(contextSelectedItemType);
   const selectedI = useTypedSelector(selectedItem);
@@ -410,8 +412,8 @@ const Structure = () => {
       {showDialog &&
         createPortal(
           <Dialog
-            title={`Delete ${selectedType}?`}
-            content={`Are you sure you want to delete this ${selectedType}? This action cannot be
+            title={`Delete the ${selectedType} ${contextSelectedItemProps.wholeName}?`}
+            content={`Are you sure you want to delete the ${selectedType} ${contextSelectedItemProps.actualPath}? This action cannot be
             undone.`}
             actionText={`Yes, delete ${selectedType}`}
             close={setShowDialog}

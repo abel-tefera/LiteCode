@@ -36,11 +36,10 @@ const options = {
 type Monaco = typeof monaco;
 
 interface CodeEditorProps {
-  initialValue: string;
   onChange: (value: string, id: string) => void;
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const editorData = useTypedSelector(getCurrentEditor);
 
@@ -75,7 +74,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
   // };
 
   return (
-    <div className="editor-wrapper">
+    <div className="editor-wrapper pl-2 pr-0">
       {/* <button
         onClick={formatCode}
         className="button button-format is-primary is-small"
@@ -86,8 +85,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialValue, onChange }) => {
 
       <MonacoEditor
         path={editorData.id}
-        // defaultLanguage={editorData.language}
-        // defaultValue={editorData.value}
+        defaultLanguage={editorData.language}
+        defaultValue={editorData.content}
         theme="vs-dark"
         language={editorData.language}
         height={"100%"}
