@@ -92,10 +92,7 @@ const CodeCell: React.FC<CodeCellProps> = () => {
       >
         <div className="flex flex-col w-full h-full">
           <Tabs />
-
-          <CodeEditor
-            onChange={onEditorChange}
-          />
+          <CodeEditor onChange={onEditorChange} />
         </div>
       </Resizable>
       <div className="flex flex-col w-full h-full">

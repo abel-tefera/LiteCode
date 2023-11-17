@@ -1,9 +1,21 @@
 import {
   FileStructure,
   NormalizedFolder,
+  ValidExtensions,
 } from "../../state/features/structure/structureSlice";
 
-const trimName = (item: NormalizedFolder | FileStructure) => {
+const trimName = (
+  item:
+    | {
+        name: string;
+        type: "folder";
+      }
+    | {
+        name: string;
+        type: "file";
+        extension: ValidExtensions;
+      }
+) => {
   let newName = "";
   if (item.type === "file") {
     const fullName = `${item.name}.${item.extension}`;

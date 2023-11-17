@@ -1,5 +1,6 @@
 import { configureStore, createListenerMiddleware } from "@reduxjs/toolkit";
 import structureReducer from "./features/structure/structureSlice";
+import miniStructureReducer from "./features/structure/miniStructureSlice";
 import editorReducer from "./features/editor/editorSlice";
 import tabsReducer, {closeTab} from "./features/tabs/tabsSlice";
 // import { listenerMiddleware } from "./middleware/sendNormalized";
@@ -10,6 +11,7 @@ export const store = configureStore({
     structure: structureReducer,
     editor: editorReducer,
     tabs: tabsReducer,
+    miniStructure: miniStructureReducer,
   },
    middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware(),

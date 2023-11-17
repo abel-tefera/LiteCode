@@ -8,7 +8,7 @@ const TextEditor: React.FC = () => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <button onClick={() => setEditing(!editing)}>
+      <button type="button" onClick={() => setEditing(!editing)}>
         {editing ? "Preview" : "Edit"}
       </button>
 

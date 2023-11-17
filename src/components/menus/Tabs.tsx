@@ -15,13 +15,11 @@ const Tabs = () => {
   const onSelect = (id: string) => {
     // alert(`Tab ${i} selected`);
     dispatch(selectTab(id));
-    // @ts-ignore
     dispatch(setActiveEditorAsync(id))
     
   };
 
   const onClose = (id: string) => {
-    // @ts-ignore
     dispatch(removeActiveEditor(id))
 
     dispatch(closeTab(id));

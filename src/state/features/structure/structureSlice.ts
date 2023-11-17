@@ -1,12 +1,8 @@
-import {
-  createDraftSafeSelector,
-  createSelector,
-  createSlice,
-} from "@reduxjs/toolkit";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../../store";
 import { v4 as uuidv4 } from "uuid";
-import { bfsNodeAction, dfsNodeAction } from "./utils/traversal";
+import { bfsNodeAction, dfsCbOnEach, dfsNodeAction } from "./utils/traversal";
 import { findSortable } from "./utils/sorting";
 
 // type NestedRecord<T extends any[]>
@@ -49,7 +45,7 @@ type FileOrFolder = {
   path?: string[] | undefined;
 };
 
-type Identifier = {
+export type Identifier = {
   id: string;
   type: ItemType;
 };
@@ -414,32 +410,6 @@ export const structureSlice = createSlice({
 
     copyNode: (state) => {
       if (!state.toCopy) return;
-      const dfs = (
-        node: Directory[],
-        callback: (item: Directory | FileInFolder, parentIds: string[]) => void,
-        childrenIds: string[] = [],
-        parentIds: string[] = [state.initialFolder.id]
-      ) => {
-        for (let item of node) {
-          callback(item, parentIds);
-          // if (item.collapsed !== undefined) {
-          //   item.collapsed = true;
-          // }
-          if (item.type === "folder") {
-            const childIds = item.subFoldersAndFiles.map(({ id }) => id);
-            childrenIds.push(...childIds);
-            parentIds.push(item.id);
-            dfs(
-              item.subFoldersAndFiles as Directory[],
-              callback,
-              childrenIds,
-              parentIds
-            );
-            parentIds.pop();
-          }
-        }
-        return { childrenIds, parentIds };
-      };
 
       if (state.toCopy.isCut === true) {
         if (state.toCopy.type === "folder") {
@@ -496,13 +466,14 @@ export const structureSlice = createSlice({
         let i = 1;
         while (
           knownNames.filter((knownName) => {
+            // eslint-disable-next-line
             if (toCopyItem.type === "file") {
               return (
                 knownName ===
-                `${toCopyItem.name} - Copy (${i}).${toCopyItem.extension}`
+                `${toCopyItem.name}_Copy_${i}.${toCopyItem.extension}`
               );
             } else {
-              return knownName === `${toCopyItem.name} - Copy (${i})`;
+              return knownName === `${toCopyItem.name}_Copy_${i}`;
             }
           }).length > 0
         ) {
@@ -510,8 +481,8 @@ export const structureSlice = createSlice({
         }
         newName =
           toCopyItem.type === "folder"
-            ? `${toCopyItem.name} - Copy (${i})`
-            : `${toCopyItem.name} - Copy (${i}).${toCopyItem.extension}`;
+            ? `${toCopyItem.name}_Copy_${i}`
+            : `${toCopyItem.name}_Copy_${i}.${toCopyItem.extension}`;
         toCopyItem.wholeName = newName;
       }
 
@@ -564,7 +535,7 @@ export const structureSlice = createSlice({
         if (state.toCopy?.type === "folder") {
           const toCopyFolderPath =
             state.normalized.folders.byId[newNode.id].path;
-          dfs(
+          dfsCbOnEach(
             newNode.subFoldersAndFiles as Directory[],
             (item, parentIds) => {
               const parentId = parentIds[parentIds.length - 1];
@@ -690,7 +661,6 @@ export const structureSlice = createSlice({
       }>
     ) => {
       if (state.selected !== action.payload.id) {
-  
         state.contextSelected = {
           id: state.initialFolder.id,
           type: "folder",

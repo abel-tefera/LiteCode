@@ -81,7 +81,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
       >
         Format
       </button> */}
-      <Breadcrumbs editorPath={editorData.path} />
+      <Breadcrumbs
+        editorObj={{
+          id: editorData.id,
+          path: editorData.path,
+          unmappedPath: editorData.unmappedPath,
+        }}
+      />
 
       <MonacoEditor
         path={editorData.id}

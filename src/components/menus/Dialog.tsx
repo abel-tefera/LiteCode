@@ -11,7 +11,13 @@ interface DialogProps {
   action: () => void;
 }
 
-const Dialog: React.FC<DialogProps> = ({ title, content, actionText, close, action }) => {
+const Dialog: React.FC<DialogProps> = ({
+  title,
+  content,
+  actionText,
+  close,
+  action,
+}) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useOutsideAlerter(dialogRef, close);
   return (
@@ -31,19 +37,19 @@ const Dialog: React.FC<DialogProps> = ({ title, content, actionText, close, acti
             />
           </span>
         </div>
-        <div className="text-sm my-4 text-white">
-          {content}
-        </div>
+        <div className="text-sm my-4 text-white">{content}</div>
         <div className="flex justify-between my-2">
           <div className="w-32">&nbsp;</div>
           <div className="flex justify-between pl-12 w-full">
             <button
+              type="button"
               onClick={() => close(false)}
               className="text-sm text-white px-2 py-1 rounded-lg bg-slate-600 hover:bg-slate-500 transition-colors"
             >
               Cancel
             </button>
             <button
+              type="button"
               onClick={() => action()}
               className="text-sm bg-red-700 hover:bg-red-500 text-white px-2 py-1 rounded-lg transition-colors flex flex-row items-center"
             >

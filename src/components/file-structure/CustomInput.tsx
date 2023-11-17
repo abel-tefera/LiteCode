@@ -131,7 +131,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       if (isValid && isLns && validFiles.includes(ext)) {
         for (let { wholeName: name, type } of existingItems) {
           if (
-            name === value &&
+            name.toLowerCase() === value.toLowerCase() &&
             type === item.type &&
             name.split(".").reverse()[0] === ext
           ) {
@@ -185,7 +185,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
     if (isValid || value === "") {
       for (let { wholeName:name, type } of existingItems) {
-        if (name === value && type === "folder") {
+        if (name.toLowerCase() === value.toLowerCase() && type === "folder") {
           setError(true);
           setLogo(errorIcon);
           setErrorMessage(

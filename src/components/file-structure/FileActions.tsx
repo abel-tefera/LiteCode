@@ -35,6 +35,7 @@ const FileActions: React.FC<FileActionProps> = ({
             <span className="text-white">
               <Tooltip className="z-50" id="new-file" />
               <button
+                type="button"
                 onClick={(e) => {
                   newFile();
                 }}
@@ -51,33 +52,35 @@ const FileActions: React.FC<FileActionProps> = ({
             <span className="text-white">
               <Tooltip className="z-50" id="new-folder" />
               <button
+                type="button"
                 onClick={(e) => {
                   newFolder();
                 }}
               >
-              <img
-                data-tooltip-id="new-folder"
-                data-tooltip-content={"New Folder"}
-                src={newFolderIcon}
-                className="w-6 h-6 p-[2px] mx-[2px] cursor-pointer hover:bg-dark-hover rounded-sm"
-                alt="New Folder"
-              />
+                <img
+                  data-tooltip-id="new-folder"
+                  data-tooltip-content={"New Folder"}
+                  src={newFolderIcon}
+                  className="w-6 h-6 p-[2px] mx-[2px] cursor-pointer hover:bg-dark-hover rounded-sm"
+                  alt="New Folder"
+                />
               </button>
             </span>
             <span className="text-white">
               <Tooltip className="z-50" id="download-project" />
               <button
+                type="button"
                 onClick={(e) => {
                   download();
                 }}
               >
-              <img
-                data-tooltip-id="download-project"
-                data-tooltip-content={"Download Project"}
-                src={downloadIcon}
-                className="w-6 h-6 p-[2px] mx-[2px] cursor-pointer hover:bg-dark-hover rounded-sm"
-                alt="Download Project"
-              />
+                <img
+                  data-tooltip-id="download-project"
+                  data-tooltip-content={"Download Project"}
+                  src={downloadIcon}
+                  className="w-6 h-6 p-[2px] mx-[2px] cursor-pointer hover:bg-dark-hover rounded-sm"
+                  alt="Download Project"
+                />
               </button>
             </span>
           </span>

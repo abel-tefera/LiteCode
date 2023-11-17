@@ -47,7 +47,7 @@ const Tab: React.FC<TabProps> = ({
       <span className="text-lg mx-2">{name}</span>
       <span className="self-start">
         {/* <Tooltip id="close-tab" className="z-20" style={{backgroundColor: 'rgb(82 82 91)'}}/> */}
-        <button onClick={() => onClose(id)}>
+        <button type="button" onClick={() => onClose(id)}>
           <img
             // data-tooltip-id="close-tab"
             // data-tooltip-content={"Close tab"}

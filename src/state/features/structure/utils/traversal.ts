@@ -38,4 +38,31 @@ const dfsNodeAction = (
   parents.pop();
 };
 
-export { dfsNodeAction, bfsNodeAction };
+const dfsCbOnEach = (
+  node: Directory[],
+  callback: (item: Directory | FileInFolder, parentIds: string[]) => void,
+  childrenIds: string[] = [],
+  parentIds: string[]
+) => {
+  for (let item of node) {
+    callback(item, parentIds);
+    // if (item.collapsed !== undefined) {
+    //   item.collapsed = true;
+    // }
+    if (item.type === "folder") {
+      const childIds = item.subFoldersAndFiles.map(({ id }) => id);
+      childrenIds.push(...childIds);
+      parentIds.push(item.id);
+      dfsCbOnEach(
+        item.subFoldersAndFiles as Directory[],
+        callback,
+        childrenIds,
+        parentIds
+      );
+      parentIds.pop();
+    }
+  }
+  return { childrenIds, parentIds };
+};
+
+export { dfsNodeAction, bfsNodeAction, dfsCbOnEach };

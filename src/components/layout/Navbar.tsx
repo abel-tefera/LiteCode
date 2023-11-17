@@ -16,7 +16,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
       })}
     >
       <div className="md:hidden z-10">
-        <button onClick={props.onMenuButtonClick} className="inline-flex mt-[4.75rem]">
+        <button type="button" onClick={props.onMenuButtonClick} className="inline-flex mt-[4.75rem]">
           <Bars3Icon className="h-6 w-6" />
         </button>
       </div>

@@ -28,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     return () => clearTimeout(timeout);
   }, [collapsed]);
-  
+
   return (
     <div
       className={classNames({
@@ -57,6 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <img src={logo} alt="Logo" className="w-[7.5rem] select-none" />
           )}
           <button
+            type="button"
             className="grid place-content-center hover:bg-dark-hover w-10 h-10 rounded-full opacity-0 md:opacity-100"
             onClick={() => setCollapsed(!collapsed)}
           >
@@ -68,8 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             className={
               !collapsed && visibility ? "block main-content" : "display-none-c"
             }
-          >
-          </div>
+          ></div>
         </nav>
 
         {!collapsed && (

@@ -8,8 +8,6 @@ import {
   clipboard,
   setSelected,
   Directory,
-  NormalizedFolder,
-  FileStructure,
   FileInFolder,
 } from "../../state/features/structure/structureSlice";
 import useOutsideAlerter from "../../hooks/useOutsideAlerter";
@@ -17,6 +15,9 @@ import { RootState } from "../../state/store";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 import { setActiveTabAsync } from "../../state/features/tabs/tabsSlice";
 import { setActiveEditorAsync } from "../../state/features/editor/editorSlice";
+import CollapseBtn from "./widgets/CollapseBtn";
+import ThreeDots from "./widgets/ThreeDots";
+import ItemTitle from "./widgets/ItemTitle";
 
 interface FolderProps {
   data: (Directory | FileInFolder)[];
@@ -44,14 +45,6 @@ const Folder: React.FC<FolderProps> = ({
     return allData;
   });
 
-  const findLogo = (item: FileStructure | NormalizedFolder) => {
-    if (item.type === "folder") {
-      return item.collapsed ? "closed-folder" : "opened-folder";
-    } else if (item.type === "file") {
-      return getLogo(item.extension);
-    }
-  };
-
   return (
     <div className={`${children.length > 0 && "w-full"}`}>
       {children.map((item) => {
@@ -60,7 +53,7 @@ const Folder: React.FC<FolderProps> = ({
             <div
               id={item.id}
               typeof-item={item.type}
-              className={`transition-colors flex flex-row hover:cursor-pointer rounded-r-sms clickable hover:bg-dark-hover rounded-r-sm justify-between  ${
+              className={`transition-colors flex flex-row hover:cursor-pointer rounded-r-sm clickable hover:bg-dark-hover justify-between  ${
                 selected === item.id && showBlue
                   ? "bg-vscode-overlay hover:bg-vscode-blue"
                   : contextSelected === item.id && showGray
@@ -70,16 +63,15 @@ const Folder: React.FC<FolderProps> = ({
                 cutItem?.isCut && cutItem.id === item.id ? "opacity-50" : ""
               } }`}
             >
-              <div
-                onClick={(e) => {
+              <ItemTitle
+                item={item}
+                onClickE={(e) => {
                   e.stopPropagation();
                   dispatch(setSelected({ id: item.id, type: item.type }));
                   setShowBlue(true);
                   setShowGray(false);
                   if (item.type === "file") {
-                    // @ts-ignore
                     dispatch(setActiveTabAsync(item.id));
-                    // @ts-ignore
                     dispatch(setActiveEditorAsync(item.id));
                   } else {
                     dispatch(
@@ -90,31 +82,12 @@ const Folder: React.FC<FolderProps> = ({
                     );
                   }
                 }}
-                parent-id={item.id}
-                typeof-item={item.type}
-                className="w-full py-[0.32rem] pl-3 flex flex-row justify-start items-center collapsable"
-              >
-                {
-                  <span
-                    typeof-item={item.type}
-                    parent-id={item.id}
-                    className={`span-logo span-logo-width ${findLogo(item)}`}
-                  >
-                    &nbsp;
-                  </span>
-                }
-                <span
-                  typeof-item={item.type}
-                  parent-id={item.id}
-                  className="px-1 mx-1 "
-                >
-                  {trimName(item)}
-                </span>
-              </div>
-              <button
-                typeof-item={item.type}
-                parent-id={item.id}
-                onClick={(e) => {
+              />
+              <ThreeDots
+                item={item}
+                selected={selected}
+                showBlue={showBlue}
+                onClickE={(e) => {
                   e.stopPropagation();
                   setShowBlue(false);
                   setShowGray(true);
@@ -126,23 +99,15 @@ const Folder: React.FC<FolderProps> = ({
                     })
                   );
                 }}
-                className={`three-dots px-2 transition-opacity rounded-r-sm ${
-                  selected === item.id && showBlue
-                    ? "hover:bg-blue-400"
-                    : "hover:bg-slate-500"
-                }`}
-              >
-                &nbsp;
-              </button>
+              />
             </div>
             <>
               <div id={`ghost-input-${item.id}`}></div>
               {item.type === "folder" && !item.collapsed && (
                 <div className="flex flex-row sub-folder">
-                  <button
-                    parent-id={item.id}
-                    typeof-item={item.type}
-                    onClick={(e) => {
+                  <CollapseBtn
+                    item={item}
+                    onClickE={(e) => {
                       e.stopPropagation();
                       setShowBlue(true);
                       setShowGray(false);
@@ -154,8 +119,7 @@ const Folder: React.FC<FolderProps> = ({
                         })
                       );
                     }}
-                    className="transition-colors w-[14px] border-r hover:border-vscode-blue border-monaco-color"
-                  ></button>
+                  />
                   <Folder
                     data={(() => {
                       const childFolder = data.find((newItem) => {

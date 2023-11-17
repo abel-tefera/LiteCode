@@ -5,9 +5,9 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
-import { FileStructure, Normalized } from "../structure/structureSlice";
+import { FileStructure, Normalized, ValidExtensions } from "../structure/structureSlice";
 
-export type Tab = { id: string; isSelected: boolean };
+export type Tab = { id: string; extension: ValidExtensions, isSelected: boolean };
 
 interface TabSlice {
   open: Tab[];
@@ -19,8 +19,8 @@ const initialState: TabSlice = {
 export const removeTabAsync = createAsyncThunk(
   "removeTabAsync",
   async (_, { getState }) => {
-    // @ts-ignore
-    const normalized = getState().structure.normalized;
+    const state = getState() as RootState;
+    const normalized = state.structure.normalized;
     return normalized as Normalized;
   }
 );
@@ -28,17 +28,17 @@ export const removeTabAsync = createAsyncThunk(
 export const updateTabAsync = createAsyncThunk(
   "updateTabAsync",
   async (_, { getState }) => {
-    // @ts-ignore
-    const normalized = getState().structure.normalized;
+    const state = getState() as RootState;
+    const normalized = state.structure.normalized;
     return normalized as Normalized;
   }
 );
 
 export const setActiveTabAsync = createAsyncThunk(
   "setActiveTabAsync",
-  async (id, { getState }) => {
-    // @ts-ignore
-    const normalized = getState().structure.normalized;
+  async (id: string, { getState }) => {
+    const state = getState() as RootState;
+    const normalized = state.structure.normalized;
     return { id, normalized: normalized as Normalized };
   }
 );
@@ -79,7 +79,6 @@ export const tabsSlice = createSlice({
         const tabId = action.payload.id;
 
         const item =
-          // @ts-ignore
           normalized.files.byId[tabId] as FileStructure;
 
         if (state.open.filter(({ id }) => id === item.id).length === 0) {
@@ -87,7 +86,6 @@ export const tabsSlice = createSlice({
             ...state.open.map((tab) => {
               return { ...tab, isSelected: false };
             }),
-            // @ts-ignore
             { id: item.id, extension: item.extension, isSelected: true },
           ];
         } else if (
