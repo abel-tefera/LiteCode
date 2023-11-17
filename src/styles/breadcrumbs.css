@@ -1,0 +1,11 @@
+.custom-scrollbar-3::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+.custom-scrollbar-3::-webkit-scrollbar-thumb {
+    background: #4a5575;
+    border-radius: 5px;
+    visibility: visible;
+    transition-property: all;
+}

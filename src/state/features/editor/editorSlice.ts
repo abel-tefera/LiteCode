@@ -26,7 +26,7 @@ const initialState: EditorSlice = {
     line: 1,
     content: "",
     path: [],
-    unmappedPath: []
+    unmappedPath: [],
   },
   editorWidthAdjusted: 0,
 };
@@ -37,10 +37,21 @@ export const setActiveEditorAsync = createAsyncThunk(
     const state = getState() as RootState;
 
     const file = state.structure.normalized.files.byId[id];
-    const unmappedPath = file.path.filter((id) => id !== "/" && id !== "head")
-    const actualPath = unmappedPath.map((id) => state.structure.normalized.folders.byId[id].name)
-    actualPath.push(`${file.name}.${file.extension}`)
-    return { file: file as FileStructure, actualPath: actualPath, unmappedPath: unmappedPath };
+    const unmappedPath = file.path.filter((id) => id !== "/" && id !== "head");
+    const actualPath = unmappedPath.map((id, i) => {
+      if (i < unmappedPath.length - 1) {
+        return state.structure.normalized.folders.byId[id].name;
+      } else {
+        const file = state.structure.normalized.files.byId[id];
+        return `${file.name}.${file.extension}`;
+      }
+    });
+    // actualPath.push(`${file.name}.${file.extension}`);
+    return {
+      file: file as FileStructure,
+      actualPath: actualPath,
+      unmappedPath: unmappedPath,
+    };
   }
 );
 
@@ -55,14 +66,14 @@ export const editorSlice = createSlice({
       state.activeEditors = state.activeEditors.filter(
         ({ id }) => id !== action.payload
       );
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(setActiveEditorAsync.fulfilled, (state, action) => {
       const file = action.payload.file;
       const actualPath = action.payload.actualPath;
       const unmappedPath = action.payload.unmappedPath;
-      if (file.id !== state.currentEditor.id){
+      if (file.id !== state.currentEditor.id) {
         let language;
         switch (file.extension) {
           case "js":
@@ -85,10 +96,9 @@ export const editorSlice = createSlice({
           content: file.content,
           unmappedPath: unmappedPath,
           path: actualPath,
-
         };
         state.activeEditors = [...state.activeEditors, state.currentEditor];
-      } 
+      }
     });
   },
 });
@@ -99,5 +109,6 @@ export const getEditorWidthAdjusted = (state: RootState) =>
 export const getCurrentEditor = (state: RootState) =>
   state.editor.currentEditor;
 
-export const { setEditorWidthAdjusted, removeActiveEditor } = editorSlice.actions;
+export const { setEditorWidthAdjusted, removeActiveEditor } =
+  editorSlice.actions;
 export default editorSlice.reducer;

@@ -1,8 +1,8 @@
 import React, { PropsWithChildren } from "react";
-import downArrowLogo from "../../assets/left-arrow.svg";
-import newFileIcon from "../../assets/new-file.svg";
-import newFolderIcon from "../../assets/new-folder.svg";
-import downloadIcon from "../../assets/download.svg";
+import downArrowLogo from "../../../assets/left-arrow.svg";
+import newFileIcon from "../../../assets/new-file.svg";
+import newFolderIcon from "../../../assets/new-folder.svg";
+import downloadIcon from "../../../assets/download.svg";
 
 import { Tooltip } from "react-tooltip";
 

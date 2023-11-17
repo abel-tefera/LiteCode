@@ -1,5 +1,5 @@
 import React from "react";
-import Resizable from "./Resizable";
+import Resizable from "./resizable/Resizable";
 import Structure from "./file-structure/Structure";
 import Tabs from "./menus/Tabs";
 import logo from "../assets/logo-2.png";

@@ -5,7 +5,7 @@ import mdLogo from "../../assets/readme.svg";
 import jsxLogo from "../../assets/jsx.svg";
 
 import cross from "../../assets/cross.svg";
-import { getLogo } from "../file-structure/StructureUtils";
+import { getLogo } from "../file-structure/utils";
 import { Tooltip } from "react-tooltip";
 
 interface TabProps {

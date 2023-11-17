@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import useOutsideAlerter from "../../hooks/useOutsideAlerter";
-import { ValidExtensions, validExtensions } from "../../state/features/structure/structureSlice";
-import { getLogo } from "./StructureUtils";
+import useOutsideAlerter from "../../../hooks/useOutsideAlerter";
+import { ValidExtensions, validExtensions } from "../../../state/features/structure/structureSlice";
+import { getLogo } from "../utils";
 
 const newFileIcon = "new-file-logo";
 const errorIcon = "error-logo";
@@ -255,9 +255,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
             onChange={(e) => setValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                if (!error && value.length > 0) {
+                if (!error && value.trim().length > 0) {
                   submit(value);
-                } else if (value.length === 0) {
+                } else if (value.trim().length === 0) {
                   setError(true);
                   setLogo(errorIcon);
                   setErrorMessage(

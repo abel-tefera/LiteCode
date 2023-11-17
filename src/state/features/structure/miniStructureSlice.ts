@@ -37,7 +37,7 @@ const initialState: MiniStructureState = {
 
 export const setMiniStructureAsync = createAsyncThunk(
   "setMiniStructureAsync",
-  async (id: string, { getState }) => {
+  async (selectedId: string, { getState }) => {
     const state = getState() as RootState;
     let mapped = {
       id: "head",
@@ -48,8 +48,8 @@ export const setMiniStructureAsync = createAsyncThunk(
     } as MiniStructure;
     dfsNodeAction(
       state.structure.initialFolder.subFoldersAndFiles as Directory[],
-      id,
-      (_, parents) => {
+      selectedId,
+      (item, parents) => {
         const structureCopy = cloneDeep(
           parents[parents.length - 1]
         ) as MiniStructure;

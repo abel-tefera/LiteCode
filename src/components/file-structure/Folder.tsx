@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { getLogo, trimName } from "./StructureUtils";
+import { getLogo, trimName } from "./utils"
 import {
   collapseOrExpand,
   contextSelectedItem,

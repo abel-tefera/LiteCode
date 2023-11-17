@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ResizableBox, ResizableBoxProps } from "react-resizable";
-import "../styles/resizable.css";
-import throttle from "../utils/throttle";
-import { useTypedSelector } from "../state/hooks";
-import { getEditorWidthAdjusted } from "../state/features/editor/editorSlice";
+import "../../styles/resizable.css";
+import throttle from "../../utils/throttle";
+import { useTypedSelector } from "../../state/hooks";
+import { getEditorWidthAdjusted } from "../../state/features/editor/editorSlice";
 
 interface ResizableProps {
   // direction: "horizontal" | "vertical";
@@ -79,7 +79,7 @@ const Resizable: React.FC<ResizableProps> = ({
       resizableCall(data.size.width);
       // }
       if (data.handle === "w") {
-        console.log("WEST SIDE", data.size.width);
+        // console.log("WEST SIDE", data.size.width);
         // setResizableWidth();
       } else {
       }

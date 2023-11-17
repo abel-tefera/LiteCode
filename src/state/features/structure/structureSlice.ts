@@ -342,7 +342,6 @@ export const structureSlice = createSlice({
       state,
       action: PayloadAction<{ id: string; value: string }>
     ) => {
-      console.log("FREQUENCY");
       state.normalized.files.byId[action.payload.id].content =
         action.payload.value;
     },
@@ -535,6 +534,7 @@ export const structureSlice = createSlice({
         if (state.toCopy?.type === "folder") {
           const toCopyFolderPath =
             state.normalized.folders.byId[newNode.id].path;
+            toCopyFolderPath.pop();
           dfsCbOnEach(
             newNode.subFoldersAndFiles as Directory[],
             (item, parentIds) => {
@@ -543,7 +543,7 @@ export const structureSlice = createSlice({
                 ...state.normalized[`${item.type}s`].byId[item.id],
               };
               newItem.id = `${newItem.type}-${uuidv4()}`;
-              newItem.path = [...toCopyFolderPath, ...parentIds];
+              newItem.path = [...toCopyFolderPath, ...parentIds, newItem.id];
 
               state.normalized[`${newItem.type}s`].byId[newItem.id] = newItem;
               state.normalized[`${newItem.type}s`].allIds = [
@@ -576,6 +576,7 @@ export const structureSlice = createSlice({
         state.normalized[inputTypeForNormalized].byId[newNode.id].path = [
           "/",
           state.initialFolder.id,
+          newNode.id
         ];
 
         const node = actionOnChildren(newNode as Directory);
@@ -601,6 +602,7 @@ export const structureSlice = createSlice({
             state.normalized[inputTypeForNormalized].byId[newNode.id].path = [
               "/",
               ...parentsIds,
+              newNode.id,
             ];
             const node = actionOnChildren(newNode as Directory);
             parent.subFoldersAndFiles = [
@@ -615,7 +617,7 @@ export const structureSlice = createSlice({
               `${newNode.type}s` as keyof typeof state.normalized;
             state.normalized[inputTypeForFetch].byId[newNode.id].path = [
               ...parentPath,
-              parent.id,
+              newNode.id,
             ];
           },
           [state.initialFolder]
@@ -790,7 +792,7 @@ export const structureSlice = createSlice({
             `${item.type}s` as keyof typeof state.normalized;
 
           const itemData = state.normalized[inputTypeForFetch].byId[item.id];
-          itemData.path = ["/", ...parents.map(({ id }) => id)];
+          itemData.path = ["/", ...parents.map(({ id }) => id), item.id];
           // const filePath = parents
           //   .map(({ id }) => state.normalized.folders.byId[id].name)
           //   .join("/");
@@ -887,8 +889,19 @@ export const contextSelectedObj = createSelector(
     }
     const actualPath = `${item.path
       .filter((id) => id !== "/" && id !== "head")
-      .map((id) => normalized.folders.byId[id].name)
-      .join("/")}/${wholeName}`;
+      .map((id, i) => {
+        if (contextSelected?.type === "file") {
+          if (i < item.path.length - 3) {
+            return normalized.folders.byId[id].name;
+          } else {
+            return `${normalized.files.byId[id].name}.${normalized.files.byId[id].extension}`;
+          }
+        } else if (contextSelected?.type === "folder") {
+          return normalized.folders.byId[id].name;
+        } 
+        return 'UNKNOWN';
+      })
+      .join("/")}`;
     return {
       id: item.id,
       name: item.name,

@@ -2,17 +2,18 @@ import React from "react";
 import ItemTitle from "./widgets/ItemTitle";
 import CollapseBtn from "./widgets/CollapseBtn";
 import {
-  MiniFile,
   MiniStructure,
 } from "../../state/features/structure/miniStructureSlice";
 import { Identifier } from "../../state/features/structure/structureSlice";
 
 interface MiniFolderProps {
   data: MiniStructure;
+  init: boolean;
   onClickItem: (item: Identifier) => void;
   onCollapseMiniStructure: (id: string) => void;
 }
 const MiniFolder: React.FC<MiniFolderProps> = ({
+  init,
   data,
   onClickItem,
   onCollapseMiniStructure,
@@ -26,11 +27,11 @@ const MiniFolder: React.FC<MiniFolderProps> = ({
           <div className="flex flex-col select-none">
             <div
               className={`transition-colors flex flex-row hover:cursor-pointer hover:bg-dark-hover justify-between ${
-                i === 0
+                init && (i === 0
                   ? "rounded-t-lg"
                   : i === children.length - 1
                   ? "rounded-b-lg"
-                  : ""
+                  : "")
               }`}
             >
               <ItemTitle
@@ -50,6 +51,7 @@ const MiniFolder: React.FC<MiniFolderProps> = ({
                     }}
                   />
                   <MiniFolder
+                    init={false}
                     data={item}
                     onClickItem={onClickItem}
                     onCollapseMiniStructure={onCollapseMiniStructure}

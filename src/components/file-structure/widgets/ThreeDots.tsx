@@ -20,13 +20,13 @@ const ThreeDots: React.FC<ThreeDotsProp> = ({
       onClick={(e) => {
         onClickE(e);
       }}
-      className={`three-dots px-2 transition-opacity rounded-r-sm ${
+      className={`px-2 rounded-r-sm ${
         selected === item.id && showBlue
           ? "hover:bg-blue-400"
           : "hover:bg-slate-500"
       }`}
     >
-      &nbsp;
+      <span className="three-dots transition-opacity ">&nbsp;</span>
     </button>
   );
 };

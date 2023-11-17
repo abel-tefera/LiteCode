@@ -17,9 +17,9 @@ const bundle = async (serviceRef: any) => {
       entryPoints: ["index.js"],
       bundle: true,
       write: false,
-      // plugins: [filePathResolver(tree)],
+      plugins: [filePathResolver(tree)],
       // @ts-ignore
-      plugins: [unpkgPathPlugin(), fetchPlugin(tree)],
+      // plugins: [unpkgPathPlugin(), fetchPlugin(tree)],
       define: {
         "process.env.NODE_ENV": '"production"',
         global: "window",

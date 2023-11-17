@@ -5,7 +5,7 @@ import {
   NormalizedFolder,
   ValidExtensions,
 } from "../../../state/features/structure/structureSlice";
-import { getLogo, trimName } from "../StructureUtils";
+import { getLogo, trimName } from "../utils";
 
 interface ItemTitleProps {
   item: {

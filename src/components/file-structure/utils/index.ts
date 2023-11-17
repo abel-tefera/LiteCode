@@ -2,7 +2,7 @@ import {
   FileStructure,
   NormalizedFolder,
   ValidExtensions,
-} from "../../state/features/structure/structureSlice";
+} from "../../../state/features/structure/structureSlice";
 
 const trimName = (
   item:

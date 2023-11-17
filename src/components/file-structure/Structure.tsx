@@ -13,7 +13,7 @@ import Folder from "./Folder";
 import useOutsideAlerter from "../../hooks/useOutsideAlerter";
 
 import MenuContext from "../menus/MenuContext";
-import CustomInput from "../file-structure/CustomInput";
+import CustomInput from "./widgets/CustomInput";
 import { createPortal } from "react-dom";
 
 import Dialog from "../menus/Dialog";
@@ -38,7 +38,7 @@ import {
   getCurrentItems,
 } from "../../state/features/structure/structureSlice";
 import { usePrependPortal } from "../../hooks/usePrependPortal";
-import FileActions from "./FileActions";
+import FileActions from "./widgets/FileActions";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 import {
   removeTabAsync,

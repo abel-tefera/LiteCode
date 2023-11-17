@@ -4,7 +4,7 @@ import Tab from "./Tab";
 import { Tooltip } from "react-tooltip";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 
-import { trimName } from "../file-structure/StructureUtils";
+import { trimName } from "../file-structure/utils";
 import { activeTabs, closeTab, selectTab } from "../../state/features/tabs/tabsSlice";
 import { setActiveEditorAsync, removeActiveEditor } from "../../state/features/editor/editorSlice";
 

@@ -46,9 +46,6 @@ const dfsCbOnEach = (
 ) => {
   for (let item of node) {
     callback(item, parentIds);
-    // if (item.collapsed !== undefined) {
-    //   item.collapsed = true;
-    // }
     if (item.type === "folder") {
       const childIds = item.subFoldersAndFiles.map(({ id }) => id);
       childrenIds.push(...childIds);
