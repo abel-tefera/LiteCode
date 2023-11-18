@@ -8,6 +8,7 @@ import { useTypedDispatch, useTypedSelector } from "../state/hooks";
 import { setEditorWidthAdjusted } from "../state/features/editor/editorSlice";
 import throttle from "../utils/throttle";
 import { activeTabs } from "../state/features/tabs/tabsSlice";
+import Brand from "./branding/Brand";
 // import { activeTabs } from "../state/features/structure/structureSlice";
 
 const Main = () => {
@@ -34,20 +35,7 @@ const Main = () => {
         >
           <div className="h-full flex flex-col">
             <Structure />
-            <div className="ml-2 text-base relative">
-              <div className={`absolute inline-flex items-center select-none`}>
-                Developed by&nbsp;
-                <a
-                  href="https://www.abeltb.xyz/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                >
-                  {" "}
-                  Abel
-                </a>
-              </div>
-            </div>
+            {/* <Brand /> */}
           </div>
         </Resizable>
       </div>

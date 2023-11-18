@@ -65,7 +65,7 @@ const Structure = () => {
   const currentItems = useTypedSelector(getCurrentItems);
   const [showBlue, setShowBlue] = useState(true);
   const [showGray, setShowGray] = useState(true);
-
+  const [searchTerm, setSearchTerm] = useState("");
   const [showContext, setShowContext] = useState(false);
   const [selectedType, setSelectedType] = useState<
     "file" | "folder" | "head" | ""
@@ -191,6 +191,10 @@ const Structure = () => {
     },
 
     download: () => {},
+
+    searchFiles: (searchTerm: string) => {
+      setSearchTerm(searchTerm);
+    },
   };
 
   const prependForPortal = (isRename: boolean) => {
@@ -363,52 +367,54 @@ const Structure = () => {
 
   return (
     <div id="file-system">
-      <FileActions {...fileActions} />
-
-      <div
-        id="structure-container"
-        parent-id={"head"}
-        typeof-item={"folder"}
-        className="pl-1 pr-2 file-sys-container custom-scrollbar-2"
-        ref={fileSysRef}
-        onClick={(e) => {
-          dispatch(setSelected({ id: "head", type: "folder" }));
-        }}
-        onContextMenu={(e) => contextHandler(e)}
-        // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
-      >
+      <FileActions {...fileActions} isSearching={searchTerm.length > 0} />
+      {searchTerm.length === 0 && (
         <div
+          id="structure-container"
           parent-id={"head"}
           typeof-item={"folder"}
-          ref={structureRef}
-          className="content flex items-center"
+          className="pl-1 pr-2 file-sys-container custom-scrollbar-2"
+          ref={fileSysRef}
+          onClick={(e) => {
+            dispatch(setSelected({ id: "head", type: "folder" }));
+          }}
+          onContextMenu={(e) => contextHandler(e)}
+          // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
         >
-          <Folder
-            data={structureData as (Directory | FileInFolder)[]}
-            showBlue={showBlue}
-            setShowBlue={setShowBlue}
-            showGray={showGray}
-            setShowGray={setShowGray}
-          />
+          <div
+            parent-id={"head"}
+            typeof-item={"folder"}
+            ref={structureRef}
+            className="content flex items-center"
+          >
+            <Folder
+              data={structureData as (Directory | FileInFolder)[]}
+              showBlue={showBlue}
+              setShowBlue={setShowBlue}
+              showGray={showGray}
+              setShowGray={setShowGray}
+            />
 
-          {allFileIds.length === 0 && allFolderIds.length === 1 && (
-            <div
-              id="welcome"
-              parent-id={"head"}
-              typeof-item={"folder"}
-              className="flex h-[40vh] items-center px-4 mx-auto"
-            >
-              <span
+            {allFileIds.length === 0 && allFolderIds.length === 1 && (
+              <div
+                id="welcome"
                 parent-id={"head"}
                 typeof-item={"folder"}
-                className="text-base text-center break-words p-3 rounded-lg border"
+                className="flex h-[40vh] items-center px-4 mx-auto"
               >
-                Start developing with LiteCode...
-              </span>
-            </div>
-          )}
+                <span
+                  parent-id={"head"}
+                  typeof-item={"folder"}
+                  className="text-base text-center break-words p-3 rounded-lg border"
+                >
+                  Start developing with LiteCode...
+                </span>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+
       {showDialog &&
         createPortal(
           <Dialog
