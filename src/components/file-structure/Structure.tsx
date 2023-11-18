@@ -352,8 +352,8 @@ const Structure = () => {
 
   useOutsideAlerter(structureRef, () => {
     if (selectedI !== "head") {
-      setShowBlue(false);
-      setShowGray(false);
+      // setShowBlue(false);
+      // setShowGray(false);
     }
   });
 

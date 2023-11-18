@@ -79,21 +79,21 @@ const CodeCell: React.FC<CodeCellProps> = () => {
 
   return (
     <div className="w-full h-4/5 flex flex-row">
-      <Resizable
-        minRatio={0.2}
-        maxRatio={0.7}
-        initialRatio={0.65}
-        haveWidthAdjusted={true}
-        resizableCall={(width: number) => {
-          // console.log("CODE CELL", width)
-          // setCodeCellWidth(width);
-        }}
-      >
-        <div className="flex flex-col w-full h-full">
-          <Tabs />
+      <div className="flex flex-col w-full h-full">
+        <Tabs />
+        <Resizable
+          minRatio={0.2}
+          maxRatio={0.7}
+          initialRatio={0.65}
+          haveWidthAdjusted={true}
+          resizableCall={(width: number) => {
+            // console.log("CODE CELL", width)
+            // setCodeCellWidth(width);
+          }}
+        >
           <CodeEditor onChange={onEditorChange} />
-        </div>
-      </Resizable>
+        </Resizable>
+      </div>
       <div className="flex flex-col w-full h-full">
         <ProjectActions />
         <CodePreview code={code} err={err} />

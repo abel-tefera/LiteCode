@@ -212,7 +212,7 @@ export const structureSlice = createSlice({
         type: "",
       });
 
-      structureSlice.caseReducers.sortStructure(state, {
+      structureSlice.caseReducers.sortFolder(state, {
         payload: { id: state.contextSelected.id },
         type: "",
       });
@@ -319,7 +319,7 @@ export const structureSlice = createSlice({
           newExtension as ValidExtensions;
       }
 
-      structureSlice.caseReducers.sortStructure(state, {
+      structureSlice.caseReducers.sortFolder(state, {
         payload: { id: parentId },
         type: "",
       });
@@ -373,7 +373,7 @@ export const structureSlice = createSlice({
     //     }
     //   };
     //   mapStructureRecursively(state.initialFolder.children, state.normalized);
-    //   structureSlice.caseReducers.sortStructure(state, {
+    //   structureSlice.caseReducers.sortFolder(state, {
     //     payload: { id: null },
     //   });
     // },
@@ -645,7 +645,7 @@ export const structureSlice = createSlice({
       //   ];
       // }
 
-      structureSlice.caseReducers.sortStructure(state, {
+      structureSlice.caseReducers.sortFolder(state, {
         payload: { id: state.contextSelected.id },
         type: "",
       });
@@ -802,7 +802,7 @@ export const structureSlice = createSlice({
         [state.initialFolder]
       );
     },
-    sortStructure: (state, action: PayloadAction<{ id: string }>) => {
+    sortFolder: (state, action: PayloadAction<{ id: string }>) => {
       findSortable(
         state.initialFolder,
         (structure: Directory) => {

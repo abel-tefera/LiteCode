@@ -3,11 +3,24 @@ import { fetchPlugin } from "./plugins/fetchPlugin";
 import { getFiles } from "./data";
 import { filePathResolver } from "./plugins/filePathResolver";
 
+// For relative paths
+// const tree = {
+//   "/index.js":
+//     'import App from "./src/App.js";\r\n\r\nconsole.log(App() + 10);\r\n',
+//   "/src/App.js": "const App = () => 10;\r\n\r\nexport default App;",
+// };
+
+// For unpkg paths
+// const tree = {
+//   "/index.js":
+//     'import axios from "axios";\r\n\r\naxios.get("https://jsonplaceholder.typicode.com/todos/1").then((res) => {\r\n  console.log("DATA", res);\r\n})\r\n',
+// };
+// // For Both
 const tree = {
   "/index.js":
-    'import {num as yes} from "./yes/yes.js";\r\n\r\nconst sum = 10 + 10 + yes;\r\n\r\ndocument.body.innerHTML = `${sum}`',
-  "/yes/yes.js":
-    "const num = 50;\r\n\r\nexport {num};\r\n\r\n// export default 100;",
+    'import axios from "axios";\r\n\r\nimport App from "./src/App.js";\r\n\r\nconsole.log(App() + 10);\r\n',
+  "/src/App.js":
+    "import tinyTestPkg from 'tiny-test-pkg';\r\n\r\nconst App = () => 10;\r\n\r\nexport default App;",
 };
 
 const bundle = async (serviceRef: any) => {
@@ -17,15 +30,12 @@ const bundle = async (serviceRef: any) => {
       entryPoints: ["index.js"],
       bundle: true,
       write: false,
-      plugins: [filePathResolver(tree)],
-      // @ts-ignore
-      // plugins: [unpkgPathPlugin(), fetchPlugin(tree)],
+      // plugins: [filePathResolver(tree)],
+      plugins: [filePathResolver(), unpkgPathPlugin(), fetchPlugin(getFiles())],
       define: {
         "process.env.NODE_ENV": '"production"',
         global: "window",
       },
-      jsxFactory: '_React.createElement',
-      jsxFragment: '_React.Fragment',
     });
     return { code: result.outputFiles[0].text, err: null };
   } catch (err: any) {

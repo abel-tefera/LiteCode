@@ -24,7 +24,7 @@ const Main = () => {
           <img src={logo} alt="Logo" className="w-[7.5rem] select-none" />
         </div>
         <Resizable
-          minRatio={0.05}
+          minRatio={0.15}
           maxRatio={0.3}
           initialRatio={0.15}
           haveWidthAdjusted={false}

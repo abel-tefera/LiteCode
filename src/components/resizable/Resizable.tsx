@@ -74,8 +74,13 @@ const Resizable: React.FC<ResizableProps> = ({
     maxConstraints: [innerWidth * maxRatio, Infinity],
     // draggableOpts: { grid: [innerWidth * minRatio, Infinity] },
     onResize: (e, data) => {
+      if (data.size.width < window.innerWidth * minRatio * 1.5) {
+        console.log("LOWER BOUNDS")
+      }
       // console.log("ABCD", data)
       // if (hasResizableCall) {
+        
+        // console.log("DATA", data.size.width)
       resizableCall(data.size.width);
       // }
       if (data.handle === "w") {
@@ -85,7 +90,7 @@ const Resizable: React.FC<ResizableProps> = ({
       }
     },
     onResizeStop: (e, data) => {
-      setResizableWidth(data.size.width);
+      // setResizableWidth(data.size.width);
     },
   };
   // } else {

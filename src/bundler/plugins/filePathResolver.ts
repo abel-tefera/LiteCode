@@ -2,50 +2,30 @@ import * as esbuild from "esbuild-wasm";
 import Path from "path-browserify";
 
 export const filePathResolver = (
-  tree: Record<string, string>
 ): esbuild.Plugin => {
-  const map = new Map(Object.entries(tree));
   return {
     name: "filePathResolver",
     setup: (build: esbuild.PluginBuild) => {
-      build.onResolve({ filter: /.*/ }, (args: esbuild.OnResolveArgs) => {
-        console.log("ARGS", args);
-        if (args.kind === "entry-point") {
-          return { path: "/" + args.path };
+      build.onResolve(
+        { filter: /^\.\/?\w+/ },
+        (args: esbuild.OnResolveArgs) => {
+          console.log("ARGS", args);
+          // if (args.kind === "entry-point") {
+          //   return { path: "/" + args.path, namespace: "a" };
+          // }
+          if (args.kind === "import-statement") {
+            console.log("LOCAL IMPORT STATEMENT STATEMENT", args);
+            const dirname = Path.dirname(args.importer);
+            const path = Path.join(dirname, args.path);
+            return { path, namespace: "a" };
+          }
+          // throw Error("not resolvable");
         }
-        if (args.kind === "import-statement") {
+      );
 
-          const dirname = Path.dirname(args.importer)
-          const path = Path.join(dirname, args.path)
-          return { path }
-        }
-        throw Error("not resolvable");
-      });
+      // build.onLoad({ filter: /^\.\/?\w+/ }, (args: esbuild.OnLoadArgs) => {
 
-      build.onLoad({ filter: /.*/ }, (args: esbuild.OnLoadArgs) => {
-        if (!map.has(args.path)) {
-          throw Error("not loadable");
-        }
-
-        const ext = Path.extname(args.path)
-        const contents = map.get(args.path)!;
-        const loader =
-          // @ts-ignore
-          ext === ".ts"
-            ? "ts"
-            : // @ts-ignore
-
-            ext === ".tsx"
-            ? "tsx"
-            : // @ts-ignore
-            ext === ".js"
-            ? "js"
-            : // @ts-ignore
-            ext === ".jsx"
-            ? "jsx"
-            : "default";
-        return { contents, loader };
-      });
+      // });
     },
   };
 };

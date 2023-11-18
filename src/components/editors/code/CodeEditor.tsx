@@ -46,7 +46,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   const handleEditorDidMount = useCallback(
     async (editor: editor.IStandaloneCodeEditor, monacoEditor: Monaco) => {
       editorRef.current = editor;
-      console.log("EDITORDIDMOUNT", editor, monacoEditor);
+      // console.log("EDITORDIDMOUNT", editor, monacoEditor);
     },
     []
   );
@@ -132,7 +132,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           // monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
         }}
         onValidate={(markers) => {
-          console.log("ONVALIDATE", markers);
+          // console.log("ONVALIDATE", markers);
         }}
       />
     </div>
