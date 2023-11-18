@@ -20,6 +20,5 @@ export const getFiles = () => {
     acc[`/${file.path.join("/")}`] = file.content;
     return acc;
   }, {} as FileTree);
-  console.log("tree", tree);
   return tree;
 };

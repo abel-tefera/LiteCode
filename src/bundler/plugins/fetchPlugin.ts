@@ -13,7 +13,6 @@ export const fetchPlugin = (tree: Record<string, string>) => {
     name: "fetch-plugin",
     setup(build: esbuild.PluginBuild) {
       build.onLoad({ filter: /^\/index\.js$/ }, (args: esbuild.OnLoadArgs) => {
-        console.log("FETCH INDEX", args);
         const ext = Path.extname(args.path);
         const contents = map.get(`${args.path}`);
         return {
@@ -21,8 +20,44 @@ export const fetchPlugin = (tree: Record<string, string>) => {
           contents: contents,
         };
       });
+      build.onLoad({ filter: /.css$/ }, async (args: esbuild.OnLoadArgs) => {
+        let dataGlobal:string = '';
+        let requestGlobal;
+        if (!map.has(args.path)) {
+          const { data, request } = await axios.get(args.path);
+          dataGlobal = data;
+          requestGlobal = request;
+        } else {
+          dataGlobal = map.get(args.path)!;
+        }
+        
+        const escaped = dataGlobal
+          .replace(/\n/g, "")
+          .replace(/\r/g, "")
+          .replace(/"/g, '\\"')
+          .replace(/'/g, "\\'");
+
+        const contents = `
+          const style = document.createElement('style');
+          style.innerText = '${escaped}';
+          document.head.appendChild(style);
+          `;
+
+        const res: esbuild.OnLoadResult = {
+          loader: "jsx",
+          contents,
+          resolveDir: !map.has(args.path)
+            ? new URL("./", requestGlobal.responseURL).pathname
+            : "",
+        };
+
+        if (!map.has(args.path)) {
+          await packageCache.setItem(args.path, res);
+        }
+
+        return res;
+      });
       build.onLoad({ filter: /.*/ }, async (args: esbuild.OnLoadArgs) => {
-        console.log("DOT SLASH checking if cache");
         const cachedResult = await packageCache.getItem<esbuild.OnLoadResult>(
           args.path
         );
@@ -32,38 +67,12 @@ export const fetchPlugin = (tree: Record<string, string>) => {
         } else if (map.has(args.path)) {
           const ext = Path.extname(args.path);
           const contents = map.get(args.path)!;
-          const loader = "jsx";
+          const loader = 'jsx';
           return { contents, loader };
         }
       });
 
-      build.onLoad({ filter: /.css$/ }, async (args: esbuild.OnLoadArgs) => {
-        console.log("css importing unpkg");
-        const { data, request } = await axios.get(args.path);
-
-        const escaped = data
-          .replace(/\n/g, "")
-          .replace(/"/g, '\\"')
-          .replace(/'/g, "\\'");
-
-        const contents = `
-          const style = document.createElement('style');
-          style.innerText = '${escaped}';
-          document.head.appendChild(style);
-        `;
-
-        const res: esbuild.OnLoadResult = {
-          loader: "jsx",
-          contents,
-          resolveDir: new URL("./", request.responseURL).pathname,
-        };
-
-        await packageCache.setItem(args.path, res);
-        return res;
-      });
-
       build.onLoad({ filter: /.*/ }, async (args: esbuild.OnLoadArgs) => {
-        console.log("DOT SLASH importing unpkg");
         const { data, request } = await axios.get(args.path);
 
         const res: esbuild.OnLoadResult = {
