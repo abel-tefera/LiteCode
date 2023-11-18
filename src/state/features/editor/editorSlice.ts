@@ -33,10 +33,10 @@ const initialState: EditorSlice = {
 
 export const setActiveEditorAsync = createAsyncThunk(
   "setActiveEditorAsync",
-  async (id: string, { getState, fulfillWithValue }) => {
+  async (editorProps: {id: string, line: number}, { getState, fulfillWithValue }) => {
     const state = getState() as RootState;
 
-    const file = state.structure.normalized.files.byId[id];
+    const file = state.structure.normalized.files.byId[editorProps.id];
     const unmappedPath = file.path.filter((id) => id !== "/" && id !== "head");
     const actualPath = unmappedPath.map((id, i) => {
       if (i < unmappedPath.length - 1) {
@@ -51,6 +51,7 @@ export const setActiveEditorAsync = createAsyncThunk(
       file: file as FileStructure,
       actualPath: actualPath,
       unmappedPath: unmappedPath,
+      openAtLine: editorProps.line,
     };
   }
 );
@@ -73,6 +74,7 @@ export const editorSlice = createSlice({
       const file = action.payload.file;
       const actualPath = action.payload.actualPath;
       const unmappedPath = action.payload.unmappedPath;
+      const openAtLine = action.payload.openAtLine;
       if (file.id !== state.currentEditor.id) {
         let language;
         switch (file.extension) {
@@ -92,7 +94,7 @@ export const editorSlice = createSlice({
         state.currentEditor = {
           id: file.id,
           language: language as KnownLanguages,
-          line: 1,
+          line: openAtLine !== 0 ? openAtLine : 1,
           content: file.content,
           unmappedPath: unmappedPath,
           path: actualPath,

@@ -5,7 +5,7 @@ import uploadIcon from "../../assets/open-project.svg";
 
 const ProjectActions = () => {
   return (
-    <div className="flex items-center justify-end mb-11 select-none">
+    <div className="flex items-center justify-end select-none">
       <div className="p-2 mr-8 mb-3 md:mr-6 flex flex-row">
         <div className="mx-1">
           <Tooltip id="start-new-project" className="z-20" />

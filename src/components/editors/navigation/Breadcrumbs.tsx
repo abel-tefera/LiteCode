@@ -100,7 +100,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ editorObj }) => {
                       } else {
                         dispatch(setSelected({ id: id, type: "file" }));
                         dispatch(setActiveTabAsync(item.id));
-                        dispatch(setActiveEditorAsync(item.id));
+                        dispatch(setActiveEditorAsync({id: item.id, line: 0}));
                         setShowMiniStructure(false);
                       }
                     }}

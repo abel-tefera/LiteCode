@@ -67,7 +67,7 @@ const Resizable: React.FC<ResizableProps> = ({
     axis: "x",
     className: `${haveWidthAdjusted && "rezisable"}`,
     width: resizableWidth,
-    height: innerHeight * 0.642,
+    height: innerHeight * 0.7,
     // lockAspectRatio: true,
     resizeHandles: ["e"],
     minConstraints: [innerWidth * minRatio, Infinity],

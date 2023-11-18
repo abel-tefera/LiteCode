@@ -72,7 +72,7 @@ const Folder: React.FC<FolderProps> = ({
                   setShowGray(false);
                   if (item.type === "file") {
                     dispatch(setActiveTabAsync(item.id));
-                    dispatch(setActiveEditorAsync(item.id));
+                    dispatch(setActiveEditorAsync({id: item.id, line: 0}));
                   } else {
                     dispatch(
                       collapseOrExpand({

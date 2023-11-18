@@ -48,13 +48,13 @@ const CodePreview: React.FC<CodePreviewProps> = ({ code, err }) => {
   }, [code]);
 
   return (
-    <div className="pl-1 h-full w-full">
+    <div className="pl-1 h-[80%] mt-10 w-full">
       {err ? (
         <div className="preview-error" style={{ color: "red" }}>
           {err}
         </div>
       ) : (
-        <div className="preview-wrapper h-full w-full">
+        <div className="preview-wrapper w-full">
           <iframe
             title="Code Preview"
             ref={iframe}

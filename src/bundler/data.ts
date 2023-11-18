@@ -5,9 +5,9 @@ export type FileTree = {
     content: string;
   };
 };
-export const getFiles = () => {
+export const getFiles = (): FileTree => {
   const state = store.getState() as RootState;
-  
+
   const allFileIds = state.structure.normalized.files.allIds;
   const allFilesAndPaths = allFileIds.map((id) => {
     return {

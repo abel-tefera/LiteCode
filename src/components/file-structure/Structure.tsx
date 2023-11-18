@@ -36,6 +36,7 @@ import {
   selectedItem,
   setParentItemId,
   getCurrentItems,
+  search,
 } from "../../state/features/structure/structureSlice";
 import { usePrependPortal } from "../../hooks/usePrependPortal";
 import FileActions from "./widgets/FileActions";
@@ -66,6 +67,7 @@ const Structure = () => {
   const [showBlue, setShowBlue] = useState(true);
   const [showGray, setShowGray] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [showContext, setShowContext] = useState(false);
   const [selectedType, setSelectedType] = useState<
     "file" | "folder" | "head" | ""
@@ -196,6 +198,22 @@ const Structure = () => {
       setSearchTerm(searchTerm);
     },
   };
+
+  useEffect(() => {
+    if (searchTerm.length > 0) {
+      const timer = setTimeout(async () => {
+        dispatch(search(searchTerm));
+        setIsSearching(true);
+      }, 300);
+      return () => {
+        clearTimeout(timer);
+      };
+    } else {
+      if (isSearching) {
+        setIsSearching(false);
+      }
+    }
+  }, [searchTerm]);
 
   const prependForPortal = (isRename: boolean) => {
     if (!clickedRef.current) {
@@ -367,8 +385,8 @@ const Structure = () => {
 
   return (
     <div id="file-system">
-      <FileActions {...fileActions} isSearching={searchTerm.length > 0} />
-      {searchTerm.length === 0 && (
+      <FileActions {...fileActions} isSearching={isSearching} />
+      {!isSearching && (
         <div
           id="structure-container"
           parent-id={"head"}

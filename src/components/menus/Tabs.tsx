@@ -15,7 +15,7 @@ const Tabs = () => {
   const onSelect = (id: string) => {
     // alert(`Tab ${i} selected`);
     dispatch(selectTab(id));
-    dispatch(setActiveEditorAsync(id))
+    dispatch(setActiveEditorAsync({id, line: 0}));
     
   };
 

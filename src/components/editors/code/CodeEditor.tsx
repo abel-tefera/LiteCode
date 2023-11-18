@@ -93,9 +93,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
         path={editorData.id}
         defaultLanguage={editorData.language}
         defaultValue={editorData.content}
+        line={editorData.line}
         theme="vs-dark"
         language={editorData.language}
         height={"100%"}
+        width={"100%"}
         options={{
           // wordWrap: "on",
           minimap: { enabled: true },
@@ -113,11 +115,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
             target: monaco.languages.typescript.ScriptTarget.ES2016,
             allowNonTsExtensions: true,
+            jsx: 4
           });
           monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
             target: monaco.languages.typescript.ScriptTarget.ES2016,
             allowNonTsExtensions: true,
+            jsx: 4
           });
+       
           monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
             noSemanticValidation: false,
             noSyntaxValidation: false,
@@ -129,7 +134,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           monaco.languages.typescript.typescriptDefaults.setEagerModelSync(
             true
           );
-          // monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+          monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
         }}
         onValidate={(markers) => {
           // console.log("ONVALIDATE", markers);

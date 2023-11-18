@@ -7,7 +7,7 @@ export const filePathPlugin = (
     name: "filePathPlugin",
     setup: (build: esbuild.PluginBuild) => {
       build.onResolve(
-        { filter: /^\.\/?\w+/ },
+        { filter: /^(\.\.|\.)(\/.*)?$/ },
         (args: esbuild.OnResolveArgs) => {
           if (args.kind === "import-statement") {
             const dirname = Path.dirname(args.importer);

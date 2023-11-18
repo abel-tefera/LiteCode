@@ -92,6 +92,24 @@ type ToCopy = {
   parentId: string;
 } | null;
 
+type MatchingLine = {
+  line: number;
+  content: string;
+};
+
+export type MatchingFile = {
+  id: string;
+  name: string;
+  extension: ValidExtensions;
+  matches: MatchingLine[];
+};
+
+type SearchResults = {
+  files: MatchingFile[];
+  numOfResults: number;
+  numOfLines: number;
+};
+
 interface FileSystem {
   normalized: Normalized;
   selected: string;
@@ -99,6 +117,7 @@ interface FileSystem {
   toCopy: ToCopy;
   parentItemId: string;
   initialFolder: Directory;
+  searchTerm: string;
   // tabs: Tabs;
 }
 
@@ -135,6 +154,7 @@ const initialState: FileSystem = {
   },
   toCopy: null,
   parentItemId: "head",
+  searchTerm: "",
   // tabs: [],
 };
 
@@ -534,7 +554,7 @@ export const structureSlice = createSlice({
         if (state.toCopy?.type === "folder") {
           const toCopyFolderPath =
             state.normalized.folders.byId[newNode.id].path;
-            toCopyFolderPath.pop();
+          toCopyFolderPath.pop();
           dfsCbOnEach(
             newNode.subFoldersAndFiles as Directory[],
             (item, parentIds) => {
@@ -576,7 +596,7 @@ export const structureSlice = createSlice({
         state.normalized[inputTypeForNormalized].byId[newNode.id].path = [
           "/",
           state.initialFolder.id,
-          newNode.id
+          newNode.id,
         ];
 
         const node = actionOnChildren(newNode as Directory);
@@ -845,6 +865,9 @@ export const structureSlice = createSlice({
         action.payload.id
       );
     },
+    search: (state, action: PayloadAction<string>) => {
+      state.searchTerm = action.payload;
+    },
   },
 });
 
@@ -868,6 +891,7 @@ export const folderIds = (state: RootState) =>
 
 export const clipboard = (state: RootState) => state.structure.toCopy;
 
+export const getSearchTerm = (state: RootState) => state.structure.searchTerm;
 // export const getChildren = (state: any, action) => {
 //   const { id } = action.payload;
 //   const folder = state.structure.normalized.folders.byId[id];
@@ -898,8 +922,8 @@ export const contextSelectedObj = createSelector(
           }
         } else if (contextSelected?.type === "folder") {
           return normalized.folders.byId[id].name;
-        } 
-        return 'UNKNOWN';
+        }
+        return "UNKNOWN";
       })
       .join("/")}`;
     return {
@@ -949,6 +973,47 @@ export const getCurrentItems = createSelector(
   }
 );
 
+export const getSearchResults = createSelector(
+  (state: RootState) => state.structure.searchTerm,
+  (state: RootState) => state.structure.normalized.files,
+  (searchTerm: string, files: Normalized["files"]) => {
+    const res: SearchResults = {
+      files: [],
+      numOfResults: 0,
+      numOfLines: 0,
+    };
+    const foundFiles: MatchingFile[] = [];
+    files.allIds.forEach((id) => {
+      const currentFile = files.byId[id];
+      const content = currentFile.content;
+      const regex = new RegExp(searchTerm, "g");
+      const matches = content.match(regex);
+      const allRes: MatchingLine[] = [];
+      if (matches) {
+        res.numOfResults += 1;
+        res.numOfLines += matches.length;
+        const nL = content.split("\r");
+        for (let j = 0; j < nL.length; j++) {
+          if (nL[j].includes(matches[0])) {
+            allRes.push({
+              line: j + 1,
+              content: nL[j].trim(),
+            });
+          }
+        }
+        foundFiles.push({
+          id: currentFile.id,
+          name: currentFile.name,
+          extension: currentFile.extension,
+          matches: allRes,
+        });
+      }
+    });
+    res.files = foundFiles;
+    return res;
+  }
+);
+
 export const {
   addNode,
   removeNode,
@@ -962,6 +1027,7 @@ export const {
   copyNode,
   setParentItemId,
   setContextSelectedForFileAction,
+  search,
 } = structureSlice.actions;
 
 export default structureSlice.reducer;

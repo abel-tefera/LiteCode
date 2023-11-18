@@ -5,17 +5,21 @@ import { getEditorWidthAdjusted } from "../../../state/features/editor/editorSli
 interface HighlightedTextProps {
   hightlight: string;
   lineOfText: string;
+  lineNum: number;
+  openAtLine: (lineNum: number) => void;
 }
 const HighlightedText: React.FC<HighlightedTextProps> = ({
   hightlight,
   lineOfText,
+  lineNum,
+  openAtLine
 }) => {
   const widthAdjusted = useTypedSelector(getEditorWidthAdjusted);
 
   const parts = lineOfText.split(new RegExp(`(${hightlight})`, "gi"));
   const idx = parts.indexOf(hightlight);
   return (
-    <div className="whitespace-nowrap my-1 pl-4 cursor-pointer hover:bg-dark-hover">
+    <div onClick={() => openAtLine(lineNum)} className="whitespace-nowrap my-1 ml-3 pl-1 cursor-pointer hover:bg-dark-hover">
       {parts.map((part, i) =>
         (() => {
           if (part.toLowerCase() === hightlight.toLowerCase()) {

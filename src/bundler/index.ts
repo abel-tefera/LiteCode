@@ -9,6 +9,7 @@ const bundle = async (serviceRef: any) => {
       entryPoints: ["index.js"],
       bundle: true,
       write: false,
+      // @ts-ignore
       plugins: [filePathPlugin(), unpkgPathPlugin(), fetchPlugin(getFiles())],
       define: {
         "process.env.NODE_ENV": '"production"',
