@@ -19,18 +19,20 @@ const trimName = (
   let newName = "";
   if (item.type === "file") {
     const fullName = `${item.name}.${item.extension}`;
-    const [fname, ext] = fullName.split(".");
-    if (fname.length > 10) {
-      newName = `${fname.slice(0, 10)}...${ext}`;
-    } else {
-      newName = fullName;
-    }
+    // const [fname, ext] = fullName.split(".");
+    // if (fname.length > 10) {
+    //   newName = `${fname.slice(0, 10)}...${ext}`;
+    // } else {
+    //   newName = fullName;
+    // }
+    newName = fullName;
   } else if (item.type === "folder") {
-    if (item.name.length > 12) {
-      newName = `${item.name.slice(0, 12)}...`;
-    } else {
-      newName = item.name;
-    }
+    // if (item.name.length > 12) {
+    //   newName = `${item.name.slice(0, 12)}...`;
+    // } else {
+    //   newName = item.name;
+    // }
+    newName = item.name;
   }
   // TODO Optimize Too many calls
   // console.log("NAME", newName);

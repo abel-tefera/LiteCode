@@ -985,6 +985,7 @@ export const getSearchResults = createSelector(
     const foundFiles: MatchingFile[] = [];
     files.allIds.forEach((id) => {
       const currentFile = files.byId[id];
+      console.log("ASDSA CONTENT HERE", currentFile)
       const content = currentFile.content;
       const regex = new RegExp(searchTerm, "g");
       const matches = content.match(regex);

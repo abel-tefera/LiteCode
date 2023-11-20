@@ -1,6 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import { FileStructure } from "../structure/structureSlice";
+import { getPaths } from "./utils/pathUtil";
 
 type KnownLanguages = "javascript" | "typescript" | "css" | "html" | "json";
 type EditorData = {
@@ -13,7 +14,7 @@ type EditorData = {
 };
 
 interface EditorSlice {
-  activeEditors: EditorData[];
+  activeEditors: string[];
   currentEditor: EditorData;
   editorWidthAdjusted: number;
 }
@@ -33,19 +34,15 @@ const initialState: EditorSlice = {
 
 export const setActiveEditorAsync = createAsyncThunk(
   "setActiveEditorAsync",
-  async (editorProps: {id: string, line: number}, { getState, fulfillWithValue }) => {
+  async (
+    editorProps: { id: string; line: number },
+    { getState, fulfillWithValue }
+  ) => {
     const state = getState() as RootState;
 
-    const file = state.structure.normalized.files.byId[editorProps.id];
-    const unmappedPath = file.path.filter((id) => id !== "/" && id !== "head");
-    const actualPath = unmappedPath.map((id, i) => {
-      if (i < unmappedPath.length - 1) {
-        return state.structure.normalized.folders.byId[id].name;
-      } else {
-        const file = state.structure.normalized.files.byId[id];
-        return `${file.name}.${file.extension}`;
-      }
-    });
+    const normalized = state.structure.normalized;
+    const file = normalized.files.byId[editorProps.id];
+    const [unmappedPath, actualPath] = getPaths(file, normalized);
     // actualPath.push(`${file.name}.${file.extension}`);
     return {
       file: file as FileStructure,
@@ -65,7 +62,7 @@ export const editorSlice = createSlice({
     },
     removeActiveEditor: (state, action: PayloadAction<string>) => {
       state.activeEditors = state.activeEditors.filter(
-        ({ id }) => id !== action.payload
+        (id) => id !== action.payload
       );
     },
   },
@@ -99,7 +96,7 @@ export const editorSlice = createSlice({
           unmappedPath: unmappedPath,
           path: actualPath,
         };
-        state.activeEditors = [...state.activeEditors, state.currentEditor];
+        state.activeEditors = [...state.activeEditors, state.currentEditor.id];
       }
     });
   },

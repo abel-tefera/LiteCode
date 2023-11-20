@@ -5,22 +5,32 @@ import { Tooltip } from "react-tooltip";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 
 import { trimName } from "../file-structure/utils";
-import { activeTabs, closeTab, selectTab } from "../../state/features/tabs/tabsSlice";
-import { setActiveEditorAsync, removeActiveEditor } from "../../state/features/editor/editorSlice";
+import {
+  activeTabs,
+  closeTab,
+  selectTab,
+  selectedTab,
+} from "../../state/features/tabs/tabsSlice";
+import {
+  setActiveEditorAsync,
+  removeActiveEditor,
+} from "../../state/features/editor/editorSlice";
 
 const Tabs = () => {
   const dispatch = useTypedDispatch();
   const tabs = useTypedSelector(activeTabs);
+  const selected = useTypedSelector(selectedTab);
 
   const onSelect = (id: string) => {
     // alert(`Tab ${i} selected`);
-    dispatch(selectTab(id));
-    dispatch(setActiveEditorAsync({id, line: 0}));
-    
+    if (selected !== id) {
+      dispatch(selectTab(id));
+      dispatch(setActiveEditorAsync({ id, line: 0 }));
+    }
   };
 
   const onClose = (id: string) => {
-    dispatch(removeActiveEditor(id))
+    dispatch(removeActiveEditor(id));
 
     dispatch(closeTab(id));
   };
@@ -33,14 +43,13 @@ const Tabs = () => {
               id={item.id}
               name={item.wholeName}
               type={item.extension}
-              selected={item.isSelected}
+              selected={item.id === selected}
               onSelect={onSelect}
               onClose={onClose}
             />
           ))}
         </div>
       </div>
-
     </div>
   );
 };

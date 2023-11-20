@@ -43,7 +43,6 @@ import FileActions from "./widgets/FileActions";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 import {
   removeTabAsync,
-  updateTabAsync,
 } from "../../state/features/tabs/tabsSlice";
 
 const Structure = () => {
@@ -281,9 +280,6 @@ const Structure = () => {
       showInputHandler(false);
       clickedRef.current?.classList.remove("hide-input");
       if (isRename === true && value !== false) {
-        if (inputType === "file") {
-          dispatch(updateTabAsync());
-        }
         dispatch(renameNode({ value }));
       }
       setIsRename(false);
@@ -385,7 +381,13 @@ const Structure = () => {
 
   return (
     <div id="file-system">
-      <FileActions {...fileActions} isSearching={isSearching} />
+      <FileActions
+        {...fileActions}
+        isSearching={
+          isSearching && allFileIds.length > 0 && allFolderIds.length > 1
+        }
+      />
+
       {!isSearching && (
         <div
           id="structure-container"
