@@ -15,13 +15,13 @@ export type Tab = { id: string; extension: ValidExtensions };
 
 interface TabSlice {
   open: Tab[];
-  selected: string | null;
+  selected: string;
   selectionStack: string[];
 }
 
 const initialState: TabSlice = {
   open: [],
-  selected: null,
+  selected: "",
   selectionStack: [],
 };
 
@@ -48,7 +48,10 @@ export const tabsSlice = createSlice({
   initialState,
   reducers: {
     selectTab: (state, action: PayloadAction<string>) => {
-      if (state.selected) {
+      if (
+        state.selected !== "" &&
+        state.selectionStack[state.selectionStack.length - 1] !== state.selected
+      ) {
         state.selectionStack = [...state.selectionStack, state.selected];
       }
       state.selected = action.payload;
@@ -71,14 +74,14 @@ export const tabsSlice = createSlice({
       state.selectionStack = state.selectionStack.filter(
         (id) => id !== action.payload
       );
-      
+
       if (state.selected === action.payload) {
         console.log("HERE SELECTED", state.selected);
         const newSelectedStack = state.selectionStack.filter(
           (id) => id !== action.payload
         );
         const lastSelected = newSelectedStack.pop();
-        state.selected = lastSelected || null;
+        state.selected = lastSelected || "";
         state.selectionStack = newSelectedStack;
       }
     },
@@ -115,6 +118,14 @@ export const tabsSlice = createSlice({
             ...state.open,
             { id: item.id, extension: item.extension },
           ];
+        }
+        if (
+          (state.selected !== "" &&
+            state.selectionStack[state.selectionStack.length - 1] !==
+              state.selected) ||
+          state.selectionStack.length === 0
+        ) {
+          state.selectionStack = [...state.selectionStack, state.selected];
         }
         state.selected = item.id;
       });

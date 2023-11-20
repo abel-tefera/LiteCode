@@ -12,8 +12,9 @@ import {
   selectedTab,
 } from "../../state/features/tabs/tabsSlice";
 import {
+  removeActiveEditorAsync,
   setActiveEditorAsync,
-  removeActiveEditor,
+  
 } from "../../state/features/editor/editorSlice";
 
 const Tabs = () => {
@@ -30,9 +31,9 @@ const Tabs = () => {
   };
 
   const onClose = (id: string) => {
-    dispatch(removeActiveEditor(id));
-
     dispatch(closeTab(id));
+    dispatch(removeActiveEditorAsync(id));
+
   };
   return (
     <div className="flex flex-row w-full justify-between">

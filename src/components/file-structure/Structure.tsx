@@ -41,9 +41,8 @@ import {
 import { usePrependPortal } from "../../hooks/usePrependPortal";
 import FileActions from "./widgets/FileActions";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
-import {
-  removeTabAsync,
-} from "../../state/features/tabs/tabsSlice";
+import { removeTabAsync } from "../../state/features/tabs/tabsSlice";
+import { removeActiveEditorAsync } from "../../state/features/editor/editorSlice";
 
 const Structure = () => {
   const fileSysRef = useRef<HTMLDivElement>(null);
@@ -446,6 +445,7 @@ const Structure = () => {
             action={() => {
               dispatch(removeNode({ id: null, type: null }));
               dispatch(removeTabAsync());
+              dispatch(removeActiveEditorAsync(contextSelectedId));
               setShowDialog(false);
             }}
           />,

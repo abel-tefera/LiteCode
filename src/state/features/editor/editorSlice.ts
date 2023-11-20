@@ -32,6 +32,17 @@ const initialState: EditorSlice = {
   editorWidthAdjusted: 0,
 };
 
+export const removeActiveEditorAsync = createAsyncThunk(
+  "removeActiveEditorAsync",
+  async (id: string, { getState, dispatch }) => {
+    const state = getState() as RootState;
+    const selectedTab = state.tabs.selected;
+    console.log("AAWAIT", selectedTab)
+    await dispatch(setActiveEditorAsync({ id: selectedTab, line: 0 }));
+    return { id };
+  }
+);
+
 export const setActiveEditorAsync = createAsyncThunk(
   "setActiveEditorAsync",
   async (
@@ -39,7 +50,7 @@ export const setActiveEditorAsync = createAsyncThunk(
     { getState, fulfillWithValue }
   ) => {
     const state = getState() as RootState;
-
+    console.log("SETTING ACTIVE", editorProps.id);
     const normalized = state.structure.normalized;
     const file = normalized.files.byId[editorProps.id];
     const [unmappedPath, actualPath] = getPaths(file, normalized);
@@ -59,11 +70,6 @@ export const editorSlice = createSlice({
   reducers: {
     setEditorWidthAdjusted: (state, action: PayloadAction<number>) => {
       state.editorWidthAdjusted = action.payload;
-    },
-    removeActiveEditor: (state, action: PayloadAction<string>) => {
-      state.activeEditors = state.activeEditors.filter(
-        (id) => id !== action.payload
-      );
     },
   },
   extraReducers: (builder) => {
@@ -96,7 +102,18 @@ export const editorSlice = createSlice({
           unmappedPath: unmappedPath,
           path: actualPath,
         };
-        state.activeEditors = [...state.activeEditors, state.currentEditor.id];
+        if (state.activeEditors.filter((_id) => _id === file.id).length === 0) {
+          state.activeEditors = [
+            ...state.activeEditors,
+            state.currentEditor.id,
+          ];
+        }
+      }
+    });
+    builder.addCase(removeActiveEditorAsync.fulfilled, (state, action) => {
+      const { id } = action.payload;
+      state.activeEditors = state.activeEditors.filter((_id) => _id !== id);
+      if (state.currentEditor.id === id) {
       }
     });
   },
@@ -108,6 +125,5 @@ export const getEditorWidthAdjusted = (state: RootState) =>
 export const getCurrentEditor = (state: RootState) =>
   state.editor.currentEditor;
 
-export const { setEditorWidthAdjusted, removeActiveEditor } =
-  editorSlice.actions;
+export const { setEditorWidthAdjusted } = editorSlice.actions;
 export default editorSlice.reducer;
