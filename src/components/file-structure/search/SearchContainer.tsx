@@ -11,8 +11,8 @@ const SearchContainer = () => {
   return (
     <div className="select-none w-full h-[25rem]">
       <div className="m-2">
-        {searchData.numOfLines}{" "}result{searchData.numOfLines > 1 && "s"}{" "}in
-        {" "}{searchData.numOfResults}{" "}file{searchData.numOfResults > 1 && "s"}
+        {searchData.numOfLines}{" "}result{searchData.numOfLines !== 1 && "s"}{" "}in
+        {" "}{searchData.numOfResults}{" "}file{searchData.numOfResults !== 1 && "s"}
       </div>
       {searchData.files.map((file) => (
         <div className="w-full z-0">

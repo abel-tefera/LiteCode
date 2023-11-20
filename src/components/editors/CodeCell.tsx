@@ -11,6 +11,7 @@ import { updateFileContents } from "../../state/features/structure/structureSlic
 import { useTypedDispatch } from "../../state/hooks";
 import Tabs from "../menus/Tabs";
 import ProjectActions from "../menus/ProjectActions";
+import { storeOutput } from "../../state/features/bundler/bundlerSlice";
 
 interface CodeCellProps {
   // currentTab: string;
@@ -19,8 +20,6 @@ interface CodeCellProps {
 const CodeCell: React.FC<CodeCellProps> = () => {
   const [input, setInput] = useState("");
   const [currentEditorId, setCurrentEditorId] = useState("");
-  const [code, setCode] = useState("");
-  const [err, setErr] = useState("");
   const [direction, setDirection] = useState<
     "horizontal" | "vertical" | null
   >();
@@ -61,8 +60,7 @@ const CodeCell: React.FC<CodeCellProps> = () => {
       if (input === "") return;
       dispatch(updateFileContents({ id: currentEditorId, value: input }));
       const resCode = await bundle(esbuildRef);
-      setCode(resCode.code);
-      setErr(resCode.err);
+      dispatch(storeOutput({ code: resCode.code, err: resCode.err }));
     }, 1000);
 
     return () => {
@@ -97,7 +95,7 @@ const CodeCell: React.FC<CodeCellProps> = () => {
           <CodeEditor onChange={onEditorChange} />
         </Resizable>
         <div className="w-full mr-2">
-          <CodePreview code={code} err={err} />
+          <CodePreview />
         </div>
       </div>
     </div>

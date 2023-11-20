@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from "react";
+import { useTypedSelector } from "../../../state/hooks";
+import { getOutput } from "../../../state/features/bundler/bundlerSlice";
 
 const preview = `
   <html>
@@ -35,23 +37,24 @@ interface CodePreviewProps {
   err: string | null;
 }
 
-const CodePreview: React.FC<CodePreviewProps> = ({ code, err }) => {
+const CodePreview: React.FC = () => {
   const iframe = useRef<any>(null);
+  const output = useTypedSelector(getOutput);
 
   useEffect(() => {
-    if (code !== "") {
+    if (output.code !== "") {
       iframe.current.srcdoc = preview;
       setTimeout(() => {
-        iframe.current.contentWindow.postMessage(code, "*");
+        iframe.current.contentWindow.postMessage(output.code, "*");
       }, 50);
     }
-  }, [code]);
+  }, [output]);
 
   return (
     <div className="pl-1 h-[80%] mt-10 w-full">
-      {err ? (
+      {output.err ? (
         <div className="preview-error" style={{ color: "red" }}>
-          {err}
+          {output.err}
         </div>
       ) : (
         <div className="preview-wrapper w-full">

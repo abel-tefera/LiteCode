@@ -16,9 +16,9 @@ const bundle = async (serviceRef: any) => {
         global: "window",
       }
     });
-    return { code: result.outputFiles[0].text, err: null };
+    return { code: result.outputFiles[0].text as string, err: "" };
   } catch (err: any) {
-    return { code: "", err: err.message };
+    return { code: "", err: err.message as string };
   }
 };
 
