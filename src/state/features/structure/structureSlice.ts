@@ -4,6 +4,7 @@ import type { RootState } from "../../store";
 import { v4 as uuidv4 } from "uuid";
 import { bfsNodeAction, dfsCbOnEach, dfsNodeAction } from "./utils/traversal";
 import { findSortable } from "./utils/sorting";
+import getTree from "./utils/getTree";
 
 // type NestedRecord<T extends any[]>
 //     = T extends [any, ...infer R]
@@ -973,6 +974,15 @@ export const getCurrentItems = createSelector(
   }
 );
 
+export const getFileTree = createSelector(
+  (state: RootState) => state.structure.normalized,
+  (normalized: Normalized) => {
+    const allFileIds = normalized.files.allIds;
+    const tree = getTree(allFileIds, normalized);
+    return tree;
+  }
+);
+
 export const getSearchResults = createSelector(
   (state: RootState) => state.structure.searchTerm,
   (state: RootState) => state.structure.normalized.files,
@@ -985,7 +995,7 @@ export const getSearchResults = createSelector(
     const foundFiles: MatchingFile[] = [];
     files.allIds.forEach((id) => {
       const currentFile = files.byId[id];
-      console.log("ASDSA CONTENT HERE", currentFile)
+      console.log("ASDSA CONTENT HERE", currentFile);
       const content = currentFile.content;
       const regex = new RegExp(searchTerm, "g");
       const matches = content.match(regex);

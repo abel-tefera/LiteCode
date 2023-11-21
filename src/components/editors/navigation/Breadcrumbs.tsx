@@ -89,7 +89,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ editorObj }) => {
               return createPortal(
                 <div
                   ref={miniStructurePortalRef}
-                  className="rounded-lg bg-slate-950 border border-slate-600 absolute w-60 z-10 mt-2 max-h-60 overflow-y-auto custom-scrollbar-3"
+                  className="rounded-lg bg-slate-950 border border-slate-600 absolute w-52 z-10 mt-2 max-h-60 overflow-y-auto custom-scrollbar-3"
                 >
                   <MiniFolder
                     init={true}

@@ -88,7 +88,9 @@ const CodeCell: React.FC<CodeCellProps> = () => {
           initialRatio={0.65}
           haveWidthAdjusted={true}
           resizableCall={(width: number) => {
-            // console.log("CODE CELL", width)
+            // setCodeCellWidth(width);
+          }}
+          resizeStopCall={(width: number) => {
             // setCodeCellWidth(width);
           }}
         >

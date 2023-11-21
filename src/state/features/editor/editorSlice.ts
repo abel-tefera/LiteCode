@@ -1,6 +1,11 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  PayloadAction,
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
 import { RootState } from "../../store";
-import { FileStructure } from "../structure/structureSlice";
+import { FileStructure, Normalized } from "../structure/structureSlice";
 import { getPaths } from "./utils/pathUtil";
 
 type KnownLanguages = "javascript" | "typescript" | "css" | "html" | "json";
@@ -8,24 +13,22 @@ type EditorData = {
   id: string;
   language: KnownLanguages;
   line: number;
-  content: string;
   path: string[];
   unmappedPath: string[];
 };
 
 interface EditorSlice {
-  activeEditors: string[];
+  // activeEditors: string[];
   currentEditor: EditorData;
   editorWidthAdjusted: number;
 }
 
 const initialState: EditorSlice = {
-  activeEditors: [],
+  // activeEditors: [],
   currentEditor: {
     id: "",
     language: "javascript",
     line: 1,
-    content: "",
     path: [],
     unmappedPath: [],
   },
@@ -37,8 +40,10 @@ export const removeActiveEditorAsync = createAsyncThunk(
   async (id: string, { getState, dispatch }) => {
     const state = getState() as RootState;
     const selectedTab = state.tabs.selected;
-    console.log("AAWAIT", selectedTab)
-    await dispatch(setActiveEditorAsync({ id: selectedTab, line: 0 }));
+    console.log("AAWAIT", selectedTab);
+    if (selectedTab !== "") {
+      await dispatch(setActiveEditorAsync({ id: selectedTab, line: 0 }));
+    }
     return { id };
   }
 );
@@ -53,6 +58,7 @@ export const setActiveEditorAsync = createAsyncThunk(
     console.log("SETTING ACTIVE", editorProps.id);
     const normalized = state.structure.normalized;
     const file = normalized.files.byId[editorProps.id];
+    console.log("F", file);
     const [unmappedPath, actualPath] = getPaths(file, normalized);
     // actualPath.push(`${file.name}.${file.extension}`);
     return {
@@ -98,21 +104,20 @@ export const editorSlice = createSlice({
           id: file.id,
           language: language as KnownLanguages,
           line: openAtLine !== 0 ? openAtLine : 1,
-          content: file.content,
           unmappedPath: unmappedPath,
           path: actualPath,
         };
-        if (state.activeEditors.filter((_id) => _id === file.id).length === 0) {
-          state.activeEditors = [
-            ...state.activeEditors,
-            state.currentEditor.id,
-          ];
-        }
+        // if (state.activeEditors.filter((_id) => _id === file.id).length === 0) {
+        //   state.activeEditors = [
+        //     ...state.activeEditors,
+        //     state.currentEditor.id,
+        //   ];
+        // }
       }
     });
     builder.addCase(removeActiveEditorAsync.fulfilled, (state, action) => {
       const { id } = action.payload;
-      state.activeEditors = state.activeEditors.filter((_id) => _id !== id);
+      // state.activeEditors = state.activeEditors.filter((_id) => _id !== id);
       if (state.currentEditor.id === id) {
       }
     });
@@ -122,8 +127,20 @@ export const editorSlice = createSlice({
 export const getEditorWidthAdjusted = (state: RootState) =>
   state.editor.editorWidthAdjusted;
 
-export const getCurrentEditor = (state: RootState) =>
-  state.editor.currentEditor;
+export const getCurrentEditor = createSelector(
+  (state: RootState) => state.structure.normalized,
+  (state: RootState) => state.editor.currentEditor,
+  (normalized: Normalized, editor: EditorData) => {
+    const file = normalized.files.byId[editor.id];
+    const [unmappedPath, actualPath] = getPaths(file, normalized);
+    return {
+      ...editor,
+      path: actualPath,
+      unmappedPath: unmappedPath,
+      content: file.content,
+    };
+  }
+);
 
 export const { setEditorWidthAdjusted } = editorSlice.actions;
 export default editorSlice.reducer;

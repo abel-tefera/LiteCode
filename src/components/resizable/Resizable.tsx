@@ -13,6 +13,7 @@ interface ResizableProps {
   initialRatio: number;
   resizableCall: (width: number) => void;
   haveWidthAdjusted: boolean;
+  resizeStopCall: (width: number) => void;
 }
 
 const Resizable: React.FC<ResizableProps> = ({
@@ -22,6 +23,7 @@ const Resizable: React.FC<ResizableProps> = ({
   initialRatio,
   resizableCall,
   haveWidthAdjusted,
+  resizeStopCall
 }) => {
   let resizableProps: ResizableBoxProps;
 
@@ -51,7 +53,6 @@ const Resizable: React.FC<ResizableProps> = ({
     const height = window.innerHeight;
     setInnerWidth(width);
     setInnerHeight(height);
-
     if (window.innerWidth * maxRatio < resizableWidth) {
       setResizableWidth(window.innerWidth * maxRatio);
     }
@@ -75,7 +76,7 @@ const Resizable: React.FC<ResizableProps> = ({
     // draggableOpts: { grid: [innerWidth * minRatio, Infinity] },
     onResize: (e, data) => {
       if (data.size.width < window.innerWidth * minRatio * 1.5) {
-        console.log("LOWER BOUNDS")
+        // console.log("LOWER BOUNDS")
       }
       // console.log("ABCD", data)
       // if (hasResizableCall) {
@@ -90,7 +91,8 @@ const Resizable: React.FC<ResizableProps> = ({
       }
     },
     onResizeStop: (e, data) => {
-      // setResizableWidth(data.size.width);
+      setResizableWidth(data.size.width);
+      resizeStopCall(data.size.width);
     },
   };
   // } else {

@@ -32,6 +32,9 @@ const Main = () => {
           resizableCall={(width: number) => {
             setWidthAdjusted(window.innerWidth * 0.15 - width);
           }}
+          resizeStopCall={(width: number) => {
+            setWidthAdjusted(window.innerWidth * 0.15 - width);
+          }}
         >
           <div className="h-full flex flex-col">
             <Structure />
