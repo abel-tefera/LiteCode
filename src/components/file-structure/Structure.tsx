@@ -6,7 +6,10 @@ import {
   FileInFolder,
   ItemType,
   getInitialSet,
+  isResizeCollapsed,
   setContextSelectedForFileAction,
+  setResizeCollapsed,
+  setSearchFocused,
   setSelected,
 } from "../../state/features/structure/structureSlice";
 import Folder from "./Folder";
@@ -43,6 +46,8 @@ import FileActions from "./widgets/FileActions";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 import { removeTabAsync } from "../../state/features/tabs/tabsSlice";
 import { removeActiveEditorAsync } from "../../state/features/editor/editorSlice";
+import searchIcon from "../../assets/search-icon.svg";
+import fileExplorer from "../../assets/file-explorer.svg";
 
 const Structure = () => {
   const fileSysRef = useRef<HTMLDivElement>(null);
@@ -50,7 +55,7 @@ const Structure = () => {
   const clickedRef = useRef<HTMLElement>();
 
   const dispatch = useTypedDispatch();
-
+  const isCollapsed = useTypedSelector(isResizeCollapsed);
   const structureData = useTypedSelector(getInitialSet);
   const contextSelectedE = useTypedSelector(contextSelectedEvent);
   const contextSelectedItemProps = useTypedSelector(contextSelectedObj);
@@ -209,6 +214,7 @@ const Structure = () => {
     } else {
       if (isSearching) {
         setIsSearching(false);
+        dispatch(search(''));
       }
     }
   }, [searchTerm]);
@@ -379,79 +385,127 @@ const Structure = () => {
   }, [selectedI]);
 
   return (
-    <div id="file-system">
-      <FileActions
-        {...fileActions}
-        isSearching={
-          isSearching && allFileIds.length > 0 && allFolderIds.length > 1
-        }
-      />
+    <>
+      {!isCollapsed ? (
+        <div id="file-system">
+          <FileActions
+            {...fileActions}
+            isSearching={
+              isSearching && allFileIds.length > 0 && allFolderIds.length > 1
+            }
+          />
 
-      {!isSearching && (
-        <div
-          id="structure-container"
-          parent-id={"head"}
-          typeof-item={"folder"}
-          className="pl-1 pr-2 file-sys-container custom-scrollbar-2"
-          ref={fileSysRef}
-          onClick={(e) => {
-            dispatch(setSelected({ id: "head", type: "folder" }));
-          }}
-          onContextMenu={(e) => contextHandler(e)}
-          // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
-        >
-          <div
-            parent-id={"head"}
-            typeof-item={"folder"}
-            ref={structureRef}
-            className="content flex items-center"
-          >
-            <Folder
-              data={structureData as (Directory | FileInFolder)[]}
-              showBlue={showBlue}
-              setShowBlue={setShowBlue}
-              showGray={showGray}
-              setShowGray={setShowGray}
-            />
-
-            {allFileIds.length === 0 && allFolderIds.length === 1 && (
+          {!isSearching && (
+            <div
+              id="structure-container"
+              parent-id={"head"}
+              typeof-item={"folder"}
+              className="pl-1 mr-2 file-sys-container custom-scrollbar-2"
+              ref={fileSysRef}
+              onClick={(e) => {
+                dispatch(setSelected({ id: "head", type: "folder" }));
+              }}
+              onContextMenu={(e) => contextHandler(e)}
+              // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
+            >
               <div
-                id="welcome"
                 parent-id={"head"}
                 typeof-item={"folder"}
-                className="flex h-[40vh] items-center px-4 mx-auto"
+                ref={structureRef}
+                className="content flex items-center"
               >
-                <span
-                  parent-id={"head"}
-                  typeof-item={"folder"}
-                  className="text-base text-center break-words p-3 rounded-lg border"
-                >
-                  Start developing with LiteCode...
-                </span>
+                <Folder
+                  data={structureData as (Directory | FileInFolder)[]}
+                  showBlue={showBlue}
+                  setShowBlue={setShowBlue}
+                  showGray={showGray}
+                  setShowGray={setShowGray}
+                />
+
+                {allFileIds.length === 0 && allFolderIds.length === 1 && (
+                  <div
+                    id="welcome"
+                    parent-id={"head"}
+                    typeof-item={"folder"}
+                    className="flex h-[40vh] items-center px-4 mx-auto"
+                  >
+                    <span
+                      parent-id={"head"}
+                      typeof-item={"folder"}
+                      className="text-base text-center break-words p-3 rounded-lg border"
+                    >
+                      Start developing with LiteCode...
+                    </span>
+                  </div>
+                )}
               </div>
+            </div>
+          )}
+
+          {showDialog &&
+            createPortal(
+              <Dialog
+                title={`Delete the ${selectedType} ${contextSelectedItemProps.wholeName}?`}
+                content={`Are you sure you want to delete the ${selectedType} ${contextSelectedItemProps.actualPath}? This action cannot be
+            undone.`}
+                actionText={`Yes, delete ${selectedType}`}
+                close={setShowDialog}
+                action={() => {
+                  dispatch(removeNode({ id: null, type: null }));
+                  dispatch(removeTabAsync());
+                  dispatch(removeActiveEditorAsync(contextSelectedId));
+                  setShowDialog(false);
+                }}
+              />,
+              document.getElementById("root") as HTMLElement
             )}
-          </div>
+
+          {showContext &&
+            createPortal(
+              <MenuContext
+                top={points.x}
+                left={points.y}
+                showContext={showContext}
+                setShowContext={setShowContext}
+                actions={actions}
+              />,
+              document.getElementById("file-system") as HTMLElement
+            )}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-start w-20 h-full">
+          <button
+            onClick={() => {
+              dispatch(setResizeCollapsed(false));
+              dispatch(setSearchFocused(true));
+            }}
+            type="button"
+            className="my-3"
+          >
+            <img
+              src={searchIcon}
+              className="w-14 h-14 hover:bg-dark-hover rounded-md p-2"
+            />
+          </button>
+          <hr className="w-5/6 border-t border-t-zinc-500" />
+
+          <button
+            onClick={() => {
+              dispatch(setResizeCollapsed(false));
+              dispatch(setSearchFocused(false));
+              dispatch(search(''));
+              setIsSearching(false);
+            }}
+            type="button"
+            className="my-3"
+          >
+            <img
+              src={fileExplorer}
+              className="w-14 h-14 hover:bg-dark-hover rounded-md p-2"
+            />
+          </button>
         </div>
       )}
-
-      {showDialog &&
-        createPortal(
-          <Dialog
-            title={`Delete the ${selectedType} ${contextSelectedItemProps.wholeName}?`}
-            content={`Are you sure you want to delete the ${selectedType} ${contextSelectedItemProps.actualPath}? This action cannot be
-            undone.`}
-            actionText={`Yes, delete ${selectedType}`}
-            close={setShowDialog}
-            action={() => {
-              dispatch(removeNode({ id: null, type: null }));
-              dispatch(removeTabAsync());
-              dispatch(removeActiveEditorAsync(contextSelectedId));
-              setShowDialog(false);
-            }}
-          />,
-          document.getElementById("root") as HTMLElement
-        )}
-
       {usePrependPortal(
         <CustomInput
           closeCallback={() => {
@@ -494,19 +548,7 @@ const Structure = () => {
         />,
         appendTo.current as HTMLElement
       )}
-
-      {showContext &&
-        createPortal(
-          <MenuContext
-            top={points.x}
-            left={points.y}
-            showContext={showContext}
-            setShowContext={setShowContext}
-            actions={actions}
-          />,
-          document.getElementById("file-system") as HTMLElement
-        )}
-    </div>
+    </>
   );
 };
 

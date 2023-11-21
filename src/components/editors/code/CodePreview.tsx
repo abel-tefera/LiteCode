@@ -16,6 +16,7 @@ const preview = `
 
         window.addEventListener('error', (e) => {
           e.preventDefault();
+          console.error(e.message);
           handleError(e.error);
         });
 
@@ -51,13 +52,15 @@ const CodePreview: React.FC = () => {
   }, [output]);
 
   return (
-    <div className="pl-1 h-[80%] mt-10 w-full">
+    <div
+      className={`pl-1 w-full pt-10 pb-8 h-full`}
+    >
       {output.err ? (
         <div className="preview-error" style={{ color: "red" }}>
           {output.err}
         </div>
       ) : (
-        <div className="preview-wrapper w-full">
+        <div className="preview-wrapper w-full h-full">
           <iframe
             title="Code Preview"
             ref={iframe}

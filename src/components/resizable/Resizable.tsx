@@ -2,8 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { ResizableBox, ResizableBoxProps } from "react-resizable";
 import "../../styles/resizable.css";
 import throttle from "../../utils/throttle";
-import { useTypedSelector } from "../../state/hooks";
+import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 import { getEditorWidthAdjusted } from "../../state/features/editor/editorSlice";
+import {
+  isResizeCollapsed,
+  setResizeCollapsed,
+} from "../../state/features/structure/structureSlice";
 
 interface ResizableProps {
   // direction: "horizontal" | "vertical";
@@ -23,18 +27,22 @@ const Resizable: React.FC<ResizableProps> = ({
   initialRatio,
   resizableCall,
   haveWidthAdjusted,
-  resizeStopCall
+  resizeStopCall,
 }) => {
   let resizableProps: ResizableBoxProps;
-
+  const dispatch = useTypedDispatch();
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
-
+  const [mouseX, setMouseX] = useState(0);
+  const [minWConstraints, setWMinConstraint] = useState(
+    window.innerWidth * minRatio
+  );
   const [resizableWidth, setResizableWidth] = useState(
     window.innerWidth * initialRatio
   );
   const widthAdjusted = useTypedSelector(getEditorWidthAdjusted);
   const prevCountRef = useRef<number>(widthAdjusted);
+  const isCollapsed = useTypedSelector(isResizeCollapsed);
 
   useEffect(() => {
     if (!haveWidthAdjusted) return;
@@ -71,17 +79,30 @@ const Resizable: React.FC<ResizableProps> = ({
     height: innerHeight * 0.7,
     // lockAspectRatio: true,
     resizeHandles: ["e"],
-    minConstraints: [innerWidth * minRatio, Infinity],
+    minConstraints: [minWConstraints, Infinity],
     maxConstraints: [innerWidth * maxRatio, Infinity],
     // draggableOpts: { grid: [innerWidth * minRatio, Infinity] },
     onResize: (e, data) => {
-      if (data.size.width < window.innerWidth * minRatio * 1.5) {
-        // console.log("LOWER BOUNDS")
+      if (
+        !haveWidthAdjusted &&
+        data.size.width === window.innerWidth * minRatio &&
+        mouseX <= 80
+      ) {
+        // setResizableWidth(40);
+        if (!isCollapsed){
+          dispatch(setResizeCollapsed(true));
+
+        }
+      } else if (!haveWidthAdjusted && data.size.width > 100) {
+        // setResizableWidth(innerWidth * minRatio);
+        if (isCollapsed){
+
+          dispatch(setResizeCollapsed(false));
+        }
       }
-      // console.log("ABCD", data)
+
       // if (hasResizableCall) {
-        
-        // console.log("DATA", data.size.width)
+
       resizableCall(data.size.width);
       // }
       if (data.handle === "w") {
@@ -105,8 +126,28 @@ const Resizable: React.FC<ResizableProps> = ({
   //   };
   // }
 
+  useEffect(() => {
+    if (!containerRef.current || haveWidthAdjusted) return;
+    if (isCollapsed) {
+      // containerRef.current.style.width = "80px";
+      setWMinConstraint(80);
+      setResizableWidth(80);
+    } else {
+      // containerRef.current.classList.add = ;
+      setWMinConstraint(innerWidth * minRatio);
+      setResizableWidth(innerWidth * minRatio + 1);
+    }
+  }, [isCollapsed]);
+
   return (
-    <div ref={containerRef}>
+    <div
+      className="h-fit w-fit"
+      ref={containerRef}
+      onMouseMove={throttle((e) => {
+        let x = e.clientX;
+        setMouseX(x);
+      }, 300)}
+    >
       <ResizableBox {...resizableProps}>{children}</ResizableBox>
     </div>
   );

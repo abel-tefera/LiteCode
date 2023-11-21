@@ -2,8 +2,8 @@ import React from "react";
 
 const Brand = () => {
   return (
-    <div className="ml-2 text-base relative">
-      <div className={`absolute inline-flex items-center select-none`}>
+    <div className="ml-2 text-base">
+      <div className={`flex items-center select-none`}>
         Developed by&nbsp;
         <a
           href="https://www.abeltb.xyz/"

@@ -21,7 +21,7 @@ const App = () => {
         <CodeCell /> */}
         {/* <TextEditor /> */}
         {/* <Structure /> */}
-        <div className="flex flex-col w-full h-full">
+        <div className="flex flex-col w-full h-screen">
           {/* <Tabs /> */}
           <Main />
         </div>

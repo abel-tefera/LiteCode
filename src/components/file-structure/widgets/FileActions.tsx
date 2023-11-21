@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState } from "react";
+import React, { PropsWithChildren, useState, useRef, useEffect } from "react";
 import downArrowLogo from "../../../assets/left-arrow.svg";
 import newFileIcon from "../../../assets/new-file.svg";
 import newFolderIcon from "../../../assets/new-folder.svg";
@@ -6,7 +6,9 @@ import downloadIcon from "../../../assets/download.svg";
 
 import { Tooltip } from "react-tooltip";
 import SearchContainer from "../search/SearchContainer";
-
+import { useTypedDispatch, useTypedSelector } from "../../../state/hooks";
+import { getSearchTerm, searchFocus, setSearchFocused } from "../../../state/features/structure/structureSlice";
+ 
 interface FileActionProps {
   searchFiles: (searchTerm: string) => void;
   newFile: () => void;
@@ -22,12 +24,28 @@ const FileActions: React.FC<FileActionProps> = ({
   download,
   isSearching
 }) => {
+  const shouldSearchFocus = useTypedSelector(searchFocus);
+  const search = useTypedSelector(getSearchTerm);
+  const [searchTerm, setSearchTerm] = useState(search);
+  const searchInputRef = useRef<any>(null);
+  const dispatch = useTypedDispatch()
+  useEffect(() => {
+    if (!searchInputRef.current) return;
+    if (shouldSearchFocus) {
+      searchInputRef.current.focus();
+      dispatch(setSearchFocused(false));
+    }
+  }, [])
   return (
     <div className="flex flex-col items-start my-2 px-2">
       <input
+        ref={searchInputRef}
         onInput={(e) => {
-          searchFiles(e.currentTarget.value);
+          const searchTerm = e.currentTarget.value
+          setSearchTerm(searchTerm)
+          searchFiles(searchTerm);
         }}
+        value={searchTerm}
         placeholder="Search"
         className="self-center rounded-lg w-full bg-dark-bg-2 p-2 hover:bg-dark-hover active:outline-none focus:outline-none mb-2 focus:bg-dark-hover"
       />
@@ -97,9 +115,8 @@ const FileActions: React.FC<FileActionProps> = ({
           </span>
         </div>
         ) : (
-          <div className="w-full custom-scrollbar-3 overflow-y-auto">
+          <div className="w-full h-[25rem] custom-scrollbar-3 overflow-y-auto">
             <SearchContainer />
-
           </div>
         )
       }

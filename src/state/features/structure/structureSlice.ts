@@ -119,6 +119,8 @@ interface FileSystem {
   parentItemId: string;
   initialFolder: Directory;
   searchTerm: string;
+  searchFocus: boolean;
+  resizeCollapsed: boolean;
   // tabs: Tabs;
 }
 
@@ -156,6 +158,8 @@ const initialState: FileSystem = {
   toCopy: null,
   parentItemId: "head",
   searchTerm: "",
+  resizeCollapsed: false,
+  searchFocus: false,
   // tabs: [],
 };
 
@@ -869,6 +873,12 @@ export const structureSlice = createSlice({
     search: (state, action: PayloadAction<string>) => {
       state.searchTerm = action.payload;
     },
+    setResizeCollapsed: (state, action: PayloadAction<boolean>) => {
+      state.resizeCollapsed = action.payload;
+    },
+    setSearchFocused: (state, action: PayloadAction<boolean>) => {
+      state.searchFocus = action.payload;
+    },
   },
 });
 
@@ -893,11 +903,10 @@ export const folderIds = (state: RootState) =>
 export const clipboard = (state: RootState) => state.structure.toCopy;
 
 export const getSearchTerm = (state: RootState) => state.structure.searchTerm;
-// export const getChildren = (state: any, action) => {
-//   const { id } = action.payload;
-//   const folder = state.structure.normalized.folders.byId[id];
-//   return folder.children;
-// };
+
+export const isResizeCollapsed = (state: RootState) =>
+  state.structure.resizeCollapsed;
+export const searchFocus = (state: RootState) => state.structure.searchFocus;
 
 export const contextSelectedObj = createSelector(
   (state: RootState) => state.structure.contextSelected,
@@ -992,6 +1001,7 @@ export const getSearchResults = createSelector(
       numOfResults: 0,
       numOfLines: 0,
     };
+    if (searchTerm.trim() === "") return res;
     const foundFiles: MatchingFile[] = [];
     files.allIds.forEach((id) => {
       const currentFile = files.byId[id];
@@ -1039,6 +1049,8 @@ export const {
   setParentItemId,
   setContextSelectedForFileAction,
   search,
+  setResizeCollapsed,
+  setSearchFocused,
 } = structureSlice.actions;
 
 export default structureSlice.reducer;

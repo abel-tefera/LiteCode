@@ -36,7 +36,7 @@ const Tabs = () => {
 
   };
   return (
-    <div className="flex flex-row w-full justify-between">
+    <div className="flex flex-row w-full">
       <div className={`file-tabs w-full py-1`}>
         <div className="flex flex-row items-center w-full overflow-x-scroll custom-scrollbar">
           {tabs.map((item, i) => (
