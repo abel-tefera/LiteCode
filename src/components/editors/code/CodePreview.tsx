@@ -53,7 +53,7 @@ const CodePreview: React.FC = () => {
 
   return (
     <div
-      className={`pl-1 w-full pt-10 pb-8 h-full`}
+      className={`pl-1 w-full mt-10 h-[82%]`}
     >
       {output.err ? (
         <div className="preview-error" style={{ color: "red" }}>

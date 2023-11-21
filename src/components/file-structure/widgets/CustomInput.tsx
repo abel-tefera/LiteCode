@@ -276,7 +276,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
           {error && errorMessage !== "" && (
             <div
               ref={errorRef}
-              className={`w-fit select-none absolute flex items-start p-1 outline outline-red-500 bg-red-900 text-sm ${
+              className={`w-fit z-10 select-none absolute flex items-start p-1 outline outline-red-500 bg-red-900 text-sm ${
                 position !== "top" ? "top-7" : "bottom-7"
               }`}
             >

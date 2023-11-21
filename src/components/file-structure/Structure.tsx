@@ -48,6 +48,7 @@ import { removeTabAsync } from "../../state/features/tabs/tabsSlice";
 import { removeActiveEditorAsync } from "../../state/features/editor/editorSlice";
 import searchIcon from "../../assets/search-icon.svg";
 import fileExplorer from "../../assets/file-explorer.svg";
+import { Tooltip } from "react-tooltip";
 
 const Structure = () => {
   const fileSysRef = useRef<HTMLDivElement>(null);
@@ -214,7 +215,7 @@ const Structure = () => {
     } else {
       if (isSearching) {
         setIsSearching(false);
-        dispatch(search(''));
+        dispatch(search(""));
       }
     }
   }, [searchTerm]);
@@ -473,7 +474,9 @@ const Structure = () => {
             )}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-start w-20 h-full">
+        <div className="flex flex-col items-center justify-start w-20 h-full select-none">
+          <Tooltip place="right-start" className="z-50" id="search" />
+
           <button
             onClick={() => {
               dispatch(setResizeCollapsed(false));
@@ -483,23 +486,28 @@ const Structure = () => {
             className="my-3"
           >
             <img
+              data-tooltip-id="search"
+              data-tooltip-content={"Search"}
               src={searchIcon}
               className="w-14 h-14 hover:bg-dark-hover rounded-md p-2"
             />
           </button>
           <hr className="w-5/6 border-t border-t-zinc-500" />
+          <Tooltip place="right-start" className="z-50" id="file-explorer" />
 
           <button
             onClick={() => {
               dispatch(setResizeCollapsed(false));
               dispatch(setSearchFocused(false));
-              dispatch(search(''));
+              dispatch(search(""));
               setIsSearching(false);
             }}
             type="button"
             className="my-3"
           >
             <img
+              data-tooltip-id="file-explorer"
+              data-tooltip-content={"File Explorer"}
               src={fileExplorer}
               className="w-14 h-14 hover:bg-dark-hover rounded-md p-2"
             />

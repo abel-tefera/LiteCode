@@ -871,7 +871,7 @@ export const structureSlice = createSlice({
       );
     },
     search: (state, action: PayloadAction<string>) => {
-      state.searchTerm = action.payload;
+      state.searchTerm = action.payload.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');;
     },
     setResizeCollapsed: (state, action: PayloadAction<boolean>) => {
       state.resizeCollapsed = action.payload;

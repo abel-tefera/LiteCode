@@ -22,7 +22,7 @@ const HighlightedText: React.FC<HighlightedTextProps> = ({
     <div onClick={() => openAtLine(lineNum)} className="whitespace-nowrap my-1 ml-3 pl-1 cursor-pointer hover:bg-dark-hover">
       {parts.map((part, i) =>
         (() => {
-          if (part.toLowerCase() === hightlight.toLowerCase()) {
+          if (part === hightlight) {
             return <span className="bg-orange-400 text-black">{part}</span>;
           }
           if (idx > i && part.length > 5) {
