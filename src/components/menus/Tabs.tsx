@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Tab from "./Tab";
 
 import { Tooltip } from "react-tooltip";
@@ -14,7 +14,6 @@ import {
 import {
   removeActiveEditorAsync,
   setActiveEditorAsync,
-  
 } from "../../state/features/editor/editorSlice";
 
 const Tabs = () => {
@@ -33,8 +32,12 @@ const Tabs = () => {
   const onClose = (id: string) => {
     dispatch(closeTab(id));
     dispatch(removeActiveEditorAsync(id));
-
   };
+
+  // useEffect(() => {
+  //   console.log("STARTED");
+  //   console.log("TABBY", tabs);
+  // }, [tabs]);
   return (
     <div className="flex flex-row w-full">
       <div className={`file-tabs w-full py-1`}>
