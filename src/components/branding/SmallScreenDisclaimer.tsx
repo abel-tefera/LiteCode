@@ -4,13 +4,13 @@ import logo from "../../assets/logo.png";
 
 const SmallScreenDisclaimer = () => {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
+    <div className="w-full h-full flex flex-col items-center justify-start">
       <img
         src={logo}
         alt="Logo"
-        className="w-[7rem] select-none border-transparent self-start mb-4 mx-2"
+        className="w-[7rem] select-none border-transparent self-start mx-2 mt-6 mb-2"
       />
-      <div className="px-2 max-w-sm bg-transparent rounded-lg shadow flex flex-col items-start">
+      <div className="px-2 max-w-sm bg-transparent rounded-lg shadow flex flex-col items-start my-4">
         <div>
           <img
             className="rounded-t-lg"

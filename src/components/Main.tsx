@@ -14,7 +14,6 @@ import SmallScreenDisclaimer from "./branding/SmallScreenDisclaimer";
 // import { activeTabs } from "../state/features/structure/structureSlice";
 
 const Main = () => {
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
   const dispatch = useTypedDispatch();
   const tabs = useTypedSelector(activeTabs);
   const setWidthAdjusted = throttle((width: number) => {
@@ -29,6 +28,8 @@ const Main = () => {
       return true;
     }
   };
+  const [isSmallScreen, setIsSmallScreen] = useState(isSmall());
+
 
   const handleResize = throttle((e: UIEvent) => {
     // setDirection(findWidth());
