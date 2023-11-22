@@ -218,14 +218,6 @@ const CustomInput: React.FC<CustomInputProps> = ({
     validate(undefined);
   }, [value]);
 
-  // useEffect(() => {
-  //   if (!containerRef.current) return;
-  //   console.log("STARTED");
-  //   return () => {
-  //     console.log("ENDED");
-  //   };
-  // }, []);
-
   return (
     <div
       className={`py-[0.32rem] ${show ? "block" : "hidden"} ${

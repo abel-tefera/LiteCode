@@ -11,6 +11,7 @@
     "@uiw/react-md-editor": "^3.25.2",
     "axios": "^1.6.0",
     "esbuild-wasm": "^0.19.5",
+    "eslint-linter-browserify": "^8.54.0",
     "localforage": "^1.10.0",
     "lodash.clonedeep": "^4.5.0",
     "monaco-editor": "^0.44.0",

@@ -392,7 +392,7 @@ const Structure = () => {
           <FileActions
             {...fileActions}
             isSearching={
-              isSearching && allFileIds.length > 0 && allFolderIds.length > 1
+              isSearching && allFileIds.length > 0
             }
           />
 
@@ -475,7 +475,7 @@ const Structure = () => {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-start w-20 h-full select-none">
-          <Tooltip place="right-start" className="z-50" id="search" />
+          <Tooltip place="right-end" className="z-50" id="search" />
 
           <button
             onClick={() => {
@@ -483,7 +483,7 @@ const Structure = () => {
               dispatch(setSearchFocused(true));
             }}
             type="button"
-            className="my-3"
+            className="mb-3"
           >
             <img
               data-tooltip-id="search"
