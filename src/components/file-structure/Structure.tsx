@@ -82,6 +82,9 @@ const Structure = () => {
     y: 0,
   });
 
+  useEffect(() => {
+    console.log("ALLL THE THINGS IN THE WORLDSSS", allFolderIds, allFileIds)
+  }, [allFileIds, allFolderIds])
   const appendTo = useRef<HTMLElement | null>(null);
 
   const [showInput, setShowInput] = useState(false);
@@ -392,7 +395,7 @@ const Structure = () => {
           <FileActions
             {...fileActions}
             isSearching={
-              isSearching && allFileIds.length > 0 && allFolderIds.length > 1
+              isSearching && allFileIds.length > 0
             }
           />
 
@@ -483,7 +486,7 @@ const Structure = () => {
               dispatch(setSearchFocused(true));
             }}
             type="button"
-            className="my-3"
+            className="mb-3"
           >
             <img
               data-tooltip-id="search"

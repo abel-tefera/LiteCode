@@ -1,0 +1,57 @@
+/* Common overrides */
+.monaco-editor .line-numbers {
+  color: currentColor;
+  opacity: .5;
+}
+
+/* Light theme overrides */
+.ayu-light .JsxText {
+  color: #5c6773;
+}
+
+.ayu-light .JsxSelfClosingElement,
+.ayu-light .JsxOpeningElement,
+.ayu-light .JsxClosingElement,
+.ayu-light .tagName-of-JsxOpeningElement,
+.ayu-light .tagName-of-JsxClosingElement,
+.ayu-light .tagName-of-JsxSelfClosingElement {
+  color: #41a6d9;
+}
+
+.ayu-light .name-of-JsxAttribute {
+  color: #f08c36;
+}
+
+.ayu-light .name-of-PropertyAssignment {
+  color: #86b300;
+}
+
+.ayu-light .name-of-PropertyAccessExpression {
+  color: #f08c36;
+}
+
+/* Dark theme overrides */
+.ayu-dark .JsxText {
+  color: #d9d7ce;
+}
+
+.ayu-dark .JsxSelfClosingElement,
+.ayu-dark .JsxOpeningElement,
+.ayu-dark .JsxClosingElement,
+.ayu-dark .tagName-of-JsxOpeningElement,
+.ayu-dark .tagName-of-JsxClosingElement,
+.ayu-dark .tagName-of-JsxSelfClosingElement {
+  color: #5ccfe6;
+}
+
+.ayu-dark .name-of-JsxAttribute {
+  color: #ffcf71;
+}
+
+.ayu-dark .name-of-PropertyAssignment {
+  color: #bae67e;
+}
+
+.ayu-dark .name-of-PropertyAccessExpression {
+  color: #ffcf71;
+}

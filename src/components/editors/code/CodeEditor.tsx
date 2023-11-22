@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from "react";
+import React, { useRef, useCallback, useEffect, useMemo } from "react";
 import MonacoEditor, { OnChange } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
@@ -10,6 +10,9 @@ import { OnChange as MonacoOnChange } from "@monaco-editor/react";
 import * as prettier from "prettier/standalone";
 import parserBabel from "prettier/plugins/babel";
 import * as prettierPluginEstree from "prettier/plugins/estree";
+import DarkTheme from "./monaco-editor/themes/dark";
+// @ts-ignore
+// import ESLintWorker from "./monaco-editor/workers/eslint.worker";
 
 const options = {
   autoIndent: "full",
@@ -41,90 +44,81 @@ interface CodeEditorProps {
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<Monaco | null>(null);
   const editorData = useTypedSelector(getCurrentEditor);
+  const linterWorkerRef = useRef<any>(null);
+  // const ESLintWorker: Worker = useMemo(
+  //   () =>
+  //     new Worker(
+  //       new URL("./monaco-editor/workers/eslint.worker.ts", import.meta.url)
+  //     ),
+  //   []
+  // );
+
+  const lintCode = (value: string) => {
+    const model = editorRef.current?.getModel();
+    
+    monacoRef.current?.editor.setModelMarkers(model as editor.ITextModel, 'eslint', []);
+    linterWorkerRef.current.postMessage({
+      code: value,
+      language: "javascript",
+    });
+  };
+
+  useEffect(() => {
+    return () => {
+      linterWorkerRef.current && linterWorkerRef.current.terminate();
+    };
+  }, []);
+
+  const updateMarkers = ({ markers, version }: any) => {
+    requestAnimationFrame(() => {
+      const model = editorRef.current?.getModel();
+
+      if (model && model.getVersionId() === version) {
+        monaco.editor.setModelMarkers(model, "eslint", markers);
+      }
+    });
+  };
+  // console.log("ABCD", eslintWorker);
 
   const handleEditorDidMount = useCallback(
     async (editor: editor.IStandaloneCodeEditor, monacoEditor: Monaco) => {
       editorRef.current = editor;
-      monacoEditor.languages.registerDocumentFormattingEditProvider("javascript", {
-        async provideDocumentFormattingEdits(model, options, token) {
-          const text = await prettier.format(model.getValue(), {
-            parser: "babel",
-            plugins: [parserBabel, prettierPluginEstree],
-            useTabs: false,
-            semi: true,
-            singleQuote: true,
-          });
+      monacoRef.current = monacoEditor;
+      // @ts-ignore
+      // linterWorkerRef.current = ESLintWorker;
+      // linterWorkerRef.current.addEventListener("message", ({ data }: any) =>
+      //   updateMarkers(data)
+      // );
+      monacoEditor.editor.defineTheme("ayu-dark", DarkTheme);
+      monacoEditor.editor.setTheme("ayu-dark");
+      monacoEditor.editor.setModelMarkers(
+        editor.getModel() as editor.ITextModel,
+        "eslint",
+        []
+      );
+      monacoEditor.languages.registerDocumentFormattingEditProvider(
+        "javascript",
+        {
+          async provideDocumentFormattingEdits(model, options, token) {
+            const text = await prettier.format(model.getValue(), {
+              parser: "babel",
+              plugins: [parserBabel, prettierPluginEstree],
+              useTabs: false,
+              semi: true,
+              singleQuote: true,
+            });
 
-          return [
-            {
-              range: model.getFullModelRange(),
-              text,
-            },
-          ];
-        },
-      });
-      
-      // monacoEditor.editor.defineTheme('ace', {
-      //   base: 'vs',
-      //   inherit: true,
-      //   rules: [
-      //     { token: '', foreground: '5c6773' },
-      //     { token: 'invalid', foreground: 'ff3333' },
-      //     { token: 'emphasis', fontStyle: 'italic' },
-      //     { token: 'strong', fontStyle: 'bold' },
-      //     { token: 'variable', foreground: '5c6773' },
-      //     { token: 'variable.predefined', foreground: '5c6773' },
-      //     { token: 'constant', foreground: 'f08c36' },
-      //     { token: 'comment', foreground: 'abb0b6', fontStyle: 'italic' },
-      //     { token: 'number', foreground: 'f08c36' },
-      //     { token: 'number.hex', foreground: 'f08c36' },
-      //     { token: 'regexp', foreground: '4dbf99' },
-      //     { token: 'annotation', foreground: '41a6d9' },
-      //     { token: 'type', foreground: '41a6d9' },
-      //     { token: 'delimiter', foreground: '5c6773' },
-      //     { token: 'delimiter.html', foreground: '5c6773' },
-      //     { token: 'delimiter.xml', foreground: '5c6773' },
-      //     { token: 'tag', foreground: 'e7c547' },
-      //     { token: 'tag.id.jade', foreground: 'e7c547' },
-      //     { token: 'tag.class.jade', foreground: 'e7c547' },
-      //     { token: 'meta.scss', foreground: 'e7c547' },
-      //     { token: 'metatag', foreground: 'e7c547' },
-      //     { token: 'metatag.content.html', foreground: '86b300' },
-      //     { token: 'metatag.html', foreground: 'e7c547' },
-      //     { token: 'metatag.xml', foreground: 'e7c547' },
-      //     { token: 'metatag.php', fontStyle: 'bold' },
-      //     { token: 'key', foreground: '41a6d9' },
-      //     { token: 'string.key.json', foreground: '41a6d9' },
-      //     { token: 'string.value.json', foreground: '86b300' },
-      //     { token: 'attribute.name', foreground: 'f08c36' },
-      //     { token: 'attribute.value', foreground: '0451A5' },
-      //     { token: 'attribute.value.number', foreground: 'abb0b6' },
-      //     { token: 'attribute.value.unit', foreground: '86b300' },
-      //     { token: 'attribute.value.html', foreground: '86b300' },
-      //     { token: 'attribute.value.xml', foreground: '86b300' },
-      //     { token: 'string', foreground: '86b300' },
-      //     { token: 'string.html', foreground: '86b300' },
-      //     { token: 'string.sql', foreground: '86b300' },
-      //     { token: 'string.yaml', foreground: '86b300' },
-      //     { token: 'keyword', foreground: 'f2590c' },
-      //     { token: 'keyword.json', foreground: 'f2590c' },
-      //     { token: 'keyword.flow', foreground: 'f2590c' },
-      //     { token: 'keyword.flow.scss', foreground: 'f2590c' },
-      //     { token: 'operator.scss', foreground: '666666' }, //
-      //     { token: 'operator.sql', foreground: '778899' }, //
-      //     { token: 'operator.swift', foreground: '666666' }, //
-      //     { token: 'predefined.sql', foreground: 'FF00FF' }, //
-      //   ],
-      //   colors: {
-      //     'editor.background': '#fafafa',
-      //     'editor.foreground': '#5c6773',
-      //     'editorIndentGuide.background': '#ecebec',
-      //     'editorIndentGuide.activeBackground': '#e0e0e0',
-      //   },
-      // });
-      // monacoEditor.editor.setTheme('ace');
-
+            return [
+              {
+                range: model.getFullModelRange(),
+                text,
+              },
+            ];
+          },
+        }
+      );
     },
     []
   );
@@ -135,6 +129,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   ) => {
     if (value) {
       onChange(editorData.id, value);
+      // lintCode(value)
     }
   };
   // const formatCode = async () => {
@@ -169,10 +164,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
 
       <MonacoEditor
         path={editorData.id}
-        defaultLanguage={editorData.language}
-        defaultValue={editorData.content}
+        value={editorData.content}
         line={editorData.line}
-        theme="vs-dark"
+        // theme={"vs-dark"}
         language={editorData.language}
         height={"100%"}
         width={"100%"}
@@ -190,24 +184,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
         onChange={onChangeLocal}
         onMount={handleEditorDidMount}
         beforeMount={(monaco) => {
-          monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-            target: monaco.languages.typescript.ScriptTarget.ES2016,
-            allowNonTsExtensions: true,
-            jsx: 4,
-          });
-          monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
-            target: monaco.languages.typescript.ScriptTarget.ES2016,
-            allowNonTsExtensions: true,
-            jsx: 4,
-          });
-
-          monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-            noSemanticValidation: false,
-            noSyntaxValidation: false,
-          });
           monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-            noSemanticValidation: false,
-            noSyntaxValidation: false,
+            noSemanticValidation: true,
+            noSyntaxValidation: true,
           });
           monaco.languages.typescript.typescriptDefaults.setEagerModelSync(
             true
@@ -215,6 +194,46 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           monaco.languages.typescript.javascriptDefaults.setEagerModelSync(
             true
           );
+          const compilerOptions = {
+            allowJs: true,
+            allowSyntheticDefaultImports: true,
+            alwaysStrict: true,
+            target: monaco.languages.typescript.ScriptTarget.ES2016,
+            allowNonTsExtensions: true,
+            jsx: 5,
+            jsxFactory: "React.createElement",
+          };
+          monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
+            compilerOptions
+          );
+          monaco.languages.typescript.javascriptDefaults.setCompilerOptions(
+            compilerOptions
+          );
+          // monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+            // target: monaco.languages.typescript.ScriptTarget.ES2016,
+            // allowNonTsExtensions: true,
+          //   jsx: 4,
+          // });
+          // monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+          //   target: monaco.languages.typescript.ScriptTarget.ES2016,
+          //   allowNonTsExtensions: true,
+          //   jsx: 4,
+          // });
+
+          // monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+          //   noSemanticValidation: false,
+          //   noSyntaxValidation: false,
+          // });
+          // monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+          //   noSemanticValidation: false,
+          //   noSyntaxValidation: false,
+          // });
+          // monaco.languages.typescript.typescriptDefaults.setEagerModelSync(
+          //   true
+          // );
+          // monaco.languages.typescript.javascriptDefaults.setEagerModelSync(
+          //   true
+          // );
         }}
         onValidate={(markers) => {
           // console.log("ONVALIDATE", markers);
