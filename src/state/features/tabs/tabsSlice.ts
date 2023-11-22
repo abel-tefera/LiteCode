@@ -76,7 +76,6 @@ export const tabsSlice = createSlice({
       );
 
       if (state.selected === action.payload) {
-        console.log("HERE SELECTED", state.selected);
         const newSelectedStack = state.selectionStack.filter(
           (id) => id !== action.payload
         );

@@ -40,7 +40,6 @@ export const removeActiveEditorAsync = createAsyncThunk(
   async (id: string, { getState, dispatch }) => {
     const state = getState() as RootState;
     const selectedTab = state.tabs.selected;
-    console.log("AAWAIT", selectedTab);
     if (selectedTab !== "") {
       await dispatch(setActiveEditorAsync({ id: selectedTab, line: 0 }));
     }
@@ -55,10 +54,8 @@ export const setActiveEditorAsync = createAsyncThunk(
     { getState, fulfillWithValue }
   ) => {
     const state = getState() as RootState;
-    console.log("SETTING ACTIVE", editorProps.id);
     const normalized = state.structure.normalized;
     const file = normalized.files.byId[editorProps.id];
-    console.log("F", file);
     const [unmappedPath, actualPath] = getPaths(file, normalized);
     // actualPath.push(`${file.name}.${file.extension}`);
     return {

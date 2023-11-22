@@ -37,7 +37,7 @@ const FileActions: React.FC<FileActionProps> = ({
     }
   }, [])
   return (
-    <div className="flex flex-col items-start my-2 px-2">
+    <div className="flex flex-col items-start mb-2 px-2">
       <input
         ref={searchInputRef}
         onInput={(e) => {

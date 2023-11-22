@@ -34,8 +34,6 @@ const trimName = (
     // }
     newName = item.name;
   }
-  // TODO Optimize Too many calls
-  // console.log("NAME", newName);
   return newName;
 };
 
