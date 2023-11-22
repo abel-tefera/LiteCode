@@ -8,9 +8,9 @@ const SmallScreenDisclaimer = () => {
       <img
         src={logo}
         alt="Logo"
-        className="w-[7rem] select-none border-transparent self-start m-4"
+        className="w-[7rem] select-none border-transparent self-start mb-4 mx-2"
       />
-      <div className="max-w-sm bg-transparent rounded-lg shadow flex flex-col items-start">
+      <div className="px-2 max-w-sm bg-transparent rounded-lg shadow flex flex-col items-start">
         <div>
           <img
             className="rounded-t-lg"
