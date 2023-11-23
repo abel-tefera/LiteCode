@@ -49,6 +49,7 @@ import { removeActiveEditorAsync } from "../../state/features/editor/editorSlice
 import searchIcon from "../../assets/search-icon.svg";
 import fileExplorer from "../../assets/file-explorer.svg";
 import { Tooltip } from "react-tooltip";
+import downloadZip from "../../state/features/structure/utils/downloadZip";
 
 const Structure = () => {
   const fileSysRef = useRef<HTMLDivElement>(null);
@@ -196,7 +197,9 @@ const Structure = () => {
       createFileInput();
     },
 
-    download: () => {},
+    download: () => {
+      downloadZip();
+    },
 
     searchFiles: (searchTerm: string) => {
       setSearchTerm(searchTerm);
@@ -391,9 +394,7 @@ const Structure = () => {
         <div id="file-system">
           <FileActions
             {...fileActions}
-            isSearching={
-              isSearching && allFileIds.length > 0
-            }
+            isSearching={isSearching && allFileIds.length > 0}
           />
 
           {!isSearching && (
