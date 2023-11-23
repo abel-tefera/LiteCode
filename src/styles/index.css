@@ -5,170 +5,169 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
 body {
-    background-color: #0E1525;
+  background-color: #0e1525;
 }
 
 .App {
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  overflow: hidden;
 }
 
 .code-cell {
-    height: 100%;
+  height: 100%;
 }
 
 .editor-wrapper {
-    position: relative;
-    height: 100%;
-    width: calc(100% - 10px);
+  position: relative;
+  height: 100%;
+  width: calc(100% - 10px);
 }
 
 .preview-wrapper {
-    background-color: white;
-    position: relative;
-    height: 100%;
-    display: flex;
-    flex-grow: 1;
-    margin-right: 2rem;
-    width: 100%;
+  background-color: white;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-grow: 1;
+  margin-right: 2rem;
+  width: 100%;
 }
 
 .preview-wrapper iframe {
-    background-color: white;
-    width: 100%;
-    height: 100%;
+  background-color: white;
+  width: 100%;
+  height: 100%;
 }
 
-.react-draggable-transparent-selection .preview-wrapper:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    opacity: 0;
+.react-draggable-transparent-selection .preview-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 0;
 }
-
 
 .custom-scrollbar::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-    /* transition-property: all;
+  width: 5px;
+  height: 5px;
+
+  /* transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms; */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #4a5575;
-    border-radius: 5px;
-    visibility: hidden;
-
+  background: #4a5575;
+  border-radius: 5px;
+  visibility: hidden;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-    background-color: #0E1525;
+  background-color: #0e1525;
 }
 
 .file-tabs:hover .custom-scrollbar::-webkit-scrollbar-thumb {
-    visibility: visible;
+  visibility: visible;
 }
 
 .bg-vscode-overlay {
-    position: relative;
+  position: relative;
 }
 
 .bg-vscode-overlay > * {
-    z-index: 1;
+  z-index: 1;
 }
 
 .bg-vscode-overlay::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: #4078CE;
-    opacity: 0.6;
-    width: 100%;
-    height: 100%;
-    border-top-right-radius: 0.125rem/* 2px */;
-    border-bottom-right-radius: 0.125rem/* 2px */;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #4078ce;
+  opacity: 0.6;
+  width: 100%;
+  height: 100%;
+  border-top-right-radius: 0.125rem/* 2px */;
+  border-bottom-right-radius: 0.125rem/* 2px */;
 }
 
 .dialog-cover::before {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: #000;
-    opacity: 0.2;
-    width: 100%;
-    height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #000;
+  opacity: 0.2;
+  width: 100%;
+  height: 100%;
 }
 
 .display-none-c {
-    display: none;
+  display: none;
 }
 
 .span-logo {
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position-y: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position-y: center;
 }
 
 .span-logo-width {
-    width: 1rem;
+  width: 1rem;
 }
 
 .custom-scrollbar::-webkit-scrollbar-button:vertical:start:increment,
 .custom-scrollbar::-webkit-scrollbar-button:vertical:end:decrement,
 .custom-scrollbar::-webkit-scrollbar-button:horizontal:start:increment,
 .custom-scrollbar::-webkit-scrollbar-button:horizontal:end:decrement {
-    display: none;
+  display: none;
 }
 
 .new-file-logo {
-    background-image: url("../assets/new-file-colored.svg");
+  background-image: url("../assets/new-file-colored.svg");
 }
 
 .new-folder-logo {
-    background-image: url("../assets/new-folder.svg");
+  background-image: url("../assets/new-folder.svg");
 }
 
 .opened-folder {
-    background-image: url("../assets/opened-folder.svg");
+  background-image: url("../assets/opened-folder.svg");
 }
 
 .closed-folder {
-    background-image: url("../assets/folder.svg");
+  background-image: url("../assets/folder.svg");
 }
 
 .js-logo {
-    background-image: url("../assets/js.svg");
+  background-image: url("../assets/js.svg");
 }
 
 .css-logo {
-    background-image: url("../assets/css.svg");
+  background-image: url("../assets/css.svg");
 }
 
 .jsx-logo {
-    background-image: url("../assets/jsx.svg");
+  background-image: url("../assets/jsx.svg");
 }
 
 .error-logo {
-    background-image: url("../assets/error.png");
+  background-image: url("../assets/error.png");
 }
 
 .readme-logo {
-    background-image: url("../assets/readme.svg");
+  background-image: url("../assets/readme.svg");
 }
 
 .rename-logo {
-    background-image: url("../assets/rename.svg");
+  background-image: url("../assets/rename.svg");
 }
 
 .typescript-logo {
-    background-image: url("../assets/typescript.svg");
+  background-image: url("../assets/typescript.svg");
 }
 
 

@@ -89,14 +89,12 @@ const Resizable: React.FC<ResizableProps> = ({
         mouseX <= 80
       ) {
         // setResizableWidth(40);
-        if (!isCollapsed){
+        if (!isCollapsed) {
           dispatch(setResizeCollapsed(true));
-
         }
       } else if (!haveWidthAdjusted && data.size.width > 100) {
         // setResizableWidth(innerWidth * minRatio);
-        if (isCollapsed){
-
+        if (isCollapsed) {
           dispatch(setResizeCollapsed(false));
         }
       }

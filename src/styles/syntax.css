@@ -71,47 +71,47 @@
     text-decoration: underline;
     text-underline-position: under;
   }
-  
+
   .editor-wrapper .mtk100.Identifier.JsxElement.Bracket {
     color: #0080ff;
   }
-  
+
   .editor-wrapper .mtk1000.Identifier.JsxOpeningElement.Bracket {
     color: #808080;
     font-weight: bold;
   }
-  
+
   .editor-wrapper .mtk1001.Identifier.JsxClosingElement.Bracket {
     color: #808080;
     font-weight: lighter;
   }
-  
+
   .editor-wrapper .mtk101.Identifier.JsxOpeningElement.Identifier {
     color: #569cd6;
   }
-  
+
   .editor-wrapper .mtk102.Identifier.JsxClosingElement.Identifier {
     color: #569cd6;
     font-weight: lighter;
   }
-  
+
   .editor-wrapper .mtk103.Identifier.JsxAttribute.Identifier {
     color: #9cdcfe;
   }
-  
+
   .editor-wrapper .mtk104.JsxElement.JsxText {
     color: darkgoldenrod;
   }
-  
+
   .editor-wrapper .mtk105.glyph.Identifier.JsxElement {
     background: #61dafb;
     opacity: 0.25;
   }
-  
+
   .editor-wrapper .mtk12.Identifier.JsxExpression.JsxClosingElement {
     color: #ec5f67;
   }
-  
+
   .editor-wrapper .mtk12.Identifier.JsxSelfClosingElement {
     color: #ec5f67;
   }

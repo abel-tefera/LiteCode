@@ -1,137 +1,103 @@
 .file-sys-container {
-    display: flex;
-    flex-direction: column;
-    /* width: 100%; */
-    overflow-x: scroll;
-    /* text-wrap: nowrap; */
-    max-height: calc(50vh + 18px);
-    min-height: calc(50vh + 18px);
-    /* background-color: orange; */
+  display: flex;
+  flex-direction: column;
+
+  /* width: 100%; */
+  overflow-x: scroll;
+
+  /* text-wrap: nowrap; */
+  max-height: calc(50vh + 18px);
+  min-height: calc(50vh + 18px);
+
+  /* background-color: orange; */
 }
 
 .folder-container {
-    display: flex;
-    flex-direction: column;
-    /* background-color: green; */
+  display: flex;
+  flex-direction: column;
+
+  /* background-color: green; */
 }
 
 .custom-scrollbar-2::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+  width: 5px;
+  height: 5px;
 }
 
 .custom-scrollbar-2::-webkit-scrollbar-thumb {
-    background: #4a5575;
-    border-radius: 5px;
-    visibility: visible;
-    transition-property: all;
-    /* transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
-    transition-duration: 300ms;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); */
-
+  background: #4a5575;
+  border-radius: 5px;
+  visibility: visible;
+  transition-property: all;
 }
 
-
-/* .file:hover .custom-scrollbar-2::-webkit-scrollbar-thumb {
-    visibility: visible;
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
-    transition-duration: 300ms;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-} */
-
-
-
-/* .folder-main-container {
-    display: flex;
-    flex-direction: column;
-} */
-
-/* .folder-line::before {
-    content: '';
-    width: 20px;
-    height: 20px;
-
-    color: red;
-} */
-
 .folder-container-reverse {
-    flex-direction: column-reverse;
+  flex-direction: column-reverse;
 }
 
 .folder,
 .file {
-    cursor: pointer;
-    border: 1px solid #0E1525;
-    /* background-color: blue; */
+  cursor: pointer;
+  border: 1px solid #0e1525;
 }
 
 .transformer {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .folder:hover,
 .file:hover {
-    background: #2B3245;
+  background: #2b3245;
 }
 
 .hide-input {
-    visibility: hidden;
-    position: absolute;
+  visibility: hidden;
+  position: absolute;
 }
-
-/* .hide-input::before {
-    content: '';
-    height: 20px;
-    background-color: blue;
-} */
 
 .span-text {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    
-}
-
-.clickable:hover .three-dots {
-    opacity: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .measurable {
-    width: 235px;
+  width: 235px;
 }
 
 .three-dots {
-    background-image: url("../assets/three-dots.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    opacity: 0;
+  background-image: url("../assets/three-dots.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  opacity: 0;
+}
+
+.clickable:hover .three-dots {
+  opacity: 1;
 }
 
 .not-seen {
-    position: absolute;
-    visibility: hidden;
+  position: absolute;
+  visibility: hidden;
 }
 
 @media screen and (min-width: 768px) {
-    .file-sys-container {
-        /* max-width: 205px; */
-        max-height: calc(55vh + 18px);
-        min-height: calc(55vh + 18px);
-    }
+  .file-sys-container {
+    /* max-width: 205px; */
+    max-height: calc(55vh + 18px);
+    min-height: calc(55vh + 18px);
+  }
 
-    .measurable {
-        width: 200px
-    }
+  .measurable {
+    width: 200px;
+  }
 }
 
 @media screen and (min-width: 1024px) {
-    .file-sys-container {
-        max-height: calc(60vh + 18px);
-        min-height: calc(55vh + 18px);
-    }
+  .file-sys-container {
+    max-height: calc(60vh + 18px);
+    min-height: calc(55vh + 18px);
+  }
 }

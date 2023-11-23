@@ -1,7 +1,7 @@
 /* Common overrides */
 .monaco-editor .line-numbers {
   color: currentColor;
-  opacity: .5;
+  opacity: 0.5;
 }
 
 /* Light theme overrides */

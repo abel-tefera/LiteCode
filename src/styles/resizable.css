@@ -40,10 +40,11 @@
 
 .react-resizable-handle {
   position: absolute;
+
   /* background-color: red; */
-  margin-top: 0.5rem;
-  height: 108%;
+  height: 110%;
   width: 5px;
+
   /* height: 100%; */
   background-repeat: no-repeat;
   background-origin: content-box;
@@ -62,7 +63,7 @@
 }
 
 .react-resizable-handle:active {
-  background-color: #4078CE;
+  background-color: #4078ce;
   background-size: 0;
 }
 
@@ -113,11 +114,13 @@
 .react-resizable-handle-w,
 .react-resizable-handle-e {
   top: 0;
+
   /* margin-top: -10px; */
 }
 
 .react-resizable-handle-e {
   right: 0;
+
   /* transform: rotate(315deg); */
 }
 
@@ -125,5 +128,4 @@
   /* top: 10px; */
   margin-top: 2.25rem;
   height: 100%;
-
 }
