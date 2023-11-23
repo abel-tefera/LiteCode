@@ -10,6 +10,7 @@ export const filePathPlugin = (
         { filter: /^(\.\.|\.)(\/.*)?$/ },
         (args: esbuild.OnResolveArgs) => {
           if (args.kind === "import-statement" && !args.importer.includes("unpkg.com")) {
+            // console.log("LOCAL IMPORT", args);
             const dirname = Path.dirname(args.importer);
             const path = Path.join(dirname, args.path);
             return { path, namespace: "a" };
