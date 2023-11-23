@@ -983,14 +983,14 @@ export const getCurrentItems = createSelector(
   }
 );
 
-export const getFileTree = createSelector(
-  (state: RootState) => state.structure.normalized,
-  (normalized: Normalized) => {
-    const allFileIds = normalized.files.allIds;
-    const tree = getTree(allFileIds, normalized);
-    return tree;
-  }
-);
+// export const getFileTree = createSelector(
+//   (state: RootState) => state.structure.normalized,
+//   (normalized: Normalized) => {
+//     const allFileIds = normalized.files.allIds;
+//     const tree = getTree(allFileIds, normalized);
+//     return tree;
+//   }
+// );
 
 export const getSearchResults = createSelector(
   (state: RootState) => state.structure.searchTerm,

@@ -11,5 +11,11 @@ export const getFiles = (): FileTree => {
 
   const allFileIds = state.structure.normalized.files.allIds;
   const tree = getTree(allFileIds, state.structure.normalized);
+  for (const key in tree) {
+    const content = tree[key];
+    if (!content.includes('import React')) {
+      tree[key] = `import React from 'react';\n${content}`
+    }
+  }
   return tree;
 };

@@ -237,7 +237,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           );
         }}
         onValidate={(markers) => {
-          console.log("ON VALIDATE MARKERS", markers);
+          // console.log("ON VALIDATE MARKERS", markers);
           // ESLintVerify(markers);
           // console.log("ONVALIDATE", markers);
         }}
