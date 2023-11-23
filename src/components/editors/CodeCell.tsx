@@ -9,8 +9,6 @@ import Resizable from "../resizable/Resizable";
 import throttle from "../../utils/throttle";
 import { updateFileContents } from "../../state/features/structure/structureSlice";
 import { useTypedDispatch } from "../../state/hooks";
-import Tabs from "../menus/Tabs";
-import ProjectActions from "../menus/ProjectActions";
 import { storeOutput } from "../../state/features/bundler/bundlerSlice";
 
 interface CodeCellProps {

@@ -9,8 +9,9 @@ import { setEditorWidthAdjusted } from "../state/features/editor/editorSlice";
 import throttle from "../utils/throttle";
 import { activeTabs } from "../state/features/tabs/tabsSlice";
 import Brand from "./branding/Brand";
-import ProjectActions from "./menus/ProjectActions";
+// import ProjectActions from "./menus/ProjectActions";
 import SmallScreenDisclaimer from "./branding/SmallScreenDisclaimer";
+import Reception from "./branding/Reception";
 // import { activeTabs } from "../state/features/structure/structureSlice";
 
 const Main = () => {
@@ -64,9 +65,9 @@ const Main = () => {
               <div className="w-10/12">
                 <Tabs />
               </div>
-              <div className="w-2/12 flex justify-end">
+              {/* <div className="w-2/12 flex justify-end">
                 <ProjectActions />
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="flex flex-row w-full h-full">
@@ -88,7 +89,7 @@ const Main = () => {
               </div>
             </Resizable>
 
-            {tabs.length > 0 && <CodeCell />}
+            {tabs.length > 0 ? <CodeCell /> : <Reception />}
           </div>
         </div>
       ) : (
