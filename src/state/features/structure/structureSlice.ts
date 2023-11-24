@@ -1,126 +1,126 @@
-import { createSelector, createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "../../store";
-import { v4 as uuidv4 } from "uuid";
-import { bfsNodeAction, dfsCbOnEach, dfsNodeAction } from "./utils/traversal";
-import { findSortable } from "./utils/sorting";
-import getTree from "./utils/getTree";
+import { createSelector, createSlice } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
+import type { RootState } from '../../store'
+import { v4 as uuidv4 } from 'uuid'
+import { bfsNodeAction, dfsCbOnEach, dfsNodeAction } from './utils/traversal'
+import { findSortable } from './utils/sorting'
+import getTree from './utils/getTree'
 
 // type NestedRecord<T extends any[]>
 //     = T extends [any, ...infer R]
 //     ? Record<string, NestedRecord<R>>
 //     : string
 
-export type ItemType = "file" | "folder";
+export type ItemType = 'file' | 'folder'
 
-export type ValidExtensions = "js" | "jsx" | "css" | "md" | "ts" | "tsx";
+export type ValidExtensions = 'js' | 'jsx' | 'css' | 'md' | 'ts' | 'tsx'
 
-export const validExtensions = ["js", "jsx", "css", "md", "ts", "tsx"];
-export type FileStructure = {
-  id: string;
-  name: string;
-  type: "file";
-  content: string;
-  extension: ValidExtensions;
-  path: string[];
-};
+export const validExtensions = ['js', 'jsx', 'css', 'md', 'ts', 'tsx']
+export interface FileStructure {
+  id: string
+  name: string
+  type: 'file'
+  content: string
+  extension: ValidExtensions
+  path: string[]
+}
 
-export type NormalizedFolder = {
-  id: string;
-  name: string;
-  type: "folder";
-  collapsed: boolean;
-  childrenFlat: Identifier[];
-  path: string[];
+export interface NormalizedFolder {
+  id: string
+  name: string
+  type: 'folder'
+  collapsed: boolean
+  childrenFlat: Identifier[]
+  path: string[]
   // subFoldersAndFiles: FileStructure[] | FolderStructure[];
-};
+}
 
-type FileOrFolder = {
-  id: string;
-  name: string;
-  type: ItemType;
-  collapsed?: boolean;
-  childrenFlat?: Identifier[];
-  content?: string;
-  extension?: ValidExtensions;
-  path?: string[] | undefined;
-};
+interface FileOrFolder {
+  id: string
+  name: string
+  type: ItemType
+  collapsed?: boolean
+  childrenFlat?: Identifier[]
+  content?: string
+  extension?: ValidExtensions
+  path?: string[] | undefined
+}
 
-export type Identifier = {
-  id: string;
-  type: ItemType;
-};
+export interface Identifier {
+  id: string
+  type: ItemType
+}
 
-export type FileInFolder = {
-  id: string;
-  type: "file";
-  subFoldersAndFiles: null;
-};
+export interface FileInFolder {
+  id: string
+  type: 'file'
+  subFoldersAndFiles: null
+}
 
-export type Directory = {
-  id: string;
-  type: "folder";
-  subFoldersAndFiles: (Directory | FileInFolder)[];
-};
+export interface Directory {
+  id: string
+  type: 'folder'
+  subFoldersAndFiles: Array<Directory | FileInFolder>
+}
 
-export type Normalized = {
+export interface Normalized {
   folders: {
-    byId: { [key: string]: NormalizedFolder };
-    allIds: string[];
-  };
+    byId: Record<string, NormalizedFolder>
+    allIds: string[]
+  }
   files: {
-    byId: { [key: string]: FileStructure };
-    allIds: string[];
-  };
-};
+    byId: Record<string, FileStructure>
+    allIds: string[]
+  }
+}
 
-type ContextSelected = {
-  id: string;
-  type: ItemType;
+interface ContextSelected {
+  id: string
+  type: ItemType
   e:
-    | {
-        x: number;
-        y: number;
-      }
-    | false;
-};
+  | {
+    x: number
+    y: number
+  }
+  | false
+}
 
 type ToCopy = {
-  id: string;
-  type: ItemType;
-  subFoldersAndFiles: Directory[];
-  isCut: boolean;
-  parentId: string;
-} | null;
+  id: string
+  type: ItemType
+  subFoldersAndFiles: Directory[]
+  isCut: boolean
+  parentId: string
+} | null
 
-type MatchingLine = {
-  line: number;
-  content: string;
-};
+interface MatchingLine {
+  line: number
+  content: string
+}
 
-export type MatchingFile = {
-  id: string;
-  name: string;
-  extension: ValidExtensions;
-  matches: MatchingLine[];
-};
+export interface MatchingFile {
+  id: string
+  name: string
+  extension: ValidExtensions
+  matches: MatchingLine[]
+}
 
-type SearchResults = {
-  files: MatchingFile[];
-  numOfResults: number;
-  numOfLines: number;
-};
+interface SearchResults {
+  files: MatchingFile[]
+  numOfResults: number
+  numOfLines: number
+}
 
 interface FileSystem {
-  normalized: Normalized;
-  selected: string;
-  contextSelected: ContextSelected;
-  toCopy: ToCopy;
-  parentItemId: string;
-  initialFolder: Directory;
-  searchTerm: string;
-  searchFocus: boolean;
-  resizeCollapsed: boolean;
+  normalized: Normalized
+  selected: string
+  contextSelected: ContextSelected
+  toCopy: ToCopy
+  parentItemId: string
+  initialFolder: Directory
+  searchTerm: string
+  searchFocus: boolean
+  resizeCollapsed: boolean
   // tabs: Tabs;
 }
 
@@ -128,56 +128,56 @@ const initialState: FileSystem = {
   normalized: {
     files: {
       byId: {},
-      allIds: [],
+      allIds: []
     },
     folders: {
       byId: {
         head: {
-          id: "head",
-          name: "head",
-          type: "folder",
+          id: 'head',
+          name: 'head',
+          type: 'folder',
           collapsed: false,
           childrenFlat: [],
-          path: ["/"],
-        },
+          path: ['/']
+        }
       },
-      allIds: ["head"],
-    },
+      allIds: ['head']
+    }
   },
   initialFolder: {
-    id: "head",
-    type: "folder",
-    subFoldersAndFiles: [],
+    id: 'head',
+    type: 'folder',
+    subFoldersAndFiles: []
   },
-  selected: "head",
+  selected: 'head',
   contextSelected: {
-    id: "head",
-    type: "folder",
-    e: false,
+    id: 'head',
+    type: 'folder',
+    e: false
   },
   toCopy: null,
-  parentItemId: "head",
-  searchTerm: "",
+  parentItemId: 'head',
+  searchTerm: '',
   resizeCollapsed: false,
-  searchFocus: false,
+  searchFocus: false
   // tabs: [],
-};
+}
 
 export const structureSlice = createSlice({
-  name: "structure",
+  name: 'structure',
   initialState,
   reducers: {
     addNode: (
       state,
-      action: PayloadAction<{ value: string; inputType: ItemType }>
+      action: PayloadAction<{ value: string, inputType: ItemType }>
     ) => {
       // if (!state.contextSelected) return;
-      const { value, inputType } = action.payload;
-      let newName = value;
-      let newExtension = "";
-      if (inputType === "file") {
-        newName = value.substring(0, value.lastIndexOf("."));
-        newExtension = value.substring(value.lastIndexOf(".") + 1);
+      const { value, inputType } = action.payload
+      let newName = value
+      let newExtension = ''
+      if (inputType === 'file') {
+        newName = value.substring(0, value.lastIndexOf('.'))
+        newExtension = value.substring(value.lastIndexOf('.') + 1)
       }
 
       const newChild: FileOrFolder = {
@@ -185,123 +185,123 @@ export const structureSlice = createSlice({
         name: newName,
         type: inputType,
         extension:
-          inputType === "file" ? (newExtension as ValidExtensions) : undefined,
-        collapsed: inputType === "folder" ? true : undefined,
-        childrenFlat: inputType === "folder" ? [] : undefined,
-        content: inputType === "file" ? "" : undefined,
-      };
+          inputType === 'file' ? (newExtension as ValidExtensions) : undefined,
+        collapsed: inputType === 'folder' ? true : undefined,
+        childrenFlat: inputType === 'folder' ? [] : undefined,
+        content: inputType === 'file' ? '' : undefined
+      }
       if (state.contextSelected.id === state.initialFolder.id) {
         state.initialFolder.subFoldersAndFiles = [
           ...state.initialFolder.subFoldersAndFiles,
           {
             id: newChild.id,
             type: newChild.type,
-            subFoldersAndFiles: newChild.type === "folder" ? [] : null,
-          } as Directory,
-        ];
+            subFoldersAndFiles: newChild.type === 'folder' ? [] : null
+          } as Directory
+        ]
         state.normalized.folders.byId[state.initialFolder.id].childrenFlat = [
           ...state.normalized.folders.byId[state.initialFolder.id].childrenFlat,
-          { id: newChild.id, type: newChild.type },
-        ];
+          { id: newChild.id, type: newChild.type }
+        ]
       } else {
         bfsNodeAction(state.initialFolder, state.contextSelected.id, (item) => {
           state.normalized.folders.byId[state.contextSelected.id].childrenFlat =
             [
               ...state.normalized.folders.byId[state.contextSelected.id]
                 .childrenFlat,
-              { id: newChild.id, type: newChild.type },
-            ];
+              { id: newChild.id, type: newChild.type }
+            ]
 
           item.subFoldersAndFiles = [
             ...(item.subFoldersAndFiles as Directory[]),
             {
               id: newChild.id,
               type: newChild.type,
-              subFoldersAndFiles: newChild.type === "folder" ? [] : null,
-            } as Directory,
-          ];
-        });
+              subFoldersAndFiles: newChild.type === 'folder' ? [] : null
+            } as Directory
+          ]
+        })
       }
       const inputTypeForFetch =
-        `${inputType}s` as keyof typeof state.normalized;
+        `${inputType}s` as keyof typeof state.normalized
       state.normalized[inputTypeForFetch].byId[newChild.id] = newChild as
         | FileStructure
-        | NormalizedFolder;
+        | NormalizedFolder
       state.normalized[inputTypeForFetch].allIds = [
         ...state.normalized[inputTypeForFetch].allIds,
-        newChild.id,
-      ];
+        newChild.id
+      ]
 
       structureSlice.caseReducers.setPath(state, {
         payload: newChild.id,
-        type: "",
-      });
+        type: ''
+      })
 
       structureSlice.caseReducers.sortFolder(state, {
         payload: { id: state.contextSelected.id },
-        type: "",
-      });
+        type: ''
+      })
     },
 
     removeNode: (
       state,
       action: PayloadAction<
-        { id: string; type: ItemType } | { id: null; type: null }
+      { id: string, type: ItemType } | { id: null, type: null }
       >
     ) => {
       const id = action.payload.id
         ? action.payload.id
-        : state.contextSelected?.id;
+        : state.contextSelected?.id
       const type = action.payload.type
         ? action.payload.type
-        : state.contextSelected?.type;
-      if (id === state.initialFolder.id) return;
+        : state.contextSelected?.type
+      if (id === state.initialFolder.id) return
       dfsNodeAction(
         state.initialFolder.subFoldersAndFiles as Directory[],
-        id as string,
+        id,
         (item, parents) => {
-          const parent = parents[parents.length - 1];
+          const parent = parents[parents.length - 1]
           parent.subFoldersAndFiles = parent.subFoldersAndFiles.filter(
             ({ id }) => {
-              return id !== item.id;
+              return id !== item.id
             }
-          );
-          const parentId = parent.id;
+          )
+          const parentId = parent.id
           state.normalized.folders.byId[parentId].childrenFlat =
             state.normalized.folders.byId[parentId].childrenFlat.filter(
               ({ id: _id }) => _id !== item.id
-            );
+            )
 
-          const deleteNodes = (subItems: (Directory | FileInFolder)[]) => {
-            for (let item of subItems) {
-              const { id, type } = item;
+          const deleteNodes = (subItems: Array<Directory | FileInFolder>) => {
+            for (const item of subItems) {
+              const { id, type } = item
               // state.normalized[type + "s"].byId[id] = undefined;
               state.normalized[
-                (type + "s") as keyof typeof state.normalized
+                (type + 's') as keyof typeof state.normalized
               ].allIds = state.normalized[
-                (type + "s") as keyof typeof state.normalized
-              ].allIds.filter((_id) => _id !== id);
-              if (item.type === "folder") {
-                deleteNodes(item.subFoldersAndFiles);
+                (type + 's') as keyof typeof state.normalized
+              ].allIds.filter((_id) => _id !== id)
+              if (item.type === 'folder') {
+                deleteNodes(item.subFoldersAndFiles)
               }
             }
-          };
-          if (item.type === "folder") {
-            deleteNodes(item.subFoldersAndFiles);
+          }
+          if (item.type === 'folder') {
+            deleteNodes(item.subFoldersAndFiles)
           }
 
           if (parent.subFoldersAndFiles.length === 0) {
-            state.normalized.folders.byId[parentId].collapsed = true;
+            state.normalized.folders.byId[parentId].collapsed = true
           }
         },
         [state.initialFolder]
-      );
+      )
 
       // state.normalized[type + "s"].byId[id] = undefined;
-      state.normalized[(type + "s") as keyof typeof state.normalized].allIds =
+      state.normalized[(type + 's') as keyof typeof state.normalized].allIds =
         state.normalized[
-          (type + "s") as keyof typeof state.normalized
-        ].allIds.filter((_id) => _id !== id);
+          (type + 's') as keyof typeof state.normalized
+        ].allIds.filter((_id) => _id !== id)
 
       // remove Tab
       // state.tabs = state.tabs.filter(
@@ -312,42 +312,41 @@ export const structureSlice = createSlice({
     },
 
     renameNode: (state, action: PayloadAction<{ value: string }>) => {
-      let parentId = "";
-      let newName = action.payload.value;
-      let newExtension = "";
-      if (state.contextSelected.type === "file") {
+      let parentId = ''
+      let newName = action.payload.value
+      let newExtension = ''
+      if (state.contextSelected.type === 'file') {
         newName = action.payload.value.substring(
           0,
-          action.payload.value.lastIndexOf(".")
-        );
+          action.payload.value.lastIndexOf('.')
+        )
         newExtension = action.payload.value.substring(
-          action.payload.value.lastIndexOf(".") + 1
-        );
+          action.payload.value.lastIndexOf('.') + 1
+        )
       }
       dfsNodeAction(
         state.initialFolder.subFoldersAndFiles as Directory[],
         state.contextSelected.id,
         (_, parents) => {
-          const parent = parents[parents.length - 1];
+          const parent = parents[parents.length - 1]
           // item.name = action.payload.value;
-          parentId = parent.id;
-          return;
+          parentId = parent.id
         },
         [state.initialFolder]
-      );
+      )
       state.normalized[
-        (state.contextSelected.type + "s") as keyof typeof state.normalized
-      ].byId[state.contextSelected.id].name = newName;
+        (state.contextSelected.type + 's') as keyof typeof state.normalized
+      ].byId[state.contextSelected.id].name = newName
 
-      if (state.contextSelected.type === "file") {
+      if (state.contextSelected.type === 'file') {
         state.normalized.files.byId[state.contextSelected.id].extension =
-          newExtension as ValidExtensions;
+          newExtension as ValidExtensions
       }
 
       structureSlice.caseReducers.sortFolder(state, {
         payload: { id: parentId },
-        type: "",
-      });
+        type: ''
+      })
       // update tab
       // state.tabs = state.tabs.map((tab) => {
       //   if (
@@ -365,10 +364,10 @@ export const structureSlice = createSlice({
 
     updateFileContents: (
       state,
-      action: PayloadAction<{ id: string; value: string }>
+      action: PayloadAction<{ id: string, value: string }>
     ) => {
       state.normalized.files.byId[action.payload.id].content =
-        action.payload.value;
+        action.payload.value
     },
 
     // normalizeState: (state) => {
@@ -405,10 +404,10 @@ export const structureSlice = createSlice({
 
     collapseOrExpand: (
       state,
-      action: PayloadAction<{ item: Identifier; collapse: boolean }>
+      action: PayloadAction<{ item: Identifier, collapse: boolean }>
     ) => {
-      if (action.payload.item.type === "folder") {
-        const { item, collapse } = action.payload;
+      if (action.payload.item.type === 'folder') {
+        const { item, collapse } = action.payload
         // bfsNodeAction(state.initialFolder, item.id, (folder) => {
         //   if (collapse) {
         //     folder.collapsed = !folder.collapsed;
@@ -422,43 +421,43 @@ export const structureSlice = createSlice({
         }
         if (collapse) {
           state.normalized.folders.byId[item.id].collapsed =
-            !state.normalized.folders.byId[item.id].collapsed;
+            !state.normalized.folders.byId[item.id].collapsed
         } else {
-          state.normalized.folders.byId[item.id].collapsed = false;
+          state.normalized.folders.byId[item.id].collapsed = false
         }
-      } else if (action.payload.item.type === "file") {
+      } else if (action.payload.item.type === 'file') {
         // state.contextSelected.id = null;
       }
       // state.selected = action.payload.item.id;
     },
 
     copyNode: (state) => {
-      if (!state.toCopy) return;
+      if (!state.toCopy) return
 
-      if (state.toCopy.isCut === true) {
-        if (state.toCopy.type === "folder") {
+      if (state.toCopy.isCut) {
+        if (state.toCopy.type === 'folder') {
           const recursiveCut = state.normalized.folders.byId[
             state.contextSelected.id
-          ].path.includes(state.toCopy.id);
+          ].path.includes(state.toCopy.id)
 
           if (recursiveCut || state.toCopy.id === state.contextSelected.id) {
-            state.toCopy = null;
-            return;
+            state.toCopy = null
+            return
           }
         } else {
           const sameCut = state.normalized.folders.byId[
             state.contextSelected.id
-          ].childrenFlat.find(({ id }) => id === state.toCopy?.id);
+          ].childrenFlat.find(({ id }) => id === state.toCopy?.id)
           if (sameCut) {
-            state.toCopy = null;
-            return;
+            state.toCopy = null
+            return
           }
         }
       }
       const item =
         state.normalized[
-          (state.toCopy.type + "s") as keyof typeof state.normalized
-        ].byId[state.toCopy.id];
+          (state.toCopy.type + 's') as keyof typeof state.normalized
+        ].byId[state.toCopy.id]
       const toCopyItem = {
         ...item,
         subFoldersAndFiles: state.toCopy.subFoldersAndFiles,
@@ -468,26 +467,26 @@ export const structureSlice = createSlice({
         id: `${state.toCopy.type}-${uuidv4()}`,
 
         wholeName:
-          item.type === "file" ? `${item.name}.${item.extension}` : item.name,
+          item.type === 'file' ? `${item.name}.${item.extension}` : item.name
         // path: item.type === "file" ? [] : "",
-      };
+      }
 
       const knownNames = state.normalized.folders.byId[
         `${state.contextSelected.id}`
       ].childrenFlat.map(({ id, type }) => {
-        if (type === "folder") {
-          return state.normalized[`${type}s`].byId[id].name;
+        if (type === 'folder') {
+          return state.normalized[`${type}s`].byId[id].name
         } else {
-          const file = state.normalized[`${type}s`].byId[id];
-          return `${file.name}.${file.extension}`;
+          const file = state.normalized[`${type}s`].byId[id]
+          return `${file.name}.${file.extension}`
         }
-      });
-      let newName = toCopyItem.wholeName;
+      })
+      let newName = toCopyItem.wholeName
       const isNameTaken =
         knownNames.filter((knownName) => knownName === toCopyItem.wholeName)
-          .length > 0;
+          .length > 0
       if (isNameTaken) {
-        let i = 1;
+        let i = 1
         while (
           knownNames.filter((knownName) => {
             // eslint-disable-next-line
@@ -495,56 +494,56 @@ export const structureSlice = createSlice({
               return (
                 knownName ===
                 `${toCopyItem.name}_Copy_${i}.${toCopyItem.extension}`
-              );
+              )
             } else {
-              return knownName === `${toCopyItem.name}_Copy_${i}`;
+              return knownName === `${toCopyItem.name}_Copy_${i}`
             }
           }).length > 0
         ) {
-          i++;
+          i++
         }
         newName =
-          toCopyItem.type === "folder"
+          toCopyItem.type === 'folder'
             ? `${toCopyItem.name}_Copy_${i}`
-            : `${toCopyItem.name}_Copy_${i}.${toCopyItem.extension}`;
-        toCopyItem.wholeName = newName;
+            : `${toCopyItem.name}_Copy_${i}.${toCopyItem.extension}`
+        toCopyItem.wholeName = newName
       }
 
       const newNode = {
         ...toCopyItem,
         name:
-          toCopyItem.type === "file"
-            ? newName.substring(0, newName.lastIndexOf("."))
+          toCopyItem.type === 'file'
+            ? newName.substring(0, newName.lastIndexOf('.'))
             : newName,
         extension:
-          toCopyItem.type === "file" ? newName.split(".").pop() : undefined,
+          toCopyItem.type === 'file' ? newName.split('.').pop() : undefined,
         // subFoldersAndFiles: state.toCopy.type === "folder" ? [] : null,
-        collapsed: state.toCopy.type === "folder" ? false : undefined,
-      };
-      state.normalized.folders.byId[state.contextSelected.id].collapsed = false;
+        collapsed: state.toCopy.type === 'folder' ? false : undefined
+      }
+      state.normalized.folders.byId[state.contextSelected.id].collapsed = false
       state.normalized.folders.byId[state.contextSelected.id].childrenFlat = [
         ...state.normalized.folders.byId[state.contextSelected.id].childrenFlat,
-        { id: newNode.id, type: newNode.type },
-      ];
+        { id: newNode.id, type: newNode.type }
+      ]
 
-      if (newNode.type === "folder") {
+      if (newNode.type === 'folder') {
         state.normalized.folders.byId[newNode.id] = {
           id: newNode.id,
           name: newNode.name,
-          type: "folder",
+          type: 'folder',
           collapsed: false,
           childrenFlat: newNode.childrenFlat,
-          path: [] as string[],
-        };
+          path: [] as string[]
+        }
       } else {
         state.normalized.files.byId[newNode.id] = {
           id: newNode.id,
           name: newNode.name,
-          type: "file",
+          type: 'file',
           extension: newNode.extension as ValidExtensions,
           content: newNode.content,
-          path: [] as string[],
-        };
+          path: [] as string[]
+        }
       }
       // state.normalized[`${newNode.type}s`].byId[newNode.id] = {
       //   ...newNode,
@@ -552,108 +551,108 @@ export const structureSlice = createSlice({
       // };
       state.normalized[`${newNode.type}s`].allIds = [
         ...state.normalized[`${newNode.type}s`].allIds,
-        newNode.id,
-      ];
+        newNode.id
+      ]
 
       const actionOnChildren = (newNode: Directory) => {
-        if (state.toCopy?.type === "folder") {
+        if (state.toCopy?.type === 'folder') {
           const toCopyFolderPath =
-            state.normalized.folders.byId[newNode.id].path;
-          toCopyFolderPath.pop();
+            state.normalized.folders.byId[newNode.id].path
+          toCopyFolderPath.pop()
           dfsCbOnEach(
             newNode.subFoldersAndFiles as Directory[],
             (item, parentIds) => {
-              const parentId = parentIds[parentIds.length - 1];
+              const parentId = parentIds[parentIds.length - 1]
               const newItem = {
-                ...state.normalized[`${item.type}s`].byId[item.id],
-              };
-              newItem.id = `${newItem.type}-${uuidv4()}`;
-              newItem.path = [...toCopyFolderPath, ...parentIds, newItem.id];
+                ...state.normalized[`${item.type}s`].byId[item.id]
+              }
+              newItem.id = `${newItem.type}-${uuidv4()}`
+              newItem.path = [...toCopyFolderPath, ...parentIds, newItem.id]
 
-              state.normalized[`${newItem.type}s`].byId[newItem.id] = newItem;
+              state.normalized[`${newItem.type}s`].byId[newItem.id] = newItem
               state.normalized[`${newItem.type}s`].allIds = [
                 ...state.normalized[`${newItem.type}s`].allIds,
-                newItem.id,
-              ];
+                newItem.id
+              ]
               state.normalized.folders.byId[parentId].childrenFlat =
                 state.normalized.folders.byId[parentId].childrenFlat.map(
                   (existingItem) => {
                     if (existingItem.id === item.id) {
-                      return { ...existingItem, id: newItem.id };
+                      return { ...existingItem, id: newItem.id }
                     } else {
-                      return existingItem;
+                      return existingItem
                     }
                   }
-                );
-              item.id = newItem.id;
+                )
+              item.id = newItem.id
             },
             [],
             [newNode.id]
-          );
+          )
         }
-        return newNode;
-      };
+        return newNode
+      }
 
       const inputTypeForNormalized =
-        `${newNode.type}s` as keyof typeof state.normalized;
+        `${newNode.type}s` as keyof typeof state.normalized
 
       if (state.contextSelected.id === state.initialFolder.id) {
         state.normalized[inputTypeForNormalized].byId[newNode.id].path = [
-          "/",
+          '/',
           state.initialFolder.id,
-          newNode.id,
-        ];
+          newNode.id
+        ]
 
-        const node = actionOnChildren(newNode as Directory);
+        const node = actionOnChildren(newNode as Directory)
         state.initialFolder.subFoldersAndFiles = [
           ...state.initialFolder.subFoldersAndFiles,
           {
             id: node.id,
             type: node.type,
             subFoldersAndFiles:
-              node.type === "folder" ? node.subFoldersAndFiles : null,
-          } as Directory,
-        ];
+              node.type === 'folder' ? node.subFoldersAndFiles : null
+          } as Directory
+        ]
       } else {
         dfsNodeAction(
           state.initialFolder.subFoldersAndFiles as Directory[],
           state.contextSelected.id,
           (parent, beforeParents) => {
-            const parentPath = state.normalized.folders.byId[parent.id].path;
+            const parentPath = state.normalized.folders.byId[parent.id].path
             const parentsIds = [
               ...beforeParents.map(({ id }) => id),
-              parent.id,
-            ];
+              parent.id
+            ]
             state.normalized[inputTypeForNormalized].byId[newNode.id].path = [
-              "/",
+              '/',
               ...parentsIds,
-              newNode.id,
-            ];
-            const node = actionOnChildren(newNode as Directory);
+              newNode.id
+            ]
+            const node = actionOnChildren(newNode as Directory)
             parent.subFoldersAndFiles = [
               ...(parent.subFoldersAndFiles as Directory[]),
               {
                 id: node.id,
                 type: node.type,
-                subFoldersAndFiles: node.subFoldersAndFiles,
-              },
-            ];
+                subFoldersAndFiles: node.subFoldersAndFiles
+              }
+            ]
             const inputTypeForFetch =
-              `${newNode.type}s` as keyof typeof state.normalized;
+              `${newNode.type}s` as keyof typeof state.normalized
             state.normalized[inputTypeForFetch].byId[newNode.id].path = [
               ...parentPath,
-              newNode.id,
-            ];
+              newNode.id
+            ]
           },
           [state.initialFolder]
-        );
+        )
       }
 
-      if (state.toCopy.isCut === true) {
+      if (state.toCopy.isCut) {
         structureSlice.caseReducers.removeNode(state, {
           payload: { id: state.toCopy.id, type: state.toCopy.type },
-          type: "",
-        });
+          type: ''
+        })
       }
 
       // else {
@@ -672,140 +671,139 @@ export const structureSlice = createSlice({
 
       structureSlice.caseReducers.sortFolder(state, {
         payload: { id: state.contextSelected.id },
-        type: "",
-      });
+        type: ''
+      })
 
       if (state.toCopy.isCut) {
-        state.toCopy = null;
+        state.toCopy = null
       }
     },
 
     setSelected: (
       state,
       action: PayloadAction<{
-        id: string;
-        type: ItemType;
+        id: string
+        type: ItemType
       }>
     ) => {
       if (state.selected !== action.payload.id) {
         state.contextSelected = {
           id: state.initialFolder.id,
-          type: "folder",
-          e: false,
-        };
-        state.selected = action.payload.id;
+          type: 'folder',
+          e: false
+        }
+        state.selected = action.payload.id
       }
     },
     setContextSelectedForFileAction: (state) => {
-      const selectedItem = state.selected;
+      const selectedItem = state.selected
       if (state.normalized.files.allIds.includes(selectedItem)) {
         state.contextSelected = {
           id: state.initialFolder.id,
-          type: "folder",
-          e: false,
-        };
+          type: 'folder',
+          e: false
+        }
       } else {
         state.contextSelected = {
           id: state.selected,
-          type: "folder",
-          e: false,
-        };
+          type: 'folder',
+          e: false
+        }
       }
     },
 
     contextClick: (
       state,
       action: PayloadAction<{
-        id: string;
-        type: string;
+        id: string
+        type: string
         threeDot:
-          | {
-              x: number;
-              y: number;
-            }
-          | false;
+        | {
+          x: number
+          y: number
+        }
+        | false
       }>
     ) => {
-      const { id, type, threeDot } = action.payload;
+      const { id, type, threeDot } = action.payload
       // Don't run this if the user clicks on the same item
       // if (id === state.contextSelected.id) return;
       const newContext = {
-        id: "",
-        type: "",
+        id: '',
+        type: '',
         e: threeDot
           ? {
               x: threeDot.x,
-              y: threeDot.y,
+              y: threeDot.y
             }
-          : false,
-      };
+          : false
+      }
       if (id !== null) {
-        newContext.id = id;
-        newContext.type = type;
+        newContext.id = id
+        newContext.type = type
         if (threeDot) {
-          newContext.e = threeDot;
+          newContext.e = threeDot
         }
       } else {
-        newContext.id = state.initialFolder.id;
-        newContext.type = "folder";
+        newContext.id = state.initialFolder.id
+        newContext.type = 'folder'
 
         if (threeDot) {
-          newContext.e = threeDot;
+          newContext.e = threeDot
         }
       }
 
-      state.contextSelected = newContext as ContextSelected;
+      state.contextSelected = newContext as ContextSelected
     },
     setToCopy: (
       state,
       action: PayloadAction<{
-        id: string;
-        type: ItemType;
-        isCut: boolean;
+        id: string
+        type: ItemType
+        isCut: boolean
       }>
     ) => {
-      const children: Directory[] = [];
+      const children: Directory[] = []
 
       const newCopy = {
         id: action.payload.id,
         type: action.payload.type,
         isCut: action.payload.isCut,
-        parentId: "",
-        subFoldersAndFiles: children,
-      };
+        parentId: '',
+        subFoldersAndFiles: children
+      }
 
-      if (newCopy.type === "folder") {
+      if (newCopy.type === 'folder') {
         dfsNodeAction(
           state.initialFolder.subFoldersAndFiles as Directory[],
           action.payload.id,
           (toCopyFolder, parents) => {
-            const parent = parents[parents.length - 1];
+            const parent = parents[parents.length - 1]
             newCopy.subFoldersAndFiles =
-              toCopyFolder.subFoldersAndFiles as Directory[];
-            newCopy.parentId = parent.id;
+              toCopyFolder.subFoldersAndFiles as Directory[]
+            newCopy.parentId = parent.id
           },
           [state.initialFolder]
-        );
+        )
       }
 
-      state.toCopy = newCopy;
+      state.toCopy = newCopy
     },
     setParentItemId: (state, action: PayloadAction<string>) => {
-      if (action.payload !== "") {
-        state.parentItemId = action.payload;
+      if (action.payload !== '') {
+        state.parentItemId = action.payload
       } else {
-        let parentId = "";
+        let parentId = ''
         dfsNodeAction(
           state.initialFolder.subFoldersAndFiles as Directory[],
           state.contextSelected.id,
           (_, parents) => {
-            const parent = parents[parents.length - 1];
-            parentId = parent.id;
-            return;
+            const parent = parents[parents.length - 1]
+            parentId = parent.id
           },
           [state.initialFolder]
-        );
-        state.parentItemId = parentId;
+        )
+        state.parentItemId = parentId
       }
     },
     setPath: (state, action: PayloadAction<string>) => {
@@ -814,10 +812,10 @@ export const structureSlice = createSlice({
         action.payload,
         (item, parents) => {
           const inputTypeForFetch =
-            `${item.type}s` as keyof typeof state.normalized;
+            `${item.type}s` as keyof typeof state.normalized
 
-          const itemData = state.normalized[inputTypeForFetch].byId[item.id];
-          itemData.path = ["/", ...parents.map(({ id }) => id), item.id];
+          const itemData = state.normalized[inputTypeForFetch].byId[item.id]
+          itemData.path = ['/', ...parents.map(({ id }) => id), item.id]
           // const filePath = parents
           //   .map(({ id }) => state.normalized.folders.byId[id].name)
           //   .join("/");
@@ -825,88 +823,87 @@ export const structureSlice = createSlice({
           //   `${filePath}/${fileData.name}.${fileData.extension}`.split("/");
         },
         [state.initialFolder]
-      );
+      )
     },
     sortFolder: (state, action: PayloadAction<{ id: string }>) => {
       findSortable(
         state.initialFolder,
         (structure: Directory) => {
-          if (action.payload.id !== null && action.payload.id !== structure.id)
-            return;
+          if (action.payload.id !== null && action.payload.id !== structure.id) { return }
           if (
             action.payload.id === null ||
             structure.id === action.payload.id
           ) {
             const toSort = structure.subFoldersAndFiles.map(
               (item: Directory | FileInFolder) => {
-                return state.normalized[`${item.type}s`].byId[item.id];
+                return state.normalized[`${item.type}s`].byId[item.id]
               }
-            );
+            )
             toSort.sort(
               (
                 a: FileStructure | NormalizedFolder,
                 b: FileStructure | NormalizedFolder
               ) => {
-                if (a.type === "folder" && b.type === "file") {
-                  return -1;
-                } else if (a.type === "file" && b.type === "folder") {
-                  return 1;
+                if (a.type === 'folder' && b.type === 'file') {
+                  return -1
+                } else if (a.type === 'file' && b.type === 'folder') {
+                  return 1
                 } else {
-                  return a.name.localeCompare(b.name);
+                  return a.name.localeCompare(b.name)
                 }
               }
-            );
+            )
 
             structure.subFoldersAndFiles = toSort.map(
               ({ id, type }: FileStructure | NormalizedFolder) => {
                 const subFoldersAndFiles = structure.subFoldersAndFiles.find(
                   ({ id: _id }) => _id === id
-                )?.subFoldersAndFiles;
-                return { id, type, subFoldersAndFiles };
+                )?.subFoldersAndFiles
+                return { id, type, subFoldersAndFiles }
               }
-            ) as Directory[];
+            ) as Directory[]
           }
         },
         action.payload.id
-      );
+      )
     },
     search: (state, action: PayloadAction<string>) => {
-      state.searchTerm = action.payload.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');;
+      state.searchTerm = action.payload.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
     },
     setResizeCollapsed: (state, action: PayloadAction<boolean>) => {
-      state.resizeCollapsed = action.payload;
+      state.resizeCollapsed = action.payload
     },
     setSearchFocused: (state, action: PayloadAction<boolean>) => {
-      state.searchFocus = action.payload;
-    },
-  },
-});
+      state.searchFocus = action.payload
+    }
+  }
+})
 
 export const getInitialSet = (state: RootState) =>
-  state.structure.initialFolder.subFoldersAndFiles;
+  state.structure.initialFolder.subFoldersAndFiles
 
-export const selectedItem = (state: RootState) => state.structure.selected;
+export const selectedItem = (state: RootState) => state.structure.selected
 export const contextSelectedEvent = (state: RootState) =>
-  state.structure.contextSelected?.e;
+  state.structure.contextSelected?.e
 
 export const contextSelectedItem = (state: RootState) =>
-  state.structure.contextSelected?.id;
+  state.structure.contextSelected?.id
 
 export const contextSelectedItemType = (state: RootState) =>
-  state.structure.contextSelected?.type;
+  state.structure.contextSelected?.type
 
 export const fileIds = (state: RootState) =>
-  state.structure.normalized.files.allIds;
+  state.structure.normalized.files.allIds
 export const folderIds = (state: RootState) =>
-  state.structure.normalized.folders.allIds;
+  state.structure.normalized.folders.allIds
 
-export const clipboard = (state: RootState) => state.structure.toCopy;
+export const clipboard = (state: RootState) => state.structure.toCopy
 
-export const getSearchTerm = (state: RootState) => state.structure.searchTerm;
+export const getSearchTerm = (state: RootState) => state.structure.searchTerm
 
 export const isResizeCollapsed = (state: RootState) =>
-  state.structure.resizeCollapsed;
-export const searchFocus = (state: RootState) => state.structure.searchFocus;
+  state.structure.resizeCollapsed
+export const searchFocus = (state: RootState) => state.structure.searchFocus
 
 export const contextSelectedObj = createSelector(
   (state: RootState) => state.structure.contextSelected,
@@ -915,73 +912,73 @@ export const contextSelectedObj = createSelector(
     const item =
       normalized[`${contextSelected?.type}s` as keyof typeof normalized].byId[
         contextSelected?.id
-      ];
+      ]
 
-    let wholeName = item.name;
-    if (item.type === "file") {
-      wholeName = `${item.name}.${item.extension}`;
+    let wholeName = item.name
+    if (item.type === 'file') {
+      wholeName = `${item.name}.${item.extension}`
     }
     const actualPath = `${item.path
-      .filter((id) => id !== "/" && id !== "head")
+      .filter((id) => id !== '/' && id !== 'head')
       .map((id, i) => {
-        if (contextSelected?.type === "file") {
+        if (contextSelected?.type === 'file') {
           if (i < item.path.length - 3) {
-            return normalized.folders.byId[id].name;
+            return normalized.folders.byId[id].name
           } else {
-            return `${normalized.files.byId[id].name}.${normalized.files.byId[id].extension}`;
+            return `${normalized.files.byId[id].name}.${normalized.files.byId[id].extension}`
           }
-        } else if (contextSelected?.type === "folder") {
-          return normalized.folders.byId[id].name;
+        } else if (contextSelected?.type === 'folder') {
+          return normalized.folders.byId[id].name
         }
-        return "UNKNOWN";
+        return 'UNKNOWN'
       })
-      .join("/")}`;
+      .join('/')}`
     return {
       id: item.id,
       name: item.name,
       type: item.type,
-      wholeName: wholeName,
-      actualPath: actualPath,
-    };
+      wholeName,
+      actualPath
+    }
   }
-);
+)
 
 export const getItem = createSelector(
   (state: RootState) => state.structure.contextSelected,
   (state: RootState) => state.structure.normalized,
   (contextSelected: ContextSelected, normalized: Normalized) => {
-    if (!contextSelected) return { id: undefined, name: undefined };
+    if (!contextSelected) return { id: undefined, name: undefined }
     const item =
-      normalized[`${contextSelected.type}s`].byId[contextSelected.id];
-    if (item.type === "file") {
+      normalized[`${contextSelected.type}s`].byId[contextSelected.id]
+    if (item.type === 'file') {
       return {
         id: item.id,
         name: item.name,
         type: item.type,
-        extension: item.extension,
-      };
+        extension: item.extension
+      }
     } else {
       return {
         id: item.id,
         name: item.name,
-        type: item.type,
-      };
+        type: item.type
+      }
     }
   }
-);
+)
 
 export const getCurrentItems = createSelector(
   (state: RootState) => state.structure.normalized,
   (state: RootState) => state.structure.parentItemId,
   (normalized: Normalized, parentItemId: string) => {
-    if (!normalized || !parentItemId) return [];
+    if (!normalized || !parentItemId) return []
     return normalized.folders.byId[`${parentItemId}`].childrenFlat.map(
       ({ id, type }) => {
-        return normalized[`${type}s`].byId[id];
+        return normalized[`${type}s`].byId[id]
       }
-    );
+    )
   }
-);
+)
 
 // export const getFileTree = createSelector(
 //   (state: RootState) => state.structure.normalized,
@@ -995,44 +992,44 @@ export const getCurrentItems = createSelector(
 export const getSearchResults = createSelector(
   (state: RootState) => state.structure.searchTerm,
   (state: RootState) => state.structure.normalized.files,
-  (searchTerm: string, files: Normalized["files"]) => {
+  (searchTerm: string, files: Normalized['files']) => {
     const res: SearchResults = {
       files: [],
       numOfResults: 0,
-      numOfLines: 0,
-    };
-    if (searchTerm.trim() === "") return res;
-    const foundFiles: MatchingFile[] = [];
+      numOfLines: 0
+    }
+    if (searchTerm.trim() === '') return res
+    const foundFiles: MatchingFile[] = []
     files.allIds.forEach((id) => {
-      const currentFile = files.byId[id];
-      const content = currentFile.content;
-      const regex = new RegExp(searchTerm, "g");
-      const matches = content.match(regex);
-      const allRes: MatchingLine[] = [];
+      const currentFile = files.byId[id]
+      const content = currentFile.content
+      const regex = new RegExp(searchTerm, 'g')
+      const matches = content.match(regex)
+      const allRes: MatchingLine[] = []
       if (matches) {
-        res.numOfResults += 1;
-        res.numOfLines += matches.length;
-        const nL = content.split("\r");
+        res.numOfResults += 1
+        res.numOfLines += matches.length
+        const nL = content.split('\r')
         for (let j = 0; j < nL.length; j++) {
           if (nL[j].includes(matches[0])) {
             allRes.push({
               line: j + 1,
-              content: nL[j].trim(),
-            });
+              content: nL[j].trim()
+            })
           }
         }
         foundFiles.push({
           id: currentFile.id,
           name: currentFile.name,
           extension: currentFile.extension,
-          matches: allRes,
-        });
+          matches: allRes
+        })
       }
-    });
-    res.files = foundFiles;
-    return res;
+    })
+    res.files = foundFiles
+    return res
   }
-);
+)
 
 export const {
   addNode,
@@ -1049,7 +1046,7 @@ export const {
   setContextSelectedForFileAction,
   search,
   setResizeCollapsed,
-  setSearchFocused,
-} = structureSlice.actions;
+  setSearchFocused
+} = structureSlice.actions
 
-export default structureSlice.reducer;
+export default structureSlice.reducer

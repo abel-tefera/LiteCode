@@ -1,16 +1,16 @@
-import React from "react";
-import { ItemType } from "../../../state/features/structure/structureSlice";
+import React from 'react'
+import { type ItemType } from '../../../state/features/structure/structureSlice'
 interface ThreeDotsProp {
-  item: { id: string; type: ItemType };
-  selected: string;
-  showBlue: boolean;
-  onClickE: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  item: { id: string, type: ItemType }
+  selected: string
+  showBlue: boolean
+  onClickE: (e: React.MouseEvent<HTMLButtonElement>) => void
 }
 const ThreeDots: React.FC<ThreeDotsProp> = ({
   item,
   selected,
   showBlue,
-  onClickE,
+  onClickE
 }) => {
   return (
     <button
@@ -18,17 +18,17 @@ const ThreeDots: React.FC<ThreeDotsProp> = ({
       typeof-item={item.type}
       parent-id={item.id}
       onClick={(e) => {
-        onClickE(e);
+        onClickE(e)
       }}
       className={`px-2 rounded-r-sm ${
         selected === item.id && showBlue
-          ? "hover:bg-blue-400"
-          : "hover:bg-slate-500"
+          ? 'hover:bg-blue-400'
+          : 'hover:bg-slate-500'
       }`}
     >
       <span className="three-dots transition-opacity ">&nbsp;</span>
     </button>
-  );
-};
+  )
+}
 
-export default ThreeDots;
+export default ThreeDots

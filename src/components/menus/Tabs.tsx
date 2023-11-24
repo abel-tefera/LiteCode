@@ -1,38 +1,38 @@
-import React, { useEffect } from "react";
-import Tab from "./Tab";
+import React, { useEffect } from 'react'
+import Tab from './Tab'
 
-import { Tooltip } from "react-tooltip";
-import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
+import { Tooltip } from 'react-tooltip'
+import { useTypedDispatch, useTypedSelector } from '../../state/hooks'
 
-import { trimName } from "../file-structure/utils";
+import { trimName } from '../file-structure/utils'
 import {
   activeTabs,
   closeTab,
   selectTab,
-  selectedTab,
-} from "../../state/features/tabs/tabsSlice";
+  selectedTab
+} from '../../state/features/tabs/tabsSlice'
 import {
   removeActiveEditorAsync,
-  setActiveEditorAsync,
-} from "../../state/features/editor/editorSlice";
+  setActiveEditorAsync
+} from '../../state/features/editor/editorSlice'
 
 const Tabs = () => {
-  const dispatch = useTypedDispatch();
-  const tabs = useTypedSelector(activeTabs);
-  const selected = useTypedSelector(selectedTab);
+  const dispatch = useTypedDispatch()
+  const tabs = useTypedSelector(activeTabs)
+  const selected = useTypedSelector(selectedTab)
 
   const onSelect = (id: string) => {
     // alert(`Tab ${i} selected`);
     if (selected !== id) {
-      dispatch(selectTab(id));
-      dispatch(setActiveEditorAsync({ id, line: 0 }));
+      dispatch(selectTab(id))
+      dispatch(setActiveEditorAsync({ id, line: 0 }))
     }
-  };
+  }
 
   const onClose = (id: string) => {
-    dispatch(closeTab(id));
-    dispatch(removeActiveEditorAsync(id));
-  };
+    dispatch(closeTab(id))
+    dispatch(removeActiveEditorAsync(id))
+  }
 
   // useEffect(() => {
   //   console.log("STARTED");
@@ -40,7 +40,7 @@ const Tabs = () => {
   // }, [tabs]);
   return (
     <div className="flex flex-row w-full">
-      <div className={`file-tabs w-full py-1`}>
+      <div className={'file-tabs w-full py-1'}>
         <div className="flex flex-row items-center w-full overflow-x-scroll custom-scrollbar">
           {tabs.map((item, i) => (
             <Tab
@@ -55,7 +55,7 @@ const Tabs = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Tabs;
+export default Tabs

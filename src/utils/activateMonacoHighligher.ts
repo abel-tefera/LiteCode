@@ -23,6 +23,6 @@ const activateMonacoJSXHighlighter = async (monacoEditor: any, monaco: any) => {
   //   monacoJSXHighlighter,
   // };
   // return;
-};
+}
 
-export default activateMonacoJSXHighlighter;
+export default activateMonacoJSXHighlighter

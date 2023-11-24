@@ -1,20 +1,20 @@
-import { Directory, FileInFolder } from "../structureSlice";
+import { type Directory, type FileInFolder } from '../structureSlice'
 
 const bfsNodeAction = (
   currentItem: Directory | FileInFolder,
   id: string,
   callback: (currentItem: Directory | FileInFolder) => void
 ) => {
-  const queue: (Directory | FileInFolder)[] = [currentItem];
+  const queue: Array<Directory | FileInFolder> = [currentItem]
   while (queue.length > 0) {
-    currentItem = queue.shift() as Directory | FileInFolder;
+    currentItem = queue.shift() as Directory | FileInFolder
     if (currentItem.id === id) {
-      return callback(currentItem);
-    } else if (currentItem.type === "folder") {
-      queue.push(...currentItem.subFoldersAndFiles);
+      callback(currentItem); return
+    } else if (currentItem.type === 'folder') {
+      queue.push(...currentItem.subFoldersAndFiles)
     }
   }
-};
+}
 
 const dfsNodeAction = (
   structure: Directory[],
@@ -22,21 +22,21 @@ const dfsNodeAction = (
   callback: (item: Directory | FileInFolder, parents: Directory[]) => void,
   parents: Directory[]
 ) => {
-  for (let item of structure) {
+  for (const item of structure) {
     if (item.id === id) {
-      return callback(item, parents);
-    } else if (item.type === "folder") {
-      parents.push(item);
+      callback(item, parents); return
+    } else if (item.type === 'folder') {
+      parents.push(item)
       dfsNodeAction(
         item.subFoldersAndFiles as Directory[],
         id,
         callback,
         parents
-      );
+      )
     }
   }
-  parents.pop();
-};
+  parents.pop()
+}
 
 const dfsCbOnEach = (
   node: Directory[],
@@ -44,22 +44,22 @@ const dfsCbOnEach = (
   childrenIds: string[] = [],
   parentIds: string[]
 ) => {
-  for (let item of node) {
-    callback(item, parentIds);
-    if (item.type === "folder") {
-      const childIds = item.subFoldersAndFiles.map(({ id }) => id);
-      childrenIds.push(...childIds);
-      parentIds.push(item.id);
+  for (const item of node) {
+    callback(item, parentIds)
+    if (item.type === 'folder') {
+      const childIds = item.subFoldersAndFiles.map(({ id }) => id)
+      childrenIds.push(...childIds)
+      parentIds.push(item.id)
       dfsCbOnEach(
         item.subFoldersAndFiles as Directory[],
         callback,
         childrenIds,
         parentIds
-      );
-      parentIds.pop();
+      )
+      parentIds.pop()
     }
   }
-  return { childrenIds, parentIds };
-};
+  return { childrenIds, parentIds }
+}
 
-export { dfsNodeAction, bfsNodeAction, dfsCbOnEach };
+export { dfsNodeAction, bfsNodeAction, dfsCbOnEach }

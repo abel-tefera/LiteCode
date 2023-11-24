@@ -1,7 +1,7 @@
-import React from "react";
-import { Tooltip } from "react-tooltip";
-import newProjectIcon from "../../assets/new-project.svg";
-import uploadIcon from "../../assets/open-project.svg";
+import React from 'react'
+import { Tooltip } from 'react-tooltip'
+import newProjectIcon from '../../assets/new-project.svg'
+import uploadIcon from '../../assets/open-project.svg'
 
 const ProjectActions = () => {
   return (
@@ -11,7 +11,7 @@ const ProjectActions = () => {
           <Tooltip id="start-new-project" className="z-20" />
           <img
             data-tooltip-id="start-new-project"
-            data-tooltip-content={"Start new Project"}
+            data-tooltip-content={'Start new Project'}
             src={newProjectIcon}
             alt="new project"
             className="w-5 h-5 object-cover md:w-8 md:h-8 md:p-1 cursor-pointer hover:bg-dark-hover rounded-sm"
@@ -21,7 +21,7 @@ const ProjectActions = () => {
           <Tooltip id="open-existing-project" className="z-20" />
           <img
             data-tooltip-id="open-existing-project"
-            data-tooltip-content={"Open existing Project"}
+            data-tooltip-content={'Open existing Project'}
             src={uploadIcon}
             alt="open project"
             className="w-5 h-5 object-cover md:w-8 md:h-8 md:p-1 cursor-pointer hover:bg-dark-hover rounded-sm"
@@ -29,7 +29,7 @@ const ProjectActions = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProjectActions;
+export default ProjectActions

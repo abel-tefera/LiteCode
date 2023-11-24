@@ -1,20 +1,20 @@
-import React, { useEffect } from "react";
-import jsLogo from "../../assets/js.svg";
-import cssLogo from "../../assets/css.svg";
-import mdLogo from "../../assets/readme.svg";
-import jsxLogo from "../../assets/jsx.svg";
+import React, { useEffect } from 'react'
+import jsLogo from '../../assets/js.svg'
+import cssLogo from '../../assets/css.svg'
+import mdLogo from '../../assets/readme.svg'
+import jsxLogo from '../../assets/jsx.svg'
 
-import cross from "../../assets/cross.svg";
-import { getLogo } from "../file-structure/utils";
-import { Tooltip } from "react-tooltip";
+import cross from '../../assets/cross.svg'
+import { getLogo } from '../file-structure/utils'
+import { Tooltip } from 'react-tooltip'
 
 interface TabProps {
-  id: string;
-  name: string;
-  type: string;
-  selected: boolean;
-  onSelect: (id: string) => void;
-  onClose: (id: string) => void;
+  id: string
+  name: string
+  type: string
+  selected: boolean
+  onSelect: (id: string) => void
+  onClose: (id: string) => void
 }
 
 const Tab: React.FC<TabProps> = ({
@@ -23,24 +23,24 @@ const Tab: React.FC<TabProps> = ({
   type,
   selected,
   onSelect,
-  onClose,
+  onClose
 }) => {
-  const fileType = name.substring(name.lastIndexOf(".") + 1);
-  const [logo, setLogo] = React.useState<string>(getLogo(fileType));
+  const fileType = name.substring(name.lastIndexOf('.') + 1)
+  const [logo, setLogo] = React.useState<string>(getLogo(fileType))
 
   useEffect(() => {
-    setLogo(getLogo(type));
-  }, [type]);
+    setLogo(getLogo(type))
+  }, [type])
 
   return (
     <div
       onClick={() => {
-        if (!selected) onSelect(id);
+        if (!selected) onSelect(id)
       }}
       className={`border-t transition-colors p-2 px-2 flex flex-row flex-shrink-0 cursor-pointer select-none items-center rounded-sm mx-[1px] ${
         selected
-          ? `bg-dark-hover border-t-slate-200`
-          : `hover:bg-slate-700 border-t-dark-bg`
+          ? 'bg-dark-hover border-t-slate-200'
+          : 'hover:bg-slate-700 border-t-dark-bg'
       }`}
     >
       <span className={`span-logo w-4 h-4 ${logo}`}>&nbsp;</span>
@@ -50,8 +50,8 @@ const Tab: React.FC<TabProps> = ({
         <button
           type="button"
           onClick={(e) => {
-            e.stopPropagation();
-            onClose(id);
+            e.stopPropagation()
+            onClose(id)
           }}
         >
           <img
@@ -64,7 +64,7 @@ const Tab: React.FC<TabProps> = ({
         </button>
       </span>
     </div>
-  );
-};
+  )
+}
 
-export default Tab;
+export default Tab

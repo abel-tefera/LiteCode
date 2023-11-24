@@ -1,4 +1,4 @@
-import { editor } from "monaco-editor";
+import { type editor } from 'monaco-editor'
 
 const DarkTheme = {
   base: 'vs-dark' as editor.BuiltinTheme,
@@ -57,13 +57,13 @@ const DarkTheme = {
     { token: 'operator.scss', foreground: '666666' }, //
     { token: 'operator.sql', foreground: '778899' }, //
     { token: 'operator.swift', foreground: '666666' }, //
-    { token: 'predefined.sql', foreground: 'ff00ff' }, //
+    { token: 'predefined.sql', foreground: 'ff00ff' } //
   ],
   colors: {
     'editor.background': '#212733',
     'editor.foreground': '#d9d7ce',
     'editorIndentGuide.background': '#393b41',
-    'editorIndentGuide.activeBackground': '#494b51',
-  },
-};
-export default DarkTheme;
+    'editorIndentGuide.activeBackground': '#494b51'
+  }
+}
+export default DarkTheme

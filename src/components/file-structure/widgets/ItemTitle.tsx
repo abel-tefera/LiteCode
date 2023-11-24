@@ -1,41 +1,41 @@
-import React from "react";
+import React from 'react'
 import {
   FileStructure,
-  ItemType,
+  type ItemType,
   NormalizedFolder,
-  ValidExtensions,
-} from "../../../state/features/structure/structureSlice";
-import { getLogo, trimName } from "../utils";
+  type ValidExtensions
+} from '../../../state/features/structure/structureSlice'
+import { getLogo, trimName } from '../utils'
 
 interface ItemTitleProps {
   item: {
-    id: string;
-    name: string;
-    type: ItemType;
-    collapsed?: boolean;
-    extension?: string;
-  };
-  onClickE: (e: React.MouseEvent<HTMLDivElement>) => void;
+    id: string
+    name: string
+    type: ItemType
+    collapsed?: boolean
+    extension?: string
+  }
+  onClickE: (e: React.MouseEvent<HTMLDivElement>) => void
 }
 
 const ItemTitle: React.FC<ItemTitleProps> = ({ item, onClickE }) => {
   const findLogo = (item: {
-    id: string;
-    type: ItemType;
-    collapsed?: boolean;
-    extension?: string;
+    id: string
+    type: ItemType
+    collapsed?: boolean
+    extension?: string
   }) => {
-    if (item.type === "folder") {
-      return item.collapsed ? "closed-folder" : "opened-folder";
-    } else if (item.type === "file" && item.extension) {
-      return getLogo(item.extension);
+    if (item.type === 'folder') {
+      return item.collapsed ? 'closed-folder' : 'opened-folder'
+    } else if (item.type === 'file' && item.extension) {
+      return getLogo(item.extension)
     }
-  };
+  }
 
   return (
     <div
       onClick={(e) => {
-        onClickE(e);
+        onClickE(e)
       }}
       parent-id={item.id}
       typeof-item={item.type}
@@ -54,18 +54,18 @@ const ItemTitle: React.FC<ItemTitleProps> = ({ item, onClickE }) => {
         {trimName(
           item as
             | {
-                name: string;
-                type: "folder";
-              }
+              name: string
+              type: 'folder'
+            }
             | {
-                name: string;
-                type: "file";
-                extension: ValidExtensions;
-              }
+              name: string
+              type: 'file'
+              extension: ValidExtensions
+            }
         )}
       </span>
     </div>
-  );
-};
+  )
+}
 
-export default ItemTitle;
+export default ItemTitle

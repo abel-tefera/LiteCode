@@ -1,19 +1,19 @@
-import * as esbuild from "esbuild-wasm";
+import * as esbuild from 'esbuild-wasm'
 
 const startService = (() => {
-  let esBuildRef: any;
+  let esBuildRef: any
   return async () => {
     if (esBuildRef) {
-      return esBuildRef;
+      return esBuildRef
     } else {
       await esbuild.initialize({
         worker: true,
-        wasmURL: "https://unpkg.com/esbuild-wasm@0.19.5/esbuild.wasm",
-      });
-      esBuildRef = esbuild;
-      return esBuildRef;
+        wasmURL: 'https://unpkg.com/esbuild-wasm@0.19.5/esbuild.wasm'
+      })
+      esBuildRef = esbuild
+      return esBuildRef
     }
-  };
-})();
+  }
+})()
 
-export default startService;
+export default startService

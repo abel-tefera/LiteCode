@@ -1,6 +1,6 @@
-import React from "react";
-import samplePic from "../../assets/sample.png";
-import logo from "../../assets/logo.png";
+import React from 'react'
+import samplePic from '../../assets/sample.png'
+import logo from '../../assets/logo.png'
 
 const SmallScreenDisclaimer = () => {
   return (
@@ -32,7 +32,7 @@ const SmallScreenDisclaimer = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SmallScreenDisclaimer;
+export default SmallScreenDisclaimer

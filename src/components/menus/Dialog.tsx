@@ -1,14 +1,14 @@
-import React, { useRef } from "react";
-import useOutsideAlerter from "../../hooks/useOutsideAlerter";
-import deleteLogo from "../../assets/delete.svg";
-import cross from "../../assets/cross.svg";
+import React, { useRef } from 'react'
+import useOutsideAlerter from '../../hooks/useOutsideAlerter'
+import deleteLogo from '../../assets/delete.svg'
+import cross from '../../assets/cross.svg'
 
 interface DialogProps {
-  title: string;
-  content: string;
-  actionText: string;
-  close: (show: boolean) => void;
-  action: () => void;
+  title: string
+  content: string
+  actionText: string
+  close: (show: boolean) => void
+  action: () => void
 }
 
 const Dialog: React.FC<DialogProps> = ({
@@ -16,10 +16,10 @@ const Dialog: React.FC<DialogProps> = ({
   content,
   actionText,
   close,
-  action,
+  action
 }) => {
-  const dialogRef = useRef<HTMLDivElement>(null);
-  useOutsideAlerter(dialogRef, close);
+  const dialogRef = useRef<HTMLDivElement>(null)
+  useOutsideAlerter(dialogRef, close)
   return (
     <div className="backdrop-brightness-50 absolute top-0 z-50 flex w-full h-full justify-center items-start pt-6 select-none">
       <div
@@ -31,7 +31,7 @@ const Dialog: React.FC<DialogProps> = ({
           <span className="self-start">
             <img
               src={cross}
-              onClick={() => close(false)}
+              onClick={() => { close(false) }}
               alt="close"
               className="transition-colors p-1 h-5 w-5 cursor-pointer hover:bg-slate-500 rounded-md align-baseline"
             />
@@ -43,24 +43,24 @@ const Dialog: React.FC<DialogProps> = ({
           <div className="flex justify-between pl-12 w-full">
             <button
               type="button"
-              onClick={() => close(false)}
+              onClick={() => { close(false) }}
               className="text-sm text-white px-2 py-1 rounded-lg bg-slate-600 hover:bg-slate-500 transition-colors"
             >
               Cancel
             </button>
             <button
               type="button"
-              onClick={() => action()}
+              onClick={() => { action() }}
               className="text-sm bg-red-700 hover:bg-red-500 text-white px-2 py-1 rounded-lg transition-colors flex flex-row items-center"
             >
-              <img alt={"delete"} src={deleteLogo} className="w-4 h-4 mr-1" />
+              <img alt={'delete'} src={deleteLogo} className="w-4 h-4 mr-1" />
               {actionText}
             </button>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dialog;
+export default Dialog
