@@ -65,6 +65,14 @@ body {
   visibility: hidden;
 }
 
+.tab-close-button {
+  opacity: 0;
+}
+
+.tab-item:hover .tab-close-button {
+  opacity: 1;
+}
+
 .reception {
   background: url("../assets/bg.svg");
   width: 24rem;

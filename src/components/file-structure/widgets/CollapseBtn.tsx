@@ -1,8 +1,6 @@
 import React from "react";
 import {
-  FileStructure,
   type ItemType,
-  NormalizedFolder,
 } from "../../../state/features/structure/structureSlice";
 
 interface CollapseBtnProps {

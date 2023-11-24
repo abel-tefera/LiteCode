@@ -32,7 +32,7 @@ const Tab: React.FC<TabProps> = ({
       onClick={() => {
         if (!selected) onSelect(id);
       }}
-      className={`border-t transition-colors p-2 px-2 flex flex-row flex-shrink-0 cursor-pointer select-none items-center rounded-sm mx-[1px] ${
+      className={`tab-item border-t transition-colors p-2 px-2 flex flex-row flex-shrink-0 cursor-pointer select-none items-center rounded-sm mx-[1px] ${
         selected
           ? "bg-dark-hover border-t-slate-200"
           : "hover:bg-slate-700 border-t-dark-bg"
@@ -43,6 +43,8 @@ const Tab: React.FC<TabProps> = ({
         {/* <Tooltip id="close-tab" className="z-20" style={{backgroundColor: 'rgb(82 82 91)'}}/> */}
         <button
           type="button"
+          className="tab-close-button transition-opacity"
+
           onClick={e => {
             e.stopPropagation();
             onClose(id);
