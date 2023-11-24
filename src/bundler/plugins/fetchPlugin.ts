@@ -21,7 +21,7 @@ export const fetchPlugin = (tree: Record<string, string>) => {
         };
       });
       build.onLoad({ filter: /.css$/ }, async (args: esbuild.OnLoadArgs) => {
-        let dataGlobal:string = '';
+        let dataGlobal: string = "";
         let requestGlobal;
         if (!map.has(args.path)) {
           const { data, request } = await axios.get(args.path);
@@ -30,7 +30,7 @@ export const fetchPlugin = (tree: Record<string, string>) => {
         } else {
           dataGlobal = map.get(args.path)!;
         }
-        
+
         const escaped = dataGlobal
           .replace(/\n/g, "")
           .replace(/\r/g, "")
@@ -67,8 +67,12 @@ export const fetchPlugin = (tree: Record<string, string>) => {
         } else if (map.has(args.path)) {
           const ext = Path.extname(args.path);
           const contents = map.get(args.path)!;
-          const loader = 'jsx';
+          const loader = "jsx";
           return { contents, loader };
+        } else if (!args.path.includes("unpkg.com")) {
+          throw new Error(
+            `The file ${args.path} could not be found in the virtual file system.`
+          );
         }
       });
 
