@@ -2,108 +2,108 @@ import {
   type PayloadAction,
   createAsyncThunk,
   createSelector,
-  createSlice
-} from '@reduxjs/toolkit'
-import { type RootState } from '../../store'
-import { type FileStructure, type Normalized } from '../structure/structureSlice'
-import { getPaths } from './utils/pathUtil'
+  createSlice,
+} from "@reduxjs/toolkit";
+import { type RootState } from "../../store";
+import { type Normalized } from "../structure/structureSlice";
+import { getPaths } from "./utils/pathUtil";
 
-type KnownLanguages = 'javascript' | 'typescript' | 'css' | 'html' | 'json'
+type KnownLanguages = "javascript" | "typescript" | "css" | "html" | "json";
 interface EditorData {
-  id: string
-  language: KnownLanguages
-  line: number
-  path: string[]
-  unmappedPath: string[]
+  id: string;
+  language: KnownLanguages;
+  line: number;
+  path: string[];
+  unmappedPath: string[];
 }
 
 interface EditorSlice {
   // activeEditors: string[];
-  currentEditor: EditorData
-  editorWidthAdjusted: number
+  currentEditor: EditorData;
+  editorWidthAdjusted: number;
 }
 
 const initialState: EditorSlice = {
   // activeEditors: [],
   currentEditor: {
-    id: '',
-    language: 'javascript',
+    id: "",
+    language: "javascript",
     line: 1,
     path: [],
-    unmappedPath: []
+    unmappedPath: [],
   },
-  editorWidthAdjusted: 0
-}
+  editorWidthAdjusted: 0,
+};
 
 export const removeActiveEditorAsync = createAsyncThunk(
-  'removeActiveEditorAsync',
+  "removeActiveEditorAsync",
   async (id: string, { getState, dispatch }) => {
-    const state = getState() as RootState
-    const selectedTab = state.tabs.selected
-    if (selectedTab !== '') {
-      await dispatch(setActiveEditorAsync({ id: selectedTab, line: 0 }))
+    const state = getState() as RootState;
+    const selectedTab = state.tabs.selected;
+    if (selectedTab !== "") {
+      await dispatch(setActiveEditorAsync({ id: selectedTab, line: 0 }));
     }
-    return { id }
-  }
-)
+    return { id };
+  },
+);
 
 export const setActiveEditorAsync = createAsyncThunk(
-  'setActiveEditorAsync',
+  "setActiveEditorAsync",
   async (
-    editorProps: { id: string, line: number },
-    { getState, fulfillWithValue }
+    editorProps: { id: string; line: number },
+    { getState, fulfillWithValue },
   ) => {
-    const state = getState() as RootState
-    const normalized = state.structure.normalized
-    const file = normalized.files.byId[editorProps.id]
-    const [unmappedPath, actualPath] = getPaths(file, normalized)
+    const state = getState() as RootState;
+    const normalized = state.structure.normalized;
+    const file = normalized.files.byId[editorProps.id];
+    const [unmappedPath, actualPath] = getPaths(file, normalized);
     // actualPath.push(`${file.name}.${file.extension}`);
     return {
       file,
       actualPath,
       unmappedPath,
-      openAtLine: editorProps.line
-    }
-  }
-)
+      openAtLine: editorProps.line,
+    };
+  },
+);
 
 export const editorSlice = createSlice({
-  name: 'editor',
+  name: "editor",
   initialState,
   reducers: {
     setEditorWidthAdjusted: (state, action: PayloadAction<number>) => {
-      state.editorWidthAdjusted = action.payload
-    }
+      state.editorWidthAdjusted = action.payload;
+    },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder.addCase(setActiveEditorAsync.fulfilled, (state, action) => {
-      const file = action.payload.file
-      const actualPath = action.payload.actualPath
-      const unmappedPath = action.payload.unmappedPath
-      const openAtLine = action.payload.openAtLine
+      const file = action.payload.file;
+      const actualPath = action.payload.actualPath;
+      const unmappedPath = action.payload.unmappedPath;
+      const openAtLine = action.payload.openAtLine;
       if (file.id !== state.currentEditor.id) {
-        let language
+        let language;
         switch (file.extension) {
-          case 'js':
-            language = 'javascript'
-            break
-          case 'ts':
-            language = 'typescript'
-            break
-          case 'css':
-            language = 'css'
-            break
+          case "js":
+            language = "javascript";
+            break;
+          case "ts":
+            language = "typescript";
+            break;
+          case "css":
+            language = "css";
+            break;
           default:
-            language = 'javascript'
-            break
+            language = "javascript";
+            break;
         }
         state.currentEditor = {
           id: file.id,
           language: language as KnownLanguages,
           line: openAtLine !== 0 ? openAtLine : 1,
           unmappedPath,
-          path: actualPath
-        }
+          path: actualPath,
+        };
         // if (state.activeEditors.filter((_id) => _id === file.id).length === 0) {
         //   state.activeEditors = [
         //     ...state.activeEditors,
@@ -111,33 +111,33 @@ export const editorSlice = createSlice({
         //   ];
         // }
       }
-    })
+    });
     builder.addCase(removeActiveEditorAsync.fulfilled, (state, action) => {
-      const { id } = action.payload
+      const { id } = action.payload;
       // state.activeEditors = state.activeEditors.filter((_id) => _id !== id);
       if (state.currentEditor.id === id) {
       }
-    })
-  }
-})
+    });
+  },
+});
 
 export const getEditorWidthAdjusted = (state: RootState) =>
-  state.editor.editorWidthAdjusted
+  state.editor.editorWidthAdjusted;
 
 export const getCurrentEditor = createSelector(
   (state: RootState) => state.structure.normalized,
   (state: RootState) => state.editor.currentEditor,
   (normalized: Normalized, editor: EditorData) => {
-    const file = normalized.files.byId[editor.id]
-    const [unmappedPath, actualPath] = getPaths(file, normalized)
+    const file = normalized.files.byId[editor.id];
+    const [unmappedPath, actualPath] = getPaths(file, normalized);
     return {
       ...editor,
       path: actualPath,
       unmappedPath,
-      content: file.content
-    }
-  }
-)
+      content: file.content,
+    };
+  },
+);
 
-export const { setEditorWidthAdjusted } = editorSlice.actions
-export default editorSlice.reducer
+export const { setEditorWidthAdjusted } = editorSlice.actions;
+export default editorSlice.reducer;

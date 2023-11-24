@@ -1,20 +1,24 @@
-import React, { PropsWithChildren, useState, useRef, useEffect } from 'react'
-import downArrowLogo from '../../../assets/left-arrow.svg'
-import newFileIcon from '../../../assets/new-file.svg'
-import newFolderIcon from '../../../assets/new-folder.svg'
-import downloadIcon from '../../../assets/download.svg'
+import React, { PropsWithChildren, useState, useRef, useEffect } from "react";
+import downArrowLogo from "../../../assets/left-arrow.svg";
+import newFileIcon from "../../../assets/new-file.svg";
+import newFolderIcon from "../../../assets/new-folder.svg";
+import downloadIcon from "../../../assets/download.svg";
 
-import { Tooltip } from 'react-tooltip'
-import SearchContainer from '../search/SearchContainer'
-import { useTypedDispatch, useTypedSelector } from '../../../state/hooks'
-import { getSearchTerm, searchFocus, setSearchFocused } from '../../../state/features/structure/structureSlice'
+import { Tooltip } from "react-tooltip";
+import SearchContainer from "../search/SearchContainer";
+import { useTypedDispatch, useTypedSelector } from "../../../state/hooks";
+import {
+  getSearchTerm,
+  searchFocus,
+  setSearchFocused,
+} from "../../../state/features/structure/structureSlice";
 
 interface FileActionProps {
-  searchFiles: (searchTerm: string) => void
-  newFile: () => void
-  newFolder: () => void
-  download: () => void
-  isSearching: boolean
+  searchFiles: (searchTerm: string) => void;
+  newFile: () => void;
+  newFolder: () => void;
+  download: () => void;
+  isSearching: boolean;
 }
 
 const FileActions: React.FC<FileActionProps> = ({
@@ -22,37 +26,35 @@ const FileActions: React.FC<FileActionProps> = ({
   newFile,
   newFolder,
   download,
-  isSearching
+  isSearching,
 }) => {
-  const shouldSearchFocus = useTypedSelector(searchFocus)
-  const search = useTypedSelector(getSearchTerm)
-  const [searchTerm, setSearchTerm] = useState(search)
-  const searchInputRef = useRef<any>(null)
-  const dispatch = useTypedDispatch()
+  const shouldSearchFocus = useTypedSelector(searchFocus);
+  const search = useTypedSelector(getSearchTerm);
+  const [searchTerm, setSearchTerm] = useState(search);
+  const searchInputRef = useRef<any>(null);
+  const dispatch = useTypedDispatch();
   useEffect(() => {
-    if (!searchInputRef.current) return
+    if (!searchInputRef.current) return;
     if (shouldSearchFocus) {
-      searchInputRef.current.focus()
-      dispatch(setSearchFocused(false))
+      searchInputRef.current.focus();
+      dispatch(setSearchFocused(false));
     }
-  }, [])
+  }, []);
   return (
     <div className="flex flex-col items-start mb-2 px-2">
       <input
         ref={searchInputRef}
-        onInput={(e) => {
-          const searchTerm = e.currentTarget.value
-          setSearchTerm(searchTerm)
-          searchFiles(searchTerm)
+        onInput={e => {
+          const searchTerm = e.currentTarget.value;
+          setSearchTerm(searchTerm);
+          searchFiles(searchTerm);
         }}
         value={searchTerm}
         placeholder="Search"
         className="self-center rounded-lg w-full bg-dark-bg-2 p-2 hover:bg-dark-hover active:outline-none focus:outline-none mb-2 focus:bg-dark-hover"
       />
-      {
-        !isSearching
-          ? (
-          <div className="flex flex-row items-center mt-2 w-full select-none">
+      {!isSearching ? (
+        <div className="flex flex-row items-center mt-2 w-full select-none">
           <img
             src={downArrowLogo}
             className="w-3 h-3 mr-2 -rotate-90 self-center mb-[6px]"
@@ -65,13 +67,12 @@ const FileActions: React.FC<FileActionProps> = ({
                 <Tooltip className="z-50" id="new-file" />
                 <button
                   type="button"
-                  onClick={(e) => {
-                    newFile()
-                  }}
-                >
+                  onClick={e => {
+                    newFile();
+                  }}>
                   <img
                     data-tooltip-id="new-file"
-                    data-tooltip-content={'New File'}
+                    data-tooltip-content={"New File"}
                     src={newFileIcon}
                     className="w-6 h-6 p-[2px] mx-[2px] cursor-pointer hover:bg-dark-hover rounded-sm"
                     alt="New File"
@@ -82,13 +83,12 @@ const FileActions: React.FC<FileActionProps> = ({
                 <Tooltip className="z-50" id="new-folder" />
                 <button
                   type="button"
-                  onClick={(e) => {
-                    newFolder()
-                  }}
-                >
+                  onClick={e => {
+                    newFolder();
+                  }}>
                   <img
                     data-tooltip-id="new-folder"
-                    data-tooltip-content={'New Folder'}
+                    data-tooltip-content={"New Folder"}
                     src={newFolderIcon}
                     className="w-6 h-6 p-[2px] mx-[2px] cursor-pointer hover:bg-dark-hover rounded-sm"
                     alt="New Folder"
@@ -99,13 +99,12 @@ const FileActions: React.FC<FileActionProps> = ({
                 <Tooltip className="z-50" id="download-project" />
                 <button
                   type="button"
-                  onClick={(e) => {
-                    download()
-                  }}
-                >
+                  onClick={e => {
+                    download();
+                  }}>
                   <img
                     data-tooltip-id="download-project"
-                    data-tooltip-content={'Download Project'}
+                    data-tooltip-content={"Download Project"}
                     src={downloadIcon}
                     className="w-6 h-6 p-[2px] mx-[2px] cursor-pointer hover:bg-dark-hover rounded-sm"
                     alt="Download Project"
@@ -115,16 +114,13 @@ const FileActions: React.FC<FileActionProps> = ({
             </span>
           </span>
         </div>
-            )
-          : (
-          <div className="w-full h-[25rem] custom-scrollbar-3 overflow-y-auto">
-            <SearchContainer />
-          </div>
-            )
-      }
-
+      ) : (
+        <div className="w-full h-[25rem] custom-scrollbar-3 overflow-y-auto">
+          <SearchContainer />
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default FileActions
+export default FileActions;

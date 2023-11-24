@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react'
-import { useTypedSelector } from '../../../state/hooks'
-import { getOutput } from '../../../state/features/bundler/bundlerSlice'
+import React, { useEffect, useRef } from "react";
+import { useTypedSelector } from "../../../state/hooks";
+import { getOutput } from "../../../state/features/bundler/bundlerSlice";
 
 const preview = `
   <html>
@@ -31,30 +31,24 @@ const preview = `
       </script>
     </body>
   </html>
-`
-
-interface CodePreviewProps {
-  code: string
-  err: string | null
-}
+`;
 
 const CodePreview: React.FC = () => {
-  const iframe = useRef<any>(null)
-  const output = useTypedSelector(getOutput)
+  const iframe = useRef<any>(null);
+  const output = useTypedSelector(getOutput);
 
   useEffect(() => {
-    if (output.code !== '') {
-      iframe.current.srcdoc = preview
+    if (output.code !== "") {
+      iframe.current.srcdoc = preview;
       setTimeout(() => {
-        iframe.current.contentWindow.postMessage(output.code, '*')
-      }, 50)
+        iframe.current.contentWindow.postMessage(output.code, "*");
+      }, 50);
     }
-  }, [output])
+  }, [output]);
 
   return (
-    <div className={'pl-1 w-full mt-10 h-[82%]'}>
-      {output.err
-        ? (
+    <div className={"pl-1 w-full mt-10 h-[82%]"}>
+      {output.err ? (
         <div className="flex w-full h-full bg-white items-start justify-center">
           <div className="flex flex-col justify-center items-center w-96 h-fit p-5 shadow-md mt-6">
             <div className="flex flex-row items-center justify-evenly w-full">
@@ -66,8 +60,7 @@ const CodePreview: React.FC = () => {
             <p className="text-red-500 mt-4 ml-4">{output.err}</p>
           </div>
         </div>
-          )
-        : (
+      ) : (
         <div className="preview-wrapper w-full h-full">
           <iframe
             title="Code Preview"
@@ -76,9 +69,9 @@ const CodePreview: React.FC = () => {
             sandbox="allow-scripts"
           />
         </div>
-          )}
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default CodePreview
+export default CodePreview;

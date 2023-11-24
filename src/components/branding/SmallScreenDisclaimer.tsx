@@ -1,8 +1,8 @@
-import React from 'react'
-import samplePic from '../../assets/sample.png'
-import logo from '../../assets/logo.png'
+import React from "react";
+import samplePic from "../../assets/sample.png";
+import logo from "../../assets/logo.png";
 
-const SmallScreenDisclaimer = () => {
+const SmallScreenDisclaimer: React.FC = () => {
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       <img
@@ -25,14 +25,14 @@ const SmallScreenDisclaimer = () => {
             </h5>
           </div>
           <p className="mb-3 font-normal text-slate-100">
-            LiteCode is an IDE, and hence, I've used my limited resources to
-            make it a dedecited desktop enviornment for developers. Come back
-            later when you're on your laptop!
+            LiteCode is an IDE, and hence, I&apos;ve used my limited resources
+            to make it a dedecited desktop enviornment for developers. Come back
+            later when you&apos;re on your laptop!
           </p>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SmallScreenDisclaimer
+export default SmallScreenDisclaimer;

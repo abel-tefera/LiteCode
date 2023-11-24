@@ -8,21 +8,18 @@ const activateMonacoJSXHighlighter = async (monacoEditor: any, monaco: any) => {
   // const { default: MonacoJSXHighlighter } = await import(
   //   "monaco-jsx-highlighter"
   // );
-
   // const monacoJSXHighlighter = new MonacoJSXHighlighter(
   //   monaco,
   //   parse,
   //   traverse,
   //   monacoEditor
   // );
-
   // monacoJSXHighlighter.highlightOnDidChangeModelContent();
   // monacoJSXHighlighter.addJSXCommentCommand();
-
   // return {
   //   monacoJSXHighlighter,
   // };
   // return;
-}
+};
 
-export default activateMonacoJSXHighlighter
+export default activateMonacoJSXHighlighter;

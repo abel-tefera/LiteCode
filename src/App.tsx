@@ -4,7 +4,7 @@ import { persistor, store } from "./state/store";
 import Main from "./components/Main";
 import { PersistGate } from "redux-persist/integration/react";
 
-const App = () => {
+const App: React.FC = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}></PersistGate>

@@ -1,52 +1,54 @@
-import React, { useRef, useCallback, useEffect, useMemo } from 'react'
-import MonacoEditor, { OnChange, type OnChange as MonacoOnChange } from '@monaco-editor/react'
-import { type editor } from 'monaco-editor'
-import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api'
-import { useTypedSelector } from '../../../state/hooks'
-import { getCurrentEditor } from '../../../state/features/editor/editorSlice'
-import Breadcrumbs from '../navigation/Breadcrumbs'
+import React, { useRef, useCallback, useEffect, useMemo } from "react";
+import MonacoEditor, {
+  OnChange,
+  type OnChange as MonacoOnChange,
+} from "@monaco-editor/react";
+import { type editor } from "monaco-editor";
+import type * as monaco from "monaco-editor/esm/vs/editor/editor.api";
+import { useTypedSelector } from "../../../state/hooks";
+import { getCurrentEditor } from "../../../state/features/editor/editorSlice";
+import Breadcrumbs from "../navigation/Breadcrumbs";
 
-import * as prettier from 'prettier/standalone'
-import parserBabel from 'prettier/plugins/babel'
-import * as prettierPluginEstree from 'prettier/plugins/estree'
-import DarkTheme from './monaco-editor/themes/dark'
-import ESLintVerify from './monaco-editor/workers/eslint.worker'
-// @ts-expect-error
+import * as prettier from "prettier/standalone";
+import parserBabel from "prettier/plugins/babel";
+import * as prettierPluginEstree from "prettier/plugins/estree";
+import DarkTheme from "./monaco-editor/themes/dark";
+import ESLintVerify from "./monaco-editor/workers/eslint.worker";
 // import ESLintWorker from "./monaco-editor/workers/eslint.worker";
 
 const options = {
-  autoIndent: 'full',
+  autoIndent: "full",
   contextmenu: true,
-  fontFamily: 'monospace',
+  fontFamily: "monospace",
   fontSize: 13,
   lineHeight: 24,
   hideCursorInOverviewRuler: true,
-  matchBrackets: 'always',
+  matchBrackets: "always",
   minimap: {
-    enabled: true
+    enabled: true,
   },
   scrollbar: {
     horizontalSliderSize: 4,
-    verticalSliderSize: 18
+    verticalSliderSize: 18,
   },
   selectOnLineNumbers: true,
   roundedSelection: false,
   readOnly: false,
-  cursorStyle: 'line',
-  automaticLayout: true
-}
+  cursorStyle: "line",
+  automaticLayout: true,
+};
 
-type Monaco = typeof monaco
+type Monaco = typeof monaco;
 
 interface CodeEditorProps {
-  onChange: (value: string, id: string) => void
+  onChange: (value: string, id: string) => void;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
-  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
-  const monacoRef = useRef<Monaco | null>(null)
-  const editorData = useTypedSelector(getCurrentEditor)
-  const linterWorkerRef = useRef<any>(null)
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<Monaco | null>(null);
+  const editorData = useTypedSelector(getCurrentEditor);
+  const linterWorkerRef = useRef<any>(null);
   // const ESLintWorker: Worker = useMemo(
   //   () =>
   //     new Worker(
@@ -56,24 +58,24 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   // );
 
   const lintCode = (value: string) => {
-    const model = editorRef.current?.getModel()
+    const model = editorRef.current?.getModel();
 
     monacoRef.current?.editor.setModelMarkers(
       model as editor.ITextModel,
-      'eslint',
-      []
-    )
+      "eslint",
+      [],
+    );
     linterWorkerRef.current.postMessage({
       code: value,
-      language: 'javascript'
-    })
-  }
+      language: "javascript",
+    });
+  };
 
   useEffect(() => {
     return () => {
-      linterWorkerRef.current?.terminate()
-    }
-  }, [])
+      linterWorkerRef.current?.terminate();
+    };
+  }, []);
 
   // const updateMarkers = ({ markers, version }: any) => {
   //   requestAnimationFrame(() => {
@@ -89,54 +91,53 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
 
   const handleEditorDidMount = useCallback(
     async (editor: editor.IStandaloneCodeEditor, monacoEditor: Monaco) => {
-      editorRef.current = editor
-      monacoRef.current = monacoEditor
-      // @ts-expect-error
+      editorRef.current = editor;
+      monacoRef.current = monacoEditor;
       // linterWorkerRef.current = ESLintWorker;
       // linterWorkerRef.current.addEventListener("message", ({ data }: any) =>
       //   updateMarkers(data)
       // );
-      monacoEditor.editor.defineTheme('ayu-dark', DarkTheme)
-      monacoEditor.editor.setTheme('ayu-dark')
+      monacoEditor.editor.defineTheme("ayu-dark", DarkTheme);
+      monacoEditor.editor.setTheme("ayu-dark");
       // monacoEditor.editor.setModelMarkers(
       //   editor.getModel() as editor.ITextModel,
       //   "eslint",
       //   []
       // );
       monacoEditor.languages.registerDocumentFormattingEditProvider(
-        'javascript',
+        "javascript",
         {
-          async provideDocumentFormattingEdits (model, options, token) {
+          async provideDocumentFormattingEdits(model, options, token) {
             const text = await prettier.format(model.getValue(), {
-              parser: 'babel',
+              parser: "babel",
               plugins: [parserBabel, prettierPluginEstree],
               useTabs: false,
               semi: true,
-              singleQuote: true
-            })
+              singleQuote: true,
+            });
 
             return [
               {
                 range: model.getFullModelRange(),
-                text
-              }
-            ]
-          }
-        }
-      )
+                text,
+              },
+            ];
+          },
+        },
+      );
     },
-    []
-  )
+    [],
+  );
 
   const onChangeLocal: MonacoOnChange = (
     value: string | undefined,
-    e: editor.IModelContentChangedEvent
+    e: editor.IModelContentChangedEvent,
   ) => {
     if (value) {
-      onChange(editorData.id, value)
+      onChange(editorData.id, value);
       // lintCode(value)
     }
-  }
+  };
   // const formatCode = async () => {
   //   if (!editorRef.current) return;
   //   const unformatted = editorRef.current.getValue();
@@ -163,7 +164,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
         editorObj={{
           id: editorData.id,
           path: editorData.path,
-          unmappedPath: editorData.unmappedPath
+          unmappedPath: editorData.unmappedPath,
         }}
       />
 
@@ -173,8 +174,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
         line={editorData.line}
         // theme={"vs-dark"}
         language={editorData.language}
-        height={'100%'}
-        width={'100%'}
+        height={"100%"}
+        width={"100%"}
         options={{
           // wordWrap: "on",
           minimap: { enabled: true },
@@ -186,12 +187,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           automaticLayout: true,
           tabSize: 2,
 
-          autoIndent: 'full',
+          autoIndent: "full",
           contextmenu: true,
-          fontFamily: 'monospace',
+          fontFamily: "monospace",
           // lineHeight: 24,
           hideCursorInOverviewRuler: true,
-          matchBrackets: 'always',
+          matchBrackets: "always",
           // scrollbar: {
           //   horizontalSliderSize: 4,
           //   verticalSliderSize: 18,
@@ -199,11 +200,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           selectOnLineNumbers: true,
           roundedSelection: false,
           readOnly: false,
-          cursorStyle: 'line'
+          cursorStyle: "line",
         }}
         onChange={onChangeLocal}
         onMount={handleEditorDidMount}
-        beforeMount={(monaco) => {
+        beforeMount={monaco => {
           const compilerOptions = {
             allowJs: true,
             allowSyntheticDefaultImports: true,
@@ -211,38 +212,38 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
             allowNonTsExtensions: true,
             target: monaco.languages.typescript.ScriptTarget.ES2016,
             jsx: 5,
-            jsxFactory: 'React.createElement'
-          }
+            jsxFactory: "React.createElement",
+          };
           monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
-            compilerOptions
-          )
+            compilerOptions,
+          );
           monaco.languages.typescript.javascriptDefaults.setCompilerOptions(
-            compilerOptions
-          )
+            compilerOptions,
+          );
 
           monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
             noSemanticValidation: false,
-            noSyntaxValidation: false
-          })
+            noSyntaxValidation: false,
+          });
           monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
             noSemanticValidation: false,
-            noSyntaxValidation: false
-          })
+            noSyntaxValidation: false,
+          });
           monaco.languages.typescript.typescriptDefaults.setEagerModelSync(
-            true
-          )
+            true,
+          );
           monaco.languages.typescript.javascriptDefaults.setEagerModelSync(
-            true
-          )
+            true,
+          );
         }}
-        onValidate={(markers) => {
+        onValidate={markers => {
           // console.log("ON VALIDATE MARKERS", markers);
           // ESLintVerify(markers);
           // console.log("ONVALIDATE", markers);
         }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default CodeEditor
+export default CodeEditor;
