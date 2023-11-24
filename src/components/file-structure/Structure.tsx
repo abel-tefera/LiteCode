@@ -312,7 +312,7 @@ const Structure = () => {
     e: { clientY: number; clientX: number },
     elem: HTMLElement
   ) => {
-    if (!fileSysRef.current) return;
+    if (!fileSysRef.current || !elem) return;
     const type = elem.getAttribute("typeof-item") as "file" | "folder" | "";
     const parentId = elem.getAttribute("parent-id") as string;
 
