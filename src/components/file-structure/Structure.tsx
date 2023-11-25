@@ -386,7 +386,7 @@ const Structure: React.FC = () => {
   return (
     <>
       {!isCollapsed ? (
-        <div id="file-system">
+        <div id="file-system" className="pr-2">
           <FileActions
             {...fileActions}
             isSearching={isSearching && allFileIds.length > 0}
@@ -397,7 +397,7 @@ const Structure: React.FC = () => {
               id="structure-container"
               parent-id={"head"}
               typeof-item={"folder"}
-              className="pl-1 mr-2 file-sys-container custom-scrollbar-2"
+              className="file-sys-container custom-scrollbar-2"
               ref={fileSysRef}
               onClick={e => {
                 dispatch(setSelected({ id: "head", type: "folder" }));
@@ -469,7 +469,7 @@ const Structure: React.FC = () => {
             )}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-start w-20 h-full select-none">
+        <div className="flex flex-col items-center justify-start w-20 h-full select-none px-2">
           <Tooltip place="right-end" className="z-50" id="search" />
 
           <button

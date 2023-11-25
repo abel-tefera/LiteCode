@@ -153,7 +153,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   // };
 
   return (
-    <div className="editor-wrapper pl-2 pr-0">
+    <div className="editor-wrapper pl-2 pr-1">
       {/* <button
         onClick={formatCode}
         className="button button-format is-primary is-small"
