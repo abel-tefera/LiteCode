@@ -78,7 +78,7 @@ const Resizable: React.FC<ResizableProps> = ({
     axis: "x",
     className: `${haveWidthAdjusted && "rezisable"}`,
     width: resizableWidth,
-    height: innerHeight * 0.7,
+    height: innerHeight - 150,
     // lockAspectRatio: true,
     resizeHandles: ["e"],
     minConstraints: [minWConstraints, Infinity],
@@ -125,7 +125,7 @@ const Resizable: React.FC<ResizableProps> = ({
 
   return (
     <div
-      className="h-fit w-fit"
+      // className="h-full w-full"
       ref={containerRef}
       onMouseMove={throttle(e => {
         const x = e.clientX;

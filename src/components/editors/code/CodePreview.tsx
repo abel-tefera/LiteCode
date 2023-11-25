@@ -47,7 +47,7 @@ const CodePreview: React.FC = () => {
   }, [output]);
 
   return (
-    <div className={"pl-1 w-full mt-10 h-[82%]"}>
+    <div className={"pl-1 w-full h-full pt-10 pb-[5px]"}>
       {output.err ? (
         <div className="flex w-full h-full bg-white items-start justify-center">
           <div className="flex flex-col justify-center items-center w-96 h-fit p-5 shadow-md mt-6">

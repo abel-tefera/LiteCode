@@ -42,7 +42,7 @@
   position: absolute;
 
   /* background-color: red; */
-  height: 110%;
+  height: calc(100vh - 7rem);
   width: 5px;
 
   /* height: 100%; */
