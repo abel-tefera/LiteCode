@@ -397,7 +397,7 @@ const Structure: React.FC = () => {
               id="structure-container"
               parent-id={"head"}
               typeof-item={"folder"}
-              className="file-sys-container custom-scrollbar-2"
+              className="file-sys-container custom-scrollbar-2 pl-1"
               ref={fileSysRef}
               onClick={e => {
                 dispatch(setSelected({ id: "head", type: "folder" }));
