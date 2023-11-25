@@ -30,17 +30,16 @@ const Main: React.FC = () => {
   };
   const [isSmallScreen, setIsSmallScreen] = useState(isSmall());
 
-  const handleResize = throttle((e: UIEvent) => {
-    // setDirection(findWidth());
-    setIsSmallScreen(isSmall());
-  }, 500);
-
   useEffect(() => {
-    // setDirection(findWidth());
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+
+    const userAgent = navigator.userAgent;
+    const isMobile = /Mobile/.test(userAgent);
+    const isTablet = /Tablet/.test(userAgent);
+    const isComputer = !isMobile && !isTablet;
+
+    if (!isComputer) {
+      setIsSmallScreen(true);
+    }
   }, []);
 
   return (

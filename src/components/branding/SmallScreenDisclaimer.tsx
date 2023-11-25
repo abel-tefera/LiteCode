@@ -21,7 +21,7 @@ const SmallScreenDisclaimer: React.FC = () => {
         <div className="py-3">
           <div>
             <h5 className="mb-2 text-2xl font-bold tracking-tight text-slate-50">
-              LiteCode is not available on mobile browsers
+              LiteCode is currently not available on mobile or tablet browsers
             </h5>
           </div>
           <p className="mb-3 font-normal text-slate-100">
