@@ -12,9 +12,11 @@ export const getFiles = (): FileTree => {
   for (const key in tree) {
     const content = tree[key];
     const extension = key.split(".").reverse()[0] as ValidExtensions;
+
     if (
       extension === "jsx" &&
-      !(content.includes("import React") || content.includes("import react"))
+      !content.includes("import React") &&
+      !content.includes("import react")
     ) {
       tree[key] = `import React from 'react';\n${content}`;
     }
