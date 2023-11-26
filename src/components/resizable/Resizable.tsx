@@ -89,6 +89,7 @@ const Resizable: React.FC<ResizableProps> = ({
       if (
         !haveWidthAdjusted &&
         data.size.width === window.innerWidth * minRatio &&
+        // @ts-ignore
         e.clientX <= 80
       ) {
         // setResizableWidth(40);
