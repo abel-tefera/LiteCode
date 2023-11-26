@@ -52,11 +52,11 @@
   background-image: url("../assets/line-gray.svg");
   background-position: center;
   background-size: 35px;
-  cursor: ew-resize;
   transition-property: color, background-color, border-color,
     text-decoration-color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
+  cursor: col-resize;
 }
 
 .react-resizable-handle:hover {

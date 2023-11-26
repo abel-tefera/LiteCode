@@ -105,7 +105,11 @@ const Resizable: React.FC<ResizableProps> = ({
 
       resizableCall(data.size.width);
     },
+    onResizeStart: (e, data) => {
+      document.body.style.cursor = "col-resize";
+    },
     onResizeStop: (e, data) => {
+      document.body.style.cursor = "default";
       setResizableWidth(data.size.width);
       resizeStopCall(data.size.width);
     },
@@ -118,7 +122,7 @@ const Resizable: React.FC<ResizableProps> = ({
       setResizableWidth(80);
     } else {
       setWMinConstraint(innerWidth * minRatio);
-      setResizableWidth(innerWidth * minRatio + 1);
+      setResizableWidth(innerWidth * minRatio);
     }
   }, [isCollapsed]);
 

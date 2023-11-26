@@ -71,7 +71,7 @@ const CodeCell: React.FC = () => {
   return (
     <div className="w-full h-full flex flex-row">
       <Resizable
-        minRatio={0.2}
+        minRatio={0.3}
         maxRatio={0.7}
         initialRatio={0.65}
         haveWidthAdjusted={true}
