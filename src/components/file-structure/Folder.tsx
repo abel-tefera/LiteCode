@@ -47,7 +47,7 @@ const Folder: React.FC<FolderProps> = ({
     <div className={`${children.length > 0 && "w-full"}`}>
       {children.map(item => {
         return (
-          <div key={item.id} className={"flex flex-col select-none"}>
+          <div key={item.id} className={"flex flex-col select-none mr-1"}>
             <div
               id={item.id}
               typeof-item={item.type}

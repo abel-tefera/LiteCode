@@ -470,7 +470,12 @@ const Structure: React.FC = () => {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-start w-20 h-full select-none px-2">
-          <Tooltip place="right-end" className="z-50" id="search" />
+          <Tooltip
+            place="right-end"
+            className="z-50"
+            id="search"
+            style={{ backgroundColor: "rgb(60 60 60)" }}
+          />
 
           <button
             onClick={() => {
@@ -488,7 +493,7 @@ const Structure: React.FC = () => {
             />
           </button>
           <hr className="w-5/6 border-t border-t-zinc-500" />
-          <Tooltip place="right-start" className="z-50" id="file-explorer" />
+          <Tooltip place="right-start" className="z-50" id="file-explorer" style={{ backgroundColor: "rgb(60 60 60)" }} />
 
           <button
             onClick={() => {

@@ -67,7 +67,7 @@ const FileActions: React.FC<FileActionProps> = ({
             <span className="text-white">Files</span>
             <span className="flex items-center">
               <span className="text-white">
-                <Tooltip className="z-50" id="new-file" />
+                <Tooltip className="z-50" id="new-file" style={{ backgroundColor: "rgb(60 60 60)" }} />
                 <button
                   type="button"
                   onClick={e => {
@@ -83,7 +83,7 @@ const FileActions: React.FC<FileActionProps> = ({
                 </button>
               </span>
               <span className="text-white">
-                <Tooltip className="z-50" id="new-folder" />
+                <Tooltip className="z-50" id="new-folder" style={{ backgroundColor: "rgb(60 60 60)" }}/>
                 <button
                   type="button"
                   onClick={e => {
@@ -99,7 +99,7 @@ const FileActions: React.FC<FileActionProps> = ({
                 </button>
               </span>
               <span className="text-white">
-                <Tooltip className="z-50" id="download-project" />
+                <Tooltip className="z-50" id="download-project" style={{ backgroundColor: "rgb(60 60 60)" }} />
                 <button
                   type="button"
                   onClick={e => {

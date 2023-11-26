@@ -12,7 +12,7 @@ const SearchContainer = () => {
   const searchData = useTypedSelector(getSearchResults);
   const dispatch = useTypedDispatch();
   return (
-    <div className="select-none w-full h-fit">
+    <div className="select-none w-full h-fit pr-1">
       <div className="m-2">
         {searchData.numOfLines} result{searchData.numOfLines !== 1 && "s"} in{" "}
         {searchData.numOfResults} file{searchData.numOfResults !== 1 && "s"}
