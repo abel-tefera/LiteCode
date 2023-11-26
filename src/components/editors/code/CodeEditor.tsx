@@ -153,95 +153,102 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   // };
 
   return (
-    <div className="editor-wrapper pl-2 pr-1">
+    <div className="editor-wrapper pl-2 pr-3">
       {/* <button
         onClick={formatCode}
         className="button button-format is-primary is-small"
       >
         Format
       </button> */}
-      <Breadcrumbs
-        editorObj={{
-          id: editorData.id,
-          path: editorData.path,
-          unmappedPath: editorData.unmappedPath,
-        }}
-      />
+      <div className="bg-editor-bg rounded-lg overflow-clip flex flex-col items-center justify-start h-full">
+        <Breadcrumbs
+          editorObj={{
+            id: editorData.id,
+            path: editorData.path,
+            unmappedPath: editorData.unmappedPath,
+          }}
+        />
 
-      <MonacoEditor
-        path={editorData.id}
-        value={editorData.content}
-        line={editorData.line}
-        // theme={"vs-dark"}
-        language={editorData.language}
-        height={"100%"}
-        width={"100%"}
-        options={{
-          // wordWrap: "on",
-          minimap: { enabled: true },
-          showUnused: true,
-          // folding: true,
-          lineNumbersMinChars: 3,
-          fontSize: 16,
-          scrollBeyondLastLine: true,
-          automaticLayout: true,
-          tabSize: 2,
+        <MonacoEditor
+          path={editorData.id}
+          value={editorData.content}
+          line={editorData.line}
+          // theme={"vs-dark"}
+          language={editorData.language}
+          className="pt-1"
+          height={"100%"}
+          width={"100%"}
+          options={{
+            // wordWrap: "on",
+            minimap: { enabled: true },
+            showUnused: true,
+            // folding: true,
+            lineNumbersMinChars: 3,
+            fontSize: 16,
+            scrollBeyondLastLine: true,
+            automaticLayout: true,
+            tabSize: 2,
 
-          autoIndent: "full",
-          contextmenu: true,
-          fontFamily: "monospace",
-          // lineHeight: 24,
-          hideCursorInOverviewRuler: true,
-          matchBrackets: "always",
-          // scrollbar: {
-          //   horizontalSliderSize: 4,
-          //   verticalSliderSize: 18,
-          // },
-          selectOnLineNumbers: true,
-          roundedSelection: false,
-          readOnly: false,
-          cursorStyle: "line",
-        }}
-        onChange={onChangeLocal}
-        onMount={handleEditorDidMount}
-        beforeMount={monaco => {
-          const compilerOptions = {
-            allowJs: true,
-            allowSyntheticDefaultImports: true,
-            alwaysStrict: true,
-            allowNonTsExtensions: true,
-            target: monaco.languages.typescript.ScriptTarget.ES2016,
-            jsx: 5,
-            jsxFactory: "React.createElement",
-          };
-          monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
-            compilerOptions,
-          );
-          monaco.languages.typescript.javascriptDefaults.setCompilerOptions(
-            compilerOptions,
-          );
+            autoIndent: "full",
+            contextmenu: true,
+            fontFamily: "monospace",
+            // lineHeight: 24,
+            hideCursorInOverviewRuler: true,
+            matchBrackets: "always",
+            // scrollbar: {
+            //   horizontalSliderSize: 4,
+            //   verticalSliderSize: 18,
+            // },
+            selectOnLineNumbers: true,
+            roundedSelection: false,
+            readOnly: false,
+            cursorStyle: "line",
+          }}
+          onChange={onChangeLocal}
+          onMount={handleEditorDidMount}
+          beforeMount={monaco => {
+            const compilerOptions = {
+              allowJs: true,
+              allowSyntheticDefaultImports: true,
+              alwaysStrict: true,
+              allowNonTsExtensions: true,
+              target: monaco.languages.typescript.ScriptTarget.ES2016,
+              jsx: 5,
+              jsxFactory: "React.createElement",
+            };
+            monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
+              compilerOptions,
+            );
+            monaco.languages.typescript.javascriptDefaults.setCompilerOptions(
+              compilerOptions,
+            );
 
-          monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-            noSemanticValidation: false,
-            noSyntaxValidation: false,
-          });
-          monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
-            noSemanticValidation: false,
-            noSyntaxValidation: false,
-          });
-          monaco.languages.typescript.typescriptDefaults.setEagerModelSync(
-            true,
-          );
-          monaco.languages.typescript.javascriptDefaults.setEagerModelSync(
-            true,
-          );
-        }}
-        onValidate={markers => {
-          // console.log("ON VALIDATE MARKERS", markers);
-          // ESLintVerify(markers);
-          // console.log("ONVALIDATE", markers);
-        }}
-      />
+            monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions(
+              {
+                noSemanticValidation: false,
+                noSyntaxValidation: false,
+              },
+            );
+            monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions(
+              {
+                noSemanticValidation: false,
+                noSyntaxValidation: false,
+              },
+            );
+            monaco.languages.typescript.typescriptDefaults.setEagerModelSync(
+              true,
+            );
+            monaco.languages.typescript.javascriptDefaults.setEagerModelSync(
+              true,
+            );
+          }}
+          onValidate={markers => {
+            // console.log("ON VALIDATE MARKERS", markers);
+            // ESLintVerify(markers);
+            // console.log("ONVALIDATE", markers);
+          }}
+        />
+      </div>
     </div>
   );
 };

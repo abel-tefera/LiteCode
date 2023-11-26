@@ -19,18 +19,16 @@ body {
 }
 
 .editor-wrapper {
-  position: relative;
+  /* position: relative; */
   height: 100%;
-  width: calc(100% - 10px);
+  width: 100%;
 }
 
 .preview-wrapper {
   background-color: white;
-  position: relative;
+  /* position: relative; */
   height: 100%;
   display: flex;
-  flex-grow: 1;
-  margin-right: 2rem;
   width: 100%;
 }
 

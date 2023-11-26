@@ -33,7 +33,6 @@ const Resizable: React.FC<ResizableProps> = ({
   const dispatch = useTypedDispatch();
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
-  const [mouseX, setMouseX] = useState(0);
   const [minWConstraints, setWMinConstraint] = useState(
     window.innerWidth * minRatio,
   );
@@ -78,17 +77,19 @@ const Resizable: React.FC<ResizableProps> = ({
     axis: "x",
     className: `${haveWidthAdjusted && "rezisable"}`,
     width: resizableWidth,
-    height: innerHeight - 150,
+    height: innerHeight - 120,
     // lockAspectRatio: true,
     resizeHandles: ["e"],
     minConstraints: [minWConstraints, Infinity],
     maxConstraints: [innerWidth * maxRatio, Infinity],
     // draggableOpts: { grid: [innerWidth * minRatio, Infinity] },
     onResize: (e, data) => {
+      // e.preventDefault();
+      // const event = e as MouseEvent;
       if (
         !haveWidthAdjusted &&
         data.size.width === window.innerWidth * minRatio &&
-        mouseX <= 80
+        e.clientX <= 80
       ) {
         // setResizableWidth(40);
         if (!isCollapsed) {
@@ -101,10 +102,7 @@ const Resizable: React.FC<ResizableProps> = ({
         }
       }
 
-      // if (hasResizableCall) {
-
       resizableCall(data.size.width);
-      // }
     },
     onResizeStop: (e, data) => {
       setResizableWidth(data.size.width);
@@ -126,11 +124,7 @@ const Resizable: React.FC<ResizableProps> = ({
   return (
     <div
       // className="h-full w-full"
-      ref={containerRef}
-      onMouseMove={throttle(e => {
-        const x = e.clientX;
-        setMouseX(x);
-      }, 300)}>
+      ref={containerRef}>
       <ResizableBox {...resizableProps}>{children}</ResizableBox>
     </div>
   );

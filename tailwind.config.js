@@ -12,6 +12,7 @@ module.exports = {
         "hover-blue": "#04395E",
         "vscode-blue": "#4078CE",
         "git-orange": "#F05033",
+        "editor-bg": "#212733"
       },
       fontFamily: {
         roboto: ["Roboto", "sans-serif"],

@@ -44,7 +44,6 @@ const Tab: React.FC<TabProps> = ({
         <button
           type="button"
           className="tab-close-button transition-opacity"
-
           onClick={e => {
             e.stopPropagation();
             onClose(id);

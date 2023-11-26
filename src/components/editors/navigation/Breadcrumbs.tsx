@@ -31,8 +31,8 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ editorObj }) => {
       <div
         id={"breadcrumbs"}
         ref={breadcrumbsRef}
-        className="mb-3 mt-1 select-none w-full">
-        <div className="flex items-center justify-start ">
+        className="flex flex-col select-none w-full">
+        <div className="flex items-center justify-start m-2">
           {editorObj.path.map((path, i) => (
             <div
               id={`${editorObj.path
@@ -66,6 +66,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ editorObj }) => {
             </div>
           ))}
         </div>
+        <div className="w-full border-t border-t-slate-400"></div>
       </div>
       {breadcrumbsRef.current && showMiniStructure && (
         <>
@@ -81,7 +82,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ editorObj }) => {
               return createPortal(
                 <div
                   ref={miniStructurePortalRef}
-                  className="rounded-lg bg-slate-950 border border-slate-600 absolute w-52 z-10 mt-2 max-h-60 overflow-y-auto custom-scrollbar-3">
+                  className="rounded-lg bg-slate-950 border border-slate-600 absolute w-52 z-10 mt-3 max-h-60 overflow-y-auto custom-scrollbar-3">
                   <MiniFolder
                     init={true}
                     data={miniStructure}

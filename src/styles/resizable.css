@@ -42,7 +42,7 @@
   position: absolute;
 
   /* background-color: red; */
-  height: calc(100vh - 7rem);
+  height: 100%;
   width: 5px;
 
   /* height: 100%; */
@@ -125,8 +125,3 @@
   /* transform: rotate(315deg); */
 }
 
-.rezisable .react-resizable-handle {
-  /* top: 10px; */
-  margin-top: 2.25rem;
-  height: 100%;
-}
