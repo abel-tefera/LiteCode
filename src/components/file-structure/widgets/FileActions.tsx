@@ -41,7 +41,7 @@ const FileActions: React.FC<FileActionProps> = ({
     }
   }, []);
   return (
-    <div className="flex flex-col items-start mb-2 px-2">
+    <div className="flex flex-col items-start mb-2 pl-2">
       <input
         ref={searchInputRef}
         onInput={e => {
@@ -51,7 +51,7 @@ const FileActions: React.FC<FileActionProps> = ({
         }}
         value={searchTerm}
         placeholder="Search"
-        className="self-center rounded-lg w-full bg-dark-bg-2 p-2 hover:bg-dark-hover active:outline-none focus:outline-none mb-2 focus:bg-dark-hover"
+        className="self-center rounded-lg w-full bg-dark-bg-2 p-2 hover:bg-dark-hover active:outline-none focus:outline-none mb-2 focus:bg-dark-hover mr-2"
       />
       {!isSearching ? (
         <div className="flex flex-row items-center mt-2 w-full select-none">

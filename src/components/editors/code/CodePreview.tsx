@@ -61,7 +61,7 @@ const CodePreview: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div className="preview-wrapper rounded-lg p-1 w-full h-full">
+        <div className="preview-wrapper rounded-lg overflow-clip w-full h-full">
           <iframe
             title="Code Preview"
             ref={iframe}

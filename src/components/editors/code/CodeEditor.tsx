@@ -175,7 +175,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           line={editorData.line}
           // theme={"vs-dark"}
           language={editorData.language}
-          className="pt-1"
           height={"100%"}
           width={"100%"}
           options={{
