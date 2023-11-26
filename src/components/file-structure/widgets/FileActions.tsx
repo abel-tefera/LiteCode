@@ -42,17 +42,20 @@ const FileActions: React.FC<FileActionProps> = ({
   }, []);
   return (
     <div className="flex flex-col items-start mb-2 pl-2">
-      <input
-        ref={searchInputRef}
-        onInput={e => {
-          const searchTerm = e.currentTarget.value;
-          setSearchTerm(searchTerm);
-          searchFiles(searchTerm);
-        }}
-        value={searchTerm}
-        placeholder="Search"
-        className="self-center rounded-lg w-full bg-dark-bg-2 p-2 hover:bg-dark-hover active:outline-none focus:outline-none mb-2 focus:bg-dark-hover mr-2"
-      />
+      <div className="w-full pr-2 mb-2">
+        <input
+          ref={searchInputRef}
+          onInput={e => {
+            const searchTerm = e.currentTarget.value;
+            setSearchTerm(searchTerm);
+            searchFiles(searchTerm);
+          }}
+          value={searchTerm}
+          placeholder="Search"
+          className="self-center rounded-lg w-full bg-dark-bg-2 p-2 hover:bg-dark-hover active:outline-none focus:outline-none focus:bg-dark-hover"
+        />
+      </div>
+
       {!isSearching ? (
         <div className="flex flex-row items-center mt-2 w-full select-none">
           <img

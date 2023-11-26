@@ -97,8 +97,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
       // linterWorkerRef.current.addEventListener("message", ({ data }: any) =>
       //   updateMarkers(data)
       // );
-      monacoEditor.editor.defineTheme("ayu-dark", DarkTheme);
-      monacoEditor.editor.setTheme("ayu-dark");
+      // monacoEditor.editor.defineTheme("ayu-dark", DarkTheme);
+      // monacoEditor.editor.setTheme("ayu-dark");
       // monacoEditor.editor.setModelMarkers(
       //   editor.getModel() as editor.ITextModel,
       //   "eslint",
@@ -153,14 +153,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   // };
 
   return (
-    <div className="editor-wrapper pl-2 pr-3">
+    <div className="editor-wrapper px-3">
       {/* <button
         onClick={formatCode}
         className="button button-format is-primary is-small"
       >
         Format
       </button> */}
-      <div className="bg-editor-bg rounded-lg overflow-clip flex flex-col items-center justify-start h-full">
+      <div className="bg-monaco-vs rounded-lg overflow-clip flex flex-col items-center justify-start h-full">
         <Breadcrumbs
           editorObj={{
             id: editorData.id,
@@ -173,7 +173,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           path={editorData.id}
           value={editorData.content}
           line={editorData.line}
-          // theme={"vs-dark"}
+          theme={"vs-dark"}
           language={editorData.language}
           height={"100%"}
           width={"100%"}
