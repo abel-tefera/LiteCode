@@ -127,8 +127,35 @@ interface FileSystem {
 const initialState: FileSystem = {
   normalized: {
     files: {
-      byId: {},
-      allIds: [],
+      byId: {
+        "file-eb32d6e7-f715-4632-81b5-46998b5d0e0f": {
+          id: "file-eb32d6e7-f715-4632-81b5-46998b5d0e0f",
+          name: "index",
+          type: "file",
+          extension: "js",
+          content:
+            'import React from "react";\r\nimport ReactDOM from "react-dom";\r\nimport App from "./src/App.jsx";\r\n\r\nconst root = ReactDOM.createRoot(document.getElementById(\'root\'));\r\nroot.render(<App />);',
+          path: ["/", "head", "file-eb32d6e7-f715-4632-81b5-46998b5d0e0f"],
+        },
+        "file-8ffe79f3-c2ee-4842-8654-bc1c916c53d5": {
+          id: "file-8ffe79f3-c2ee-4842-8654-bc1c916c53d5",
+          name: "App",
+          type: "file",
+          extension: "jsx",
+          content:
+            "const App = () => {\r\n  return <div>Hi, there!</div>\r\n}\r\n\r\nexport default App;",
+          path: [
+            "/",
+            "head",
+            "folder-2aceb207-20c6-4b42-a670-c511e3c6e93c",
+            "file-8ffe79f3-c2ee-4842-8654-bc1c916c53d5",
+          ],
+        },
+      },
+      allIds: [
+        "file-eb32d6e7-f715-4632-81b5-46998b5d0e0f",
+        "file-8ffe79f3-c2ee-4842-8654-bc1c916c53d5",
+      ],
     },
     folders: {
       byId: {
@@ -137,17 +164,50 @@ const initialState: FileSystem = {
           name: "head",
           type: "folder",
           collapsed: false,
-          childrenFlat: [],
+          childrenFlat: [
+            { id: "file-eb32d6e7-f715-4632-81b5-46998b5d0e0f", type: "file" },
+            {
+              id: "folder-2aceb207-20c6-4b42-a670-c511e3c6e93c",
+              type: "folder",
+            },
+          ],
           path: ["/"],
         },
+        "folder-2aceb207-20c6-4b42-a670-c511e3c6e93c": {
+          id: "folder-2aceb207-20c6-4b42-a670-c511e3c6e93c",
+          name: "src",
+          type: "folder",
+          collapsed: true,
+          childrenFlat: [
+            { id: "file-8ffe79f3-c2ee-4842-8654-bc1c916c53d5", type: "file" },
+          ],
+          path: ["/", "head", "folder-2aceb207-20c6-4b42-a670-c511e3c6e93c"],
+        },
       },
-      allIds: ["head"],
+      allIds: ["head", "folder-2aceb207-20c6-4b42-a670-c511e3c6e93c"],
     },
   },
   initialFolder: {
     id: "head",
     type: "folder",
-    subFoldersAndFiles: [],
+    subFoldersAndFiles: [
+      {
+        id: "folder-2aceb207-20c6-4b42-a670-c511e3c6e93c",
+        type: "folder",
+        subFoldersAndFiles: [
+          {
+            id: "file-8ffe79f3-c2ee-4842-8654-bc1c916c53d5",
+            type: "file",
+            subFoldersAndFiles: null,
+          },
+        ],
+      },
+      {
+        id: "file-eb32d6e7-f715-4632-81b5-46998b5d0e0f",
+        type: "file",
+        subFoldersAndFiles: null,
+      },
+    ],
   },
   selected: "head",
   contextSelected: {

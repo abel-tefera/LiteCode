@@ -33,11 +33,9 @@ const Resizable: React.FC<ResizableProps> = ({
   const dispatch = useTypedDispatch();
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
-  const [minWConstraints, setWMinConstraint] = useState(
-    window.innerWidth * minRatio,
-  );
+  const [minWConstraints, setWMinConstraint] = useState(innerWidth * minRatio);
   const [resizableWidth, setResizableWidth] = useState(
-    window.innerWidth * initialRatio,
+    innerWidth * initialRatio,
   );
   const widthAdjusted = useTypedSelector(getEditorWidthAdjusted);
   const prevCountRef = useRef<number>(widthAdjusted);
@@ -60,6 +58,7 @@ const Resizable: React.FC<ResizableProps> = ({
     const height = window.innerHeight;
     setInnerWidth(width);
     setInnerHeight(height);
+    setWMinConstraint(width * minRatio);
     if (window.innerWidth * maxRatio < resizableWidth) {
       setResizableWidth(window.innerWidth * maxRatio);
     }

@@ -428,7 +428,7 @@ const Structure: React.FC = () => {
                     <span
                       parent-id={"head"}
                       typeof-item={"folder"}
-                      className="text-base text-center break-words p-3 rounded-lg border">
+                      className="text-base text-center break-words p-3 rounded-lg border select-none">
                       Start developing with LiteCode...
                     </span>
                   </div>
