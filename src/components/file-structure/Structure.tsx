@@ -282,7 +282,6 @@ const Structure: React.FC = () => {
 
   const inputSubmit = (value: string | false) => {
     if (!clickedRef.current) return;
-
     if (isRename || value === false) {
       showInputHandler(false);
       clickedRef.current?.classList.remove("hide-input");

@@ -53,7 +53,7 @@ const Main: React.FC = () => {
                 className="w-[7.5rem] select-none border pt-6 pb-8 border-transparent"
               />
               {tabs.length > 0 && (
-                <div className="select-none border-r border-slate-400 mt-2 ml-4 h-12 mr-2">
+                <div className="select-none border-r border-slate-400 ml-4 self-center h-8 mr-2 mb-2">
                   &nbsp;
                 </div>
               )}

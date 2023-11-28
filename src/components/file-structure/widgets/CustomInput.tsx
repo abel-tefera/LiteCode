@@ -155,9 +155,15 @@ const CustomInput: React.FC<CustomInputProps> = ({
         setError(true);
         setLogo(errorIcon);
         if (validFiles.includes(ext)) {
-          setErrorMessage(
-            "The file name cannot be empty. Please enter a valid file name.",
-          );
+          if (filename === "") {
+            setErrorMessage(
+              "The file name cannot be empty. Please enter a valid file name.",
+            );
+          } else {
+            setErrorMessage(
+              "This name is not valid as a file name. Please choose a different name.",
+            );
+          }
         } else {
           setErrorMessage(
             "This file type is not supported. Please choose a different file extension.",
