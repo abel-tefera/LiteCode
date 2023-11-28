@@ -199,19 +199,8 @@ export const structureSlice = createSlice({
             subFoldersAndFiles: newChild.type === "folder" ? [] : null,
           } as Directory,
         ];
-        state.normalized.folders.byId[state.initialFolder.id].childrenFlat = [
-          ...state.normalized.folders.byId[state.initialFolder.id].childrenFlat,
-          { id: newChild.id, type: newChild.type },
-        ];
       } else {
         bfsNodeAction(state.initialFolder, state.contextSelected.id, item => {
-          state.normalized.folders.byId[state.contextSelected.id].childrenFlat =
-            [
-              ...state.normalized.folders.byId[state.contextSelected.id]
-                .childrenFlat,
-              { id: newChild.id, type: newChild.type },
-            ];
-
           item.subFoldersAndFiles = [
             ...(item.subFoldersAndFiles as Directory[]),
             {
@@ -222,6 +211,10 @@ export const structureSlice = createSlice({
           ];
         });
       }
+      state.normalized.folders.byId[state.contextSelected.id].childrenFlat = [
+        ...state.normalized.folders.byId[state.contextSelected.id].childrenFlat,
+        { id: newChild.id, type: newChild.type },
+      ];
       const inputTypeForFetch =
         `${inputType}s` as keyof typeof state.normalized;
       state.normalized[inputTypeForFetch].byId[newChild.id] = newChild as
@@ -302,7 +295,24 @@ export const structureSlice = createSlice({
         state.normalized[
           (type + "s") as keyof typeof state.normalized
         ].allIds.filter(_id => _id !== id);
+      const allIds =
+        state.normalized[(type + "s") as keyof typeof state.normalized].allIds;
 
+      if (allIds.find(id => id === state.contextSelected.id) === undefined) {
+        state.contextSelected = {
+          id: state.initialFolder.id,
+          type: "folder",
+          e: false,
+        };
+      }
+
+      if (allIds.find(id => id === state.selected) === undefined) {
+        state.selected = state.initialFolder.id;
+      }
+
+      if (allIds.find(id => id === state.parentItemId) === undefined) {
+        state.parentItemId = state.initialFolder.id;
+      }
       // remove Tab
       // state.tabs = state.tabs.filter(
       //   (tab) =>
@@ -460,6 +470,12 @@ export const structureSlice = createSlice({
         ].byId[state.toCopy.id];
       const toCopyItem = {
         ...item,
+        childrenFlat:
+          state.toCopy.type === "folder"
+            ? state.toCopy.subFoldersAndFiles.map(({ id, type }) => {
+                return { id, type };
+              })
+            : undefined,
         subFoldersAndFiles: state.toCopy.subFoldersAndFiles,
         // subFoldersAndFiles: state.toCopy.subFoldersAndFiles
         //   ? state.toCopy.subFoldersAndFiles
