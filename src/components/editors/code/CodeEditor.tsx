@@ -14,6 +14,7 @@ import parserBabel from "prettier/plugins/babel";
 import * as prettierPluginEstree from "prettier/plugins/estree";
 import DarkTheme from "./monaco-editor/themes/dark";
 import ESLintVerify from "./monaco-editor/workers/eslint.worker";
+import Loading from "./Loading";
 // import ESLintWorker from "./monaco-editor/workers/eslint.worker";
 
 const options = {
@@ -177,6 +178,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           language={editorData.language}
           height={"100%"}
           width={"100%"}
+          loading={<Loading />}
           options={{
             // wordWrap: "on",
             minimap: { enabled: true },

@@ -6,12 +6,14 @@ interface BundlerSlice {
     code: string;
     err: string;
   };
+  isLoading: boolean;
 }
 const initialState: BundlerSlice = {
   output: {
     code: "",
     err: "",
   },
+  isLoading: false,
 };
 
 export const bundlerSlice = createSlice({
@@ -22,13 +24,18 @@ export const bundlerSlice = createSlice({
       state,
       action: PayloadAction<{ code: string; err: string }>,
     ) => {
+      state.isLoading = false;
       state.output.err = action.payload.err;
       state.output.code = action.payload.code;
+    },
+    setIsLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
     },
   },
 });
 
 export const getOutput = (state: RootState) => state.bundler.output;
+export const bundlerLoading = (state: RootState) => state.bundler.isLoading;
 
-export const { storeOutput } = bundlerSlice.actions;
+export const { storeOutput, setIsLoading } = bundlerSlice.actions;
 export default bundlerSlice.reducer;

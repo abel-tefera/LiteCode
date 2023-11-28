@@ -1,6 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { useTypedSelector } from "../../../state/hooks";
-import { getOutput } from "../../../state/features/bundler/bundlerSlice";
+import {
+  bundlerLoading,
+  getOutput,
+} from "../../../state/features/bundler/bundlerSlice";
+import Loading from "./Loading";
 
 const preview = `
   <html>
@@ -36,6 +40,7 @@ const preview = `
 const CodePreview: React.FC = () => {
   const iframe = useRef<any>(null);
   const output = useTypedSelector(getOutput);
+  const isLoading = useTypedSelector(bundlerLoading);
 
   useEffect(() => {
     if (output.code !== "") {
@@ -48,26 +53,34 @@ const CodePreview: React.FC = () => {
 
   return (
     <div className={"px-2 pb-[14px] w-full h-full"}>
-      {output.err ? (
-        <div className="flex w-full h-full bg-white rounded-lg items-start justify-center">
-          <div className="flex flex-col justify-center items-center max-w-[24rem] h-fit p-5 shadow-md mt-6">
-            <div className="flex flex-row items-center justify-evenly w-full">
-              <span className="span-logo w-8 h-8 error-logo"></span>
-              <h4 className="text-red-500 text-lg font-semibold">
-                An Error has occured during bundling
-              </h4>
+      {!isLoading ? (
+        <>
+          {output.err ? (
+            <div className="flex w-full h-full bg-white rounded-lg items-start justify-center">
+              <div className="flex flex-col justify-center items-center max-w-[24rem] h-fit p-5 shadow-md mt-6">
+                <div className="flex flex-row items-center justify-evenly w-full">
+                  <span className="span-logo w-8 h-8 error-logo"></span>
+                  <h4 className="text-red-500 text-lg font-semibold">
+                    An Error has occured during bundling
+                  </h4>
+                </div>
+                <p className="text-red-500 mt-4 ml-4">{output.err}</p>
+              </div>
             </div>
-            <p className="text-red-500 mt-4 ml-4">{output.err}</p>
-          </div>
-        </div>
+          ) : (
+            <div className="preview-wrapper rounded-lg overflow-clip w-full h-full">
+              <iframe
+                title="Code Preview"
+                ref={iframe}
+                srcDoc={preview}
+                sandbox="allow-scripts"
+              />
+            </div>
+          )}
+        </>
       ) : (
-        <div className="preview-wrapper rounded-lg overflow-clip w-full h-full">
-          <iframe
-            title="Code Preview"
-            ref={iframe}
-            srcDoc={preview}
-            sandbox="allow-scripts"
-          />
+        <div className="flex items-center justify-center w-full h-full bg-white rounded-lg">
+          <Loading />
         </div>
       )}
     </div>

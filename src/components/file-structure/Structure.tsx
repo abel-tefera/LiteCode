@@ -442,7 +442,7 @@ const Structure: React.FC = () => {
             createPortal(
               <Dialog
                 title={`Delete the ${selectedType} ${contextSelectedItemProps.wholeName}?`}
-                content={`Are you sure you want to delete the ${selectedType} ${contextSelectedItemProps.actualPath}? This action cannot be
+                content={`Are you sure you want to delete the ${selectedType} /${contextSelectedItemProps.actualPath}? This action cannot be
             undone.`}
                 actionText={`Yes, delete ${selectedType}`}
                 close={setShowDialog}
@@ -493,13 +493,18 @@ const Structure: React.FC = () => {
             />
           </button>
           <hr className="w-5/6 border-t border-t-zinc-500" />
-          <Tooltip place="right-start" className="z-50" id="file-explorer" style={{ backgroundColor: "rgb(60 60 60)" }} />
+          <Tooltip
+            place="right-start"
+            className="z-50"
+            id="file-explorer"
+            style={{ backgroundColor: "rgb(60 60 60)" }}
+          />
 
           <button
             onClick={() => {
               dispatch(setResizeCollapsed(false));
               dispatch(setSearchFocused(false));
-              dispatch(search(""));
+              // dispatch(search(""));
               setIsSearching(false);
             }}
             type="button"

@@ -2,6 +2,7 @@ import type * as esbuild from "esbuild-wasm";
 import axios from "axios";
 import localforage from "localforage";
 import Path from "path-browserify";
+import { store } from "../../state/store";
 
 const packageCache = localforage.createInstance({
   name: "packcagecache",
@@ -77,6 +78,9 @@ export const fetchPlugin = (tree: Record<string, string>) => {
       });
 
       build.onLoad({ filter: /.*/ }, async (args: esbuild.OnLoadArgs) => {
+        if (!store.getState().bundler.isLoading) {
+          store.dispatch({ type: "bundler/setIsLoading", payload: true });
+        }
         const { data, request } = await axios.get(args.path);
 
         const res: esbuild.OnLoadResult = {

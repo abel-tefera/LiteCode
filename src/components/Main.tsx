@@ -31,10 +31,9 @@ const Main: React.FC = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(isSmall());
 
   useEffect(() => {
-
     const userAgent = navigator.userAgent;
-    const isMobile = /Mobile/.test(userAgent);
-    const isTablet = /Tablet/.test(userAgent);
+    const isMobile = userAgent.includes("Mobile");
+    const isTablet = userAgent.includes("Tablet");
     const isComputer = !isMobile && !isTablet;
 
     if (!isComputer) {
