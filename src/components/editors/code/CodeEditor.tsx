@@ -178,7 +178,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           language={editorData.language}
           height={"100%"}
           width={"100%"}
-          loading={<Loading />}
+          loading={<Loading isForEditor={true} />}
           options={{
             // wordWrap: "on",
             minimap: { enabled: true },

@@ -58,13 +58,13 @@ const CodePreview: React.FC = () => {
           {output.err ? (
             <div className="flex w-full h-full bg-white rounded-lg items-start justify-center">
               <div className="flex flex-col justify-center items-center max-w-[24rem] h-fit p-5 shadow-md mt-6">
-                <div className="flex flex-row items-center justify-evenly w-full">
-                  <span className="span-logo w-8 h-8 error-logo"></span>
+                <div className="flex flex-row items-center justify-space-between w-full">
+                  <span className="span-logo w-8 h-8 error-logo mr-2"></span>
                   <h4 className="text-red-500 text-lg font-semibold">
                     An Error has occured during bundling
                   </h4>
                 </div>
-                <p className="text-red-500 mt-4 ml-4">{output.err}</p>
+                <p className="text-red-500 my-4">{output.err}</p>
               </div>
             </div>
           ) : (
