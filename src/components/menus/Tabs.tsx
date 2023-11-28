@@ -27,9 +27,9 @@ const Tabs = () => {
     }
   };
 
-  const onClose = (id: string) => {
+  const onClose = async (id: string) => {
     dispatch(closeTab(id));
-    dispatch(removeActiveEditorAsync(id));
+    await dispatch(setActiveEditorAsync({ id: "", line: 0 }));
   };
 
   return (

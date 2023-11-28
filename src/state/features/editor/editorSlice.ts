@@ -35,18 +35,6 @@ const initialState: EditorSlice = {
   editorWidthAdjusted: 0,
 };
 
-export const removeActiveEditorAsync = createAsyncThunk(
-  "removeActiveEditorAsync",
-  async (id: string, { getState, dispatch }) => {
-    const state = getState() as RootState;
-    const selectedTab = state.tabs.selected;
-    if (selectedTab !== "") {
-      await dispatch(setActiveEditorAsync({ id: selectedTab, line: 0 }));
-    }
-    return { id };
-  },
-);
-
 export const setActiveEditorAsync = createAsyncThunk(
   "setActiveEditorAsync",
   async (
@@ -55,8 +43,12 @@ export const setActiveEditorAsync = createAsyncThunk(
   ) => {
     const state = getState() as RootState;
     const normalized = state.structure.normalized;
-    const file = normalized.files.byId[editorProps.id];
+    const activeId =
+      editorProps.id === "" ? state.tabs.selected : editorProps.id;
+
+    const file = normalized.files.byId[activeId];
     const [unmappedPath, actualPath] = getPaths(file, normalized);
+
     // actualPath.push(`${file.name}.${file.extension}`);
     return {
       file,
@@ -81,6 +73,7 @@ export const editorSlice = createSlice({
       const actualPath = action.payload.actualPath;
       const unmappedPath = action.payload.unmappedPath;
       const openAtLine = action.payload.openAtLine;
+
       if (file.id !== state.currentEditor.id) {
         let language;
         switch (file.extension) {
@@ -110,12 +103,6 @@ export const editorSlice = createSlice({
         //     state.currentEditor.id,
         //   ];
         // }
-      }
-    });
-    builder.addCase(removeActiveEditorAsync.fulfilled, (state, action) => {
-      const { id } = action.payload;
-      // state.activeEditors = state.activeEditors.filter((_id) => _id !== id);
-      if (state.currentEditor.id === id) {
       }
     });
   },
