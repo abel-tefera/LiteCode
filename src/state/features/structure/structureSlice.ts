@@ -548,7 +548,7 @@ export const structureSlice = createSlice({
           name: newNode.name,
           type: "folder",
           collapsed: false,
-          childrenFlat: newNode.childrenFlat,
+          childrenFlat: newNode.childrenFlat as Identifier[],
           path: [] as string[],
         };
       } else {

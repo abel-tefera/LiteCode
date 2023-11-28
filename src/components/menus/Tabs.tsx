@@ -10,7 +10,6 @@ import {
   selectedTab,
 } from "../../state/features/tabs/tabsSlice";
 import {
-  removeActiveEditorAsync,
   setActiveEditorAsync,
 } from "../../state/features/editor/editorSlice";
 
