@@ -10,7 +10,7 @@ import { useTypedDispatch } from "../../state/hooks";
 import { storeOutput } from "../../state/features/bundler/bundlerSlice";
 
 const CodeCell: React.FC = () => {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState<string | null>(null);
   const [currentEditorId, setCurrentEditorId] = useState("");
   const [_direction, setDirection] = useState<
     "horizontal" | "vertical" | null
@@ -50,7 +50,7 @@ const CodeCell: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (!esbuildRef.current) return;
-      if (input === "") return;
+      if (input === null) return;
       dispatch(updateFileContents({ id: currentEditorId, value: input }));
       const resCode = await bundle(esbuildRef);
       dispatch(storeOutput({ code: resCode.code, err: resCode.err }));

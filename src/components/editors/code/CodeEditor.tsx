@@ -1,6 +1,5 @@
-import React, { useRef, useCallback, useEffect, useMemo } from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import MonacoEditor, {
-  OnChange,
   type OnChange as MonacoOnChange,
 } from "@monaco-editor/react";
 import { type editor } from "monaco-editor";
@@ -12,8 +11,8 @@ import Breadcrumbs from "../navigation/Breadcrumbs";
 import * as prettier from "prettier/standalone";
 import parserBabel from "prettier/plugins/babel";
 import * as prettierPluginEstree from "prettier/plugins/estree";
-import DarkTheme from "./monaco-editor/themes/dark";
-import ESLintVerify from "./monaco-editor/workers/eslint.worker";
+// import DarkTheme from "./monaco-editor/themes/dark";
+// import ESLintVerify from "./monaco-editor/workers/eslint.worker";
 import Loading from "./Loading";
 // import ESLintWorker from "./monaco-editor/workers/eslint.worker";
 
@@ -134,7 +133,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
     value: string | undefined,
     e: editor.IModelContentChangedEvent,
   ) => {
-    if (value) {
+    if (value !== null && value !== undefined) {
       onChange(editorData.id, value);
       // lintCode(value)
     }
