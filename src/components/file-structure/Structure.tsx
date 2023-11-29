@@ -67,6 +67,7 @@ const Structure: React.FC = () => {
   const allFileIds = useTypedSelector(fileIds);
   const allFolderIds = useTypedSelector(folderIds);
   const currentItems = useTypedSelector(getCurrentItems);
+
   const [showBlue, setShowBlue] = useState(true);
   const [showGray, setShowGray] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -140,10 +141,14 @@ const Structure: React.FC = () => {
     },
     {
       title: "Paste",
-      handler: () => {
+      handler: async () => {
         dispatch(copyNode());
+        if (clipboardExists !== null && clipboardExists.isCut) {
+          await dispatch(removeTabAsync());
+          await dispatch(setActiveEditorAsync({ id: "", line: 0 }));
+        }
       },
-      disabled: selectedType === "file" || !clipboardExists,
+      disabled: selectedType === "file" || clipboardExists === null,
     },
     {
       type: "hr",

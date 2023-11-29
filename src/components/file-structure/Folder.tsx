@@ -47,11 +47,11 @@ const Folder: React.FC<FolderProps> = ({
     <div className={`${children.length > 0 && "w-full"}`}>
       {children.map(item => {
         return (
-          <div key={item.id} className={"flex flex-col select-none mr-1"}>
+          <div key={item.id} className={"flex flex-col select-none mr-1 w-full"}>
             <div
               id={item.id}
               typeof-item={item.type}
-              className={`transition-colors flex flex-row hover:cursor-pointer rounded-r-sm clickable hover:bg-dark-hover justify-between  ${
+              className={`mr-1 transition-colors flex flex-row hover:cursor-pointer rounded-r-sm clickable hover:bg-dark-hover justify-between  ${
                 selected === item.id && showBlue
                   ? "bg-vscode-overlay hover:bg-vscode-blue"
                   : contextSelected === item.id && showGray
