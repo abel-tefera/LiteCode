@@ -26,8 +26,8 @@ const SmallScreenDisclaimer: React.FC = () => {
           </div>
           <p className="mb-3 font-normal text-slate-100">
             LiteCode is an IDE, and hence, I&apos;ve used my limited resources
-            to make it a dedecited desktop enviornment for developers. Come back
-            later when you&apos;re on your laptop!
+            to make it a dedicated desktop enviornment for development. Come
+            back later when you&apos;re on your laptop!
           </p>
         </div>
       </div>
