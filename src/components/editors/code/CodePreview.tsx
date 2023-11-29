@@ -73,7 +73,7 @@ const CodePreview: React.FC = () => {
                 title="Code Preview"
                 ref={iframe}
                 srcDoc={preview}
-                sandbox="allow-scripts"
+                sandbox="allow-downloads allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-scripts allow-top-navigation allow-presentation"
               />
             </div>
           )}

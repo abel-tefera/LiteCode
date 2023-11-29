@@ -9,9 +9,7 @@ import {
   selectTab,
   selectedTab,
 } from "../../state/features/tabs/tabsSlice";
-import {
-  setActiveEditorAsync,
-} from "../../state/features/editor/editorSlice";
+import { setActiveEditorAsync } from "../../state/features/editor/editorSlice";
 
 const Tabs = () => {
   const dispatch = useTypedDispatch();
@@ -37,6 +35,7 @@ const Tabs = () => {
         <div className="flex flex-row items-center w-full overflow-x-scroll custom-scrollbar">
           {tabs.map((item, i) => (
             <Tab
+              key={item.id}
               id={item.id}
               name={item.wholeName}
               type={item.extension}
