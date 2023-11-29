@@ -73,7 +73,7 @@ const CodeCell: React.FC = () => {
       <Resizable
         minRatio={0.3}
         maxRatio={0.7}
-        initialRatio={0.65}
+        initialRatio={0.5}
         haveWidthAdjusted={true}
         resizableCall={(width: number) => {
           // setCodeCellWidth(width);
