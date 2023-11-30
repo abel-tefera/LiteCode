@@ -204,14 +204,19 @@ const Structure: React.FC = () => {
       downloadZip();
     },
 
-    searchFiles: (searchTerm: string) => {
-      setSearchTerm(searchTerm);
+    searchFiles: (searchTermNew: string) => {
+      if (searchTermNew !== searchTerm) {
+        setSearchTerm(searchTermNew);
+      } else if (!isSearching) {
+        dispatch(search(searchTerm));
+        setIsSearching(true);
+      }
     },
   };
 
   useEffect(() => {
     if (searchTerm.length > 0) {
-      const timer = setTimeout(async () => {
+      const timer = setTimeout(() => {
         dispatch(search(searchTerm));
         setIsSearching(true);
       }, 300);
