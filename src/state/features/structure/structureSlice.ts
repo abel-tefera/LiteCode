@@ -761,13 +761,6 @@ export const structureSlice = createSlice({
         );
       }
 
-      if (state.toCopy.isCut) {
-        structureSlice.caseReducers.removeNode(state, {
-          payload: { id: state.toCopy.id, type: state.toCopy.type },
-          type: "",
-        });
-      }
-
       // else {
       //   state.initialFolder.subFoldersAndFiles = [
       //     ...state.initialFolder.subFoldersAndFiles,
@@ -781,11 +774,17 @@ export const structureSlice = createSlice({
       //     },
       //   ];
       // }
-
       structureSlice.caseReducers.sortFolder(state, {
         payload: { id: state.contextSelected.id },
         type: "",
       });
+
+      if (state.toCopy.isCut) {
+        structureSlice.caseReducers.removeNode(state, {
+          payload: { id: state.toCopy.id, type: state.toCopy.type },
+          type: "",
+        });
+      }
 
       if (state.toCopy.isCut) {
         state.toCopy = null;
