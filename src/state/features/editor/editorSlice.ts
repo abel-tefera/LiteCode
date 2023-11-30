@@ -66,6 +66,9 @@ export const editorSlice = createSlice({
     setEditorWidthAdjusted: (state, action: PayloadAction<number>) => {
       state.editorWidthAdjusted = action.payload;
     },
+    setLine: (state, action: PayloadAction<number>) => {
+      state.currentEditor.line = action.payload;
+    },
   },
   extraReducers: builder => {
     builder.addCase(setActiveEditorAsync.fulfilled, (state, action) => {
@@ -111,6 +114,9 @@ export const editorSlice = createSlice({
 export const getEditorWidthAdjusted = (state: RootState) =>
   state.editor.editorWidthAdjusted;
 
+export const currentEditorId = (state: RootState) =>
+  state.editor.currentEditor.id;
+
 export const getCurrentEditor = createSelector(
   (state: RootState) => state.structure.normalized,
   (state: RootState) => state.editor.currentEditor,
@@ -126,5 +132,5 @@ export const getCurrentEditor = createSelector(
   },
 );
 
-export const { setEditorWidthAdjusted } = editorSlice.actions;
+export const { setEditorWidthAdjusted, setLine } = editorSlice.actions;
 export default editorSlice.reducer;
