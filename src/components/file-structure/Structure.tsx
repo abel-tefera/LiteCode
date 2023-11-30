@@ -207,7 +207,7 @@ const Structure: React.FC = () => {
     searchFiles: (searchTermNew: string) => {
       if (searchTermNew !== searchTerm) {
         setSearchTerm(searchTermNew);
-      } else if (!isSearching) {
+      } else if (!isSearching && searchTerm.length > 0) {
         dispatch(search(searchTerm));
         setIsSearching(true);
       }
