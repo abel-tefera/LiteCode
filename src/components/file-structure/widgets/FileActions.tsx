@@ -130,7 +130,7 @@ const FileActions: React.FC<FileActionProps> = ({
           </span>
         </div>
       ) : (
-        <div className="w-full h-[25rem] custom-scrollbar-3 overflow-y-auto">
+        <div className="w-full h-[70vh] custom-scrollbar-3 overflow-y-auto">
           <SearchContainer />
         </div>
       )}
