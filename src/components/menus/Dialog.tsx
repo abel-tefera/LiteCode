@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import useOutsideAlerter from "../../hooks/useOutsideAlerter";
-import deleteLogo from "../../assets/delete.svg";
-import cross from "../../assets/cross.svg";
+import deleteLogo from "../../../public/delete.svg";
+import cross from "../../../public/cross.svg";
 
 interface DialogProps {
   title: string;
@@ -31,7 +31,7 @@ const Dialog: React.FC<DialogProps> = ({
           <span className="text-white text-2xl font-semibold">{title}</span>
           <span className="self-start">
             <img
-              src={cross}
+              src={cross.src}
               onClick={() => {
                 close(false);
               }}
@@ -58,7 +58,11 @@ const Dialog: React.FC<DialogProps> = ({
                 action();
               }}
               className="text-sm bg-red-700 hover:bg-red-500 text-white px-2 py-1 rounded-lg transition-colors flex flex-row items-center">
-              <img alt={"delete"} src={deleteLogo} className="w-4 h-4 mr-1" />
+              <img
+                alt={"delete"}
+                src={deleteLogo.src}
+                className="w-4 h-4 mr-1"
+              />
               {actionText}
             </button>
           </div>

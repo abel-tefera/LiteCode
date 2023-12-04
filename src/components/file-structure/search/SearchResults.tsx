@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ItemTitle from "../widgets/ItemTitle";
-import downArrowLogo from "../../../assets/left-arrow.svg";
+import downArrowLogo from "../../../../public/left-arrow.svg";
 import HighlightedText from "./HighlightedText";
 import {
   type MatchingFile,
@@ -27,7 +27,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({
         }}
         className="flex items-center w-full cursor-pointer hover:bg-dark-hover">
         <img
-          src={downArrowLogo}
+          src={downArrowLogo.src}
           className={`${
             showResults ? "rotate-[270deg]" : "rotate-180"
           } transition-transform w-3 h-3 ml-2 self-center`}

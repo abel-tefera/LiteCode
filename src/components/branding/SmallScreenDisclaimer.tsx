@@ -1,12 +1,12 @@
 import React from "react";
-import samplePic from "../../assets/sample.png";
-import logo from "../../assets/logo.png";
+import samplePic from "../../../public/sample.png";
+import logo from "../../../public/logo-2.png";
 
 const SmallScreenDisclaimer: React.FC = () => {
   return (
     <div className="w-full h-full flex flex-col items-center justify-start">
       <img
-        src={logo}
+        src={logo.src}
         alt="Logo"
         className="w-[7rem] select-none border-transparent self-start mx-2 mt-6 mb-2"
       />
@@ -14,7 +14,7 @@ const SmallScreenDisclaimer: React.FC = () => {
         <div>
           <img
             className="rounded-t-lg"
-            src={samplePic}
+            src={samplePic.src}
             alt="LiteCode on Desktop"
           />
         </div>

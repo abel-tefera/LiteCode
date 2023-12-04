@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import cross from "../../assets/cross.svg";
+import cross from "../../../public/cross.svg";
 import { getLogo } from "../file-structure/utils";
 // import { Tooltip } from "react-tooltip";
 
@@ -51,7 +51,7 @@ const Tab: React.FC<TabProps> = ({
           <img
             // data-tooltip-id="close-tab"
             // data-tooltip-content={"Close tab"}
-            src={cross}
+            src={cross.src}
             alt="close"
             className="transition-colors p-1 h-5 w-5 cursor-pointer hover:bg-slate-500 rounded-md align-baseline"
           />

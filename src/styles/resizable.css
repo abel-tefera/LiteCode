@@ -49,7 +49,7 @@
   background-repeat: no-repeat;
   background-origin: content-box;
   box-sizing: border-box;
-  background-image: url("../assets/line-gray.svg");
+  background-image: url("/line-gray.svg");
   background-position: center;
   background-size: 35px;
   transition-property: color, background-color, border-color,
@@ -60,7 +60,7 @@
 }
 
 .react-resizable-handle:hover {
-  background-image: url("../assets/line.svg");
+  background-image: url("/line.svg");
 }
 
 .react-resizable-handle:active {

@@ -1,6 +1,7 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -13,7 +14,7 @@ module.exports = {
         "vscode-blue": "#4078CE",
         "git-orange": "#F05033",
         "editor-bg": "#212733",
-        "monaco-vs": "#1E1E1E"
+        "monaco-vs": "#1E1E1E",
       },
       fontFamily: {
         roboto: ["Roboto", "sans-serif"],
@@ -22,3 +23,4 @@ module.exports = {
   },
   plugins: [],
 };
+export default config;

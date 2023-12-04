@@ -72,7 +72,7 @@ body {
 }
 
 .reception {
-  background: url("../assets/bg.svg");
+  background-image: url("/bg.svg");
   width: 24rem;
   background-repeat: no-repeat;
   background-size: contain;
@@ -140,47 +140,47 @@ body {
 }
 
 .new-file-logo {
-  background-image: url("../assets/new-file-colored.svg");
+  background-image: url("/new-file-colored.svg");
 }
 
 .new-folder-logo {
-  background-image: url("../assets/new-folder.svg");
+  background-image: url("/new-folder.svg");
 }
 
 .opened-folder {
-  background-image: url("../assets/opened-folder.svg");
+  background-image: url("/opened-folder.svg");
 }
 
 .closed-folder {
-  background-image: url("../assets/folder.svg");
+  background-image: url("/folder.svg");
 }
 
 .js-logo {
-  background-image: url("../assets/js.svg");
+  background-image: url("/js.svg");
 }
 
 .css-logo {
-  background-image: url("../assets/css.svg");
+  background-image: url("/css.svg");
 }
 
 .jsx-logo {
-  background-image: url("../assets/jsx.svg");
+  background-image: url("/jsx.svg");
 }
 
 .error-logo {
-  background-image: url("../assets/error.png");
+  background-image: url("/error.png");
 }
 
 .readme-logo {
-  background-image: url("../assets/readme.svg");
+  background-image: url("/readme.svg");
 }
 
 .rename-logo {
-  background-image: url("../assets/rename.svg");
+  background-image: url("/rename.svg");
 }
 
 .typescript-logo {
-  background-image: url("../assets/typescript.svg");
+  background-image: url("/typescript.svg");
 }
 
 /* iframe#webpack-dev-server-client-overlay {

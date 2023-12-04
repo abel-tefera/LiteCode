@@ -1,8 +1,8 @@
 import React, { PropsWithChildren, useState, useRef, useEffect } from "react";
-import downArrowLogo from "../../../assets/left-arrow.svg";
-import newFileIcon from "../../../assets/new-file.svg";
-import newFolderIcon from "../../../assets/new-folder.svg";
-import downloadIcon from "../../../assets/download.svg";
+import downArrowLogo from "../../../../public/left-arrow.svg";
+import newFileIcon from "../../../../public/new-file.svg";
+import newFolderIcon from "../../../../public/new-folder.svg";
+import downloadIcon from "../../../../public/download.svg";
 
 import { Tooltip } from "react-tooltip";
 import SearchContainer from "../search/SearchContainer";
@@ -65,7 +65,7 @@ const FileActions: React.FC<FileActionProps> = ({
       {!isSearching ? (
         <div className="flex flex-row items-center mt-2 w-full select-none">
           <img
-            src={downArrowLogo}
+            src={downArrowLogo.src}
             className="w-3 h-3 mr-2 -rotate-90 self-center mb-[6px]"
             alt="Down Arrow"
           />
@@ -86,7 +86,7 @@ const FileActions: React.FC<FileActionProps> = ({
                   <img
                     data-tooltip-id="new-file"
                     data-tooltip-content={"New File"}
-                    src={newFileIcon}
+                    src={newFileIcon.src}
                     className="w-6 h-6 p-[2px] mx-[2px] cursor-pointer hover:bg-dark-hover rounded-sm"
                     alt="New File"
                   />
@@ -106,7 +106,7 @@ const FileActions: React.FC<FileActionProps> = ({
                   <img
                     data-tooltip-id="new-folder"
                     data-tooltip-content={"New Folder"}
-                    src={newFolderIcon}
+                    src={newFolderIcon.src}
                     className="w-6 h-6 p-[2px] mx-[2px] cursor-pointer hover:bg-dark-hover rounded-sm"
                     alt="New Folder"
                   />
@@ -126,7 +126,7 @@ const FileActions: React.FC<FileActionProps> = ({
                   <img
                     data-tooltip-id="download-project"
                     data-tooltip-content={"Download Project"}
-                    src={downloadIcon}
+                    src={downloadIcon.src}
                     className="w-6 h-6 p-[2px] mx-[2px] cursor-pointer hover:bg-dark-hover rounded-sm"
                     alt="Download Project"
                   />

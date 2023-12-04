@@ -43,8 +43,8 @@ import { usePrependPortal } from "../../hooks/usePrependPortal";
 import FileActions from "./widgets/FileActions";
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
 import { removeTabAsync } from "../../state/features/tabs/tabsSlice";
-import searchIcon from "../../assets/search-icon.svg";
-import fileExplorer from "../../assets/file-explorer.svg";
+import searchIcon from "../../../public/search-icon.svg";
+import fileExplorer from "../../../public/file-explorer.svg";
 import { Tooltip } from "react-tooltip";
 import downloadZip from "../../state/features/structure/utils/downloadZip";
 import { setActiveEditorAsync } from "../../state/features/editor/editorSlice";
@@ -497,7 +497,7 @@ const Structure: React.FC = () => {
               alt="search"
               data-tooltip-id="search"
               data-tooltip-content={"Search"}
-              src={searchIcon}
+              src={searchIcon.src}
               className="w-14 h-14 hover:bg-dark-hover rounded-md p-2"
             />
           </button>
@@ -522,7 +522,7 @@ const Structure: React.FC = () => {
               alt="file explorer"
               data-tooltip-id="file-explorer"
               data-tooltip-content={"File Explorer"}
-              src={fileExplorer}
+              src={fileExplorer.src}
               className="w-14 h-14 hover:bg-dark-hover rounded-md p-2"
             />
           </button>
