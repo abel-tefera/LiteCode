@@ -11,7 +11,7 @@ import { persistStore, persistReducer } from "redux-persist";
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["structure", "editor", "tabs", "miniStructure"],
+  whitelist: ["structure", "editor", "tabs"],
 };
 
 const rootReducer = combineReducers({

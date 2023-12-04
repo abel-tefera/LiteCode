@@ -6,6 +6,8 @@ const startService = (() => {
     if (esBuildRef) {
       return esBuildRef;
     } else {
+      esBuildRef = "Loading..."
+      console.log("INIT...");
       await esbuild.initialize({
         worker: true,
         wasmURL: "https://unpkg.com/esbuild-wasm@0.19.8/esbuild.wasm",

@@ -3,12 +3,12 @@ import {
   createAsyncThunk,
   createSelector,
   createSlice,
-} from "@reduxjs/toolkit";
-import { type RootState } from "../../store";
+} from '@reduxjs/toolkit';
+import { type RootState } from '../../store';
 import {
   type Normalized,
   type ValidExtensions,
-} from "../structure/structureSlice";
+} from '../structure/structureSlice';
 
 export interface Tab {
   id: string;
@@ -23,12 +23,12 @@ interface TabSlice {
 
 const initialState: TabSlice = {
   open: [],
-  selected: "",
+  selected: '',
   selectionStack: [],
 };
 
 export const removeTabAsync = createAsyncThunk(
-  "removeTabAsync",
+  'removeTabAsync',
   async (_, { getState }) => {
     const state = getState() as RootState;
     const normalized = state.structure.normalized;
@@ -37,7 +37,7 @@ export const removeTabAsync = createAsyncThunk(
 );
 
 export const setActiveTabAsync = createAsyncThunk(
-  "setActiveTabAsync",
+  'setActiveTabAsync',
   async (id: string, { getState }) => {
     const state = getState() as RootState;
     const normalized = state.structure.normalized;
@@ -46,12 +46,12 @@ export const setActiveTabAsync = createAsyncThunk(
 );
 
 export const tabsSlice = createSlice({
-  name: "tabs",
+  name: 'tabs',
   initialState,
   reducers: {
     selectTab: (state, action: PayloadAction<string>) => {
       if (
-        state.selected !== "" &&
+        state.selected !== '' &&
         state.selectionStack[state.selectionStack.length - 1] !== state.selected
       ) {
         state.selectionStack = [...state.selectionStack, state.selected];
@@ -74,30 +74,30 @@ export const tabsSlice = createSlice({
     closeTab: (state, action: PayloadAction<string>) => {
       state.open = state.open.filter(({ id }) => id !== action.payload);
       state.selectionStack = state.selectionStack.filter(
-        id => id !== action.payload,
+        (id) => id !== action.payload,
       );
 
       if (state.selected === action.payload) {
         const newSelectedStack = state.selectionStack.filter(
-          id => id !== action.payload,
+          (id) => id !== action.payload,
         );
         const lastSelected = newSelectedStack.pop();
-        state.selected = lastSelected || "";
+        state.selected = lastSelected || '';
         state.selectionStack = newSelectedStack;
       }
     },
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
       .addCase(removeTabAsync.fulfilled, (state, action) => {
         const normalized = action.payload;
         state.open = state.open.filter(
-          tab =>
-            normalized.files.allIds.find(id => id === tab.id) !== undefined,
+          (tab) =>
+            normalized.files.allIds.find((id) => id === tab.id) !== undefined,
         );
         state.selectionStack = state.selectionStack.filter(
-          selected =>
-            normalized.files.allIds.find(id => id === selected) !== undefined,
+          (selected) =>
+            normalized.files.allIds.find((id) => id === selected) !== undefined,
         );
         if (!state.open.find(({ id }) => id === state.selected)) {
           state.selected =
@@ -121,7 +121,7 @@ export const tabsSlice = createSlice({
           ];
         }
         if (
-          (state.selected !== "" &&
+          (state.selected !== '' &&
             state.selectionStack[state.selectionStack.length - 1] !==
               state.selected) ||
           state.selectionStack.length === 0
@@ -143,7 +143,7 @@ export const activeTabs = createSelector(
   (state: RootState) => state.structure.normalized,
   (state: RootState) => state.tabs.open,
   (normalized: Normalized, openTabs: Tab[]) => {
-    return openTabs.map(tab => {
+    return openTabs.map((tab) => {
       const item = normalized.files.byId[tab.id];
       return {
         ...tab,

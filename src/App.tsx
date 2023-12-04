@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Provider } from "react-redux";
 import { persistor, store } from "./state/store";
 import Main from "./components/Main";

@@ -1,42 +1,44 @@
-import React, { useRef, useCallback, useEffect } from "react";
+import React, { useRef, useCallback, useEffect } from 'react';
 import MonacoEditor, {
   type OnChange as MonacoOnChange,
-} from "@monaco-editor/react";
-import { type editor } from "monaco-editor";
-import type * as monaco from "monaco-editor/esm/vs/editor/editor.api";
-import { useTypedSelector } from "../../../state/hooks";
-import { getCurrentEditor } from "../../../state/features/editor/editorSlice";
-import Breadcrumbs from "../navigation/Breadcrumbs";
+} from '@monaco-editor/react';
+import { type editor } from 'monaco-editor';
+import type * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import { useTypedSelector } from '../../../state/hooks';
+import { getCurrentEditor } from '../../../state/features/editor/editorSlice';
+import Breadcrumbs from '../navigation/Breadcrumbs';
 
-import * as prettier from "prettier/standalone";
-import parserBabel from "prettier/plugins/babel";
-import * as prettierPluginEstree from "prettier/plugins/estree";
+import * as prettier from 'prettier/standalone';
+import parserBabel from 'prettier/plugins/babel';
+import * as prettierPluginEstree from 'prettier/plugins/estree';
 // import DarkTheme from "./monaco-editor/themes/dark";
 // import ESLintVerify from "./monaco-editor/workers/eslint.worker";
-import Loading from "./Loading";
-// import ESLintWorker from "./monaco-editor/workers/eslint.worker";
+import Loading from './Loading';
+import ESLintVerify from './monaco-editor/workers/eslint-verify';
 
-const options = {
-  autoIndent: "full",
-  contextmenu: true,
-  fontFamily: "monospace",
-  fontSize: 13,
-  lineHeight: 24,
-  hideCursorInOverviewRuler: true,
-  matchBrackets: "always",
-  minimap: {
-    enabled: true,
-  },
-  scrollbar: {
-    horizontalSliderSize: 4,
-    verticalSliderSize: 18,
-  },
-  selectOnLineNumbers: true,
-  roundedSelection: false,
-  readOnly: false,
-  cursorStyle: "line",
-  automaticLayout: true,
-};
+// const ESLint = new eslint.Linter();
+
+// const options = {
+//   autoIndent: 'full',
+//   contextmenu: true,
+//   fontFamily: 'monospace',
+//   fontSize: 13,
+//   lineHeight: 24,
+//   hideCursorInOverviewRuler: true,
+//   matchBrackets: 'always',
+//   minimap: {
+//     enabled: true,
+//   },
+//   scrollbar: {
+//     horizontalSliderSize: 4,
+//     verticalSliderSize: 18,
+//   },
+//   selectOnLineNumbers: true,
+//   roundedSelection: false,
+//   readOnly: false,
+//   cursorStyle: 'line',
+//   automaticLayout: true,
+// };
 
 type Monaco = typeof monaco;
 
@@ -48,7 +50,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
   const editorData = useTypedSelector(getCurrentEditor);
-  const linterWorkerRef = useRef<any>(null);
+  // const linterWorkerRef = useRef<any>(null);
   // const ESLintWorker: Worker = useMemo(
   //   () =>
   //     new Worker(
@@ -57,37 +59,32 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   //   []
   // );
 
-  const lintCode = (value: string) => {
+  const updateMarkers = ({ markers, version }: any) => {
+    requestAnimationFrame(() => {
+      if (!editorRef.current || !monacoRef.current) return;
+      const model = editorRef.current.getModel();
+
+      if (model && model.getVersionId() === version) {
+        console.log('MODEL MARKERS');
+        monacoRef.current.editor.setModelMarkers(model, 'eslint', markers);
+      }
+    });
+  };
+
+  const lintCode = () => {
     const model = editorRef.current?.getModel();
 
     monacoRef.current?.editor.setModelMarkers(
       model as editor.ITextModel,
-      "eslint",
+      'eslint',
       [],
     );
-    linterWorkerRef.current.postMessage({
-      code: value,
-      language: "javascript",
-    });
+    const { markers, version } = ESLintVerify(
+      model?.getValue(),
+      model?.getVersionId(),
+    );
+    updateMarkers({ markers, version });
   };
-
-  useEffect(() => {
-    return () => {
-      linterWorkerRef.current?.terminate();
-    };
-  }, []);
-
-  // const updateMarkers = ({ markers, version }: any) => {
-  //   requestAnimationFrame(() => {
-  //     const model = editorRef.current?.getModel();
-  //     console.log("HERER")
-  //     if (model && model.getVersionId() === version) {
-  //       console.log("YASS")
-  //       monaco.editor.setModelMarkers(model, "eslint", markers);
-  //     }
-  //   });
-  // };
-  // console.log("ABCD", eslintWorker);
 
   const handleEditorDidMount = useCallback(
     async (editor: editor.IStandaloneCodeEditor, monacoEditor: Monaco) => {
@@ -105,11 +102,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
       //   []
       // );
       monacoEditor.languages.registerDocumentFormattingEditProvider(
-        "javascript",
+        'javascript',
         {
           async provideDocumentFormattingEdits(model, options, token) {
             const text = await prettier.format(model.getValue(), {
-              parser: "babel",
+              parser: 'babel',
               plugins: [parserBabel, prettierPluginEstree],
               useTabs: false,
               semi: true,
@@ -135,7 +132,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   ) => {
     if (value !== null && value !== undefined) {
       onChange(editorData.id, value);
-      // lintCode(value)
+      lintCode();
     }
   };
   // const formatCode = async () => {
@@ -160,7 +157,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
       >
         Format
       </button> */}
-      <div className="bg-monaco-vs rounded-lg overflow-clip flex flex-col items-center justify-start h-full">
+      <div className="flex h-full flex-col items-center justify-start rounded-lg bg-monaco-vs">
         <Breadcrumbs
           editorObj={{
             id: editorData.id,
@@ -173,10 +170,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           path={editorData.id}
           value={editorData.content}
           line={editorData.line}
-          theme={"vs-dark"}
+          theme={'vs-dark'}
           language={editorData.language}
-          height={"100%"}
-          width={"100%"}
+          height={'100%'}
+          width={'100%'}
           loading={<Loading isForEditor={true} />}
           options={{
             // wordWrap: "on",
@@ -189,12 +186,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
             automaticLayout: true,
             tabSize: 2,
 
-            autoIndent: "full",
+            autoIndent: 'full',
             contextmenu: true,
-            fontFamily: "monospace",
+            fontFamily: 'monospace',
             // lineHeight: 24,
             hideCursorInOverviewRuler: true,
-            matchBrackets: "always",
+            matchBrackets: 'always',
             // scrollbar: {
             //   horizontalSliderSize: 4,
             //   verticalSliderSize: 18,
@@ -202,37 +199,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
             selectOnLineNumbers: true,
             roundedSelection: false,
             readOnly: false,
-            cursorStyle: "line",
+            cursorStyle: 'line',
           }}
           onChange={onChangeLocal}
           onMount={handleEditorDidMount}
-          beforeMount={monaco => {
-            const compilerOptions = {
-              allowJs: true,
-              allowSyntheticDefaultImports: true,
-              alwaysStrict: true,
-              allowNonTsExtensions: true,
-              target: monaco.languages.typescript.ScriptTarget.ES2016,
-              jsx: 5,
-              jsxFactory: "React.createElement",
-            };
-            monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
-              compilerOptions,
-            );
-            monaco.languages.typescript.javascriptDefaults.setCompilerOptions(
-              compilerOptions,
-            );
-
-            monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions(
-              {
-                noSemanticValidation: false,
-                noSyntaxValidation: false,
-              },
-            );
+          beforeMount={(monaco) => {
             monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions(
               {
-                noSemanticValidation: false,
-                noSyntaxValidation: false,
+                noSemanticValidation: true,
+                noSyntaxValidation: true,
               },
             );
             monaco.languages.typescript.typescriptDefaults.setEagerModelSync(
@@ -241,8 +216,23 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
             monaco.languages.typescript.javascriptDefaults.setEagerModelSync(
               true,
             );
+
+            const compilerOptions = {
+              allowJs: true,
+              allowSyntheticDefaultImports: true,
+              alwaysStrict: true,
+              jsx: 2,
+              jsxFactory: 'React.createElement',
+            };
+
+            monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
+              compilerOptions,
+            );
+            monaco.languages.typescript.javascriptDefaults.setCompilerOptions(
+              compilerOptions,
+            );
           }}
-          onValidate={markers => {
+          onValidate={(markers) => {
             // console.log("ON VALIDATE MARKERS", markers);
             // ESLintVerify(markers);
             // console.log("ONVALIDATE", markers);
