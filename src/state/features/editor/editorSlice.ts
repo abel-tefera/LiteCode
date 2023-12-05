@@ -128,6 +128,7 @@ export const getCurrentEditor = createSelector(
       path: actualPath,
       unmappedPath,
       content: file.content,
+      ext: file.extension
     };
   },
 );

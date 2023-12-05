@@ -17,6 +17,13 @@ import * as prettierPluginEstree from 'prettier/plugins/estree';
 import Loading from './Loading';
 import ESLintVerify from './monaco-editor/workers/eslint-verify';
 import { pkgInfoService } from './pkgInfo';
+import {
+  MonacoJsxSyntaxHighlight,
+  getWorker,
+} from 'monaco-jsx-syntax-highlight';
+import '../../../styles/editor.css';
+
+// const controller = new MonacoJsxSyntaxHighlight(getWorker(), monaco)
 
 interface PkgInfo {
   name: string;
@@ -156,9 +163,78 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
         },
       );
       registerShowPackageInfo();
+      // monacoEditor.languages.typescript.typescriptDefaults.setCompilerOptions({
+      //   jsx: monacoEditor.languages.typescript.JsxEmit.Preserve,
+      //   target: monacoEditor.languages.typescript.ScriptTarget.ES2020,
+      //   esModuleInterop: true,
+      // });
+
+      monacoEditor.languages.typescript.typescriptDefaults.setCompilerOptions({
+        jsx: monacoEditor.languages.typescript.JsxEmit.Preserve,
+        target: monacoEditor.languages.typescript.ScriptTarget.ES2020,
+        esModuleInterop: true,
+      });
+
+      const monacoJsxSyntaxHighlight = new MonacoJsxSyntaxHighlight(
+        getWorker(),
+        monacoEditor,
+      );
+
+      // editor is the result of monaco.editor.create
+      const { highlighter, dispose } =
+        monacoJsxSyntaxHighlight.highlighterBuilder({
+          editor: editor,
+        });
+      // init highlight
+      highlighter();
+
+      editor.onDidChangeModelContent(() => {
+        // content change, highlight
+        console.log('CONTENT CHANGE');
+        highlighter();
+      });
+
+      editor.onDidChangeModelOptions(() => {
+        // model change, highlight
+        console.log('MODEL CHANGE');
+        highlighter();
+      });
+
+      return dispose;
     },
     [],
   );
+
+  // const configureEmmet = (enabled: boolean) => {
+  //   if (!enabled && !(window as any).emmetMonaco) return;
+
+  //   loadScript(emmetMonacoUrl, 'emmetMonaco').then((emmetMonaco: any) => {
+  //     if (enabled) {
+  //       if (!disposeEmmet.html || disposeEmmet.disabled) {
+  //         disposeEmmet.html = emmetMonaco.emmetHTML(monaco, [
+  //           'html',
+  //           'php',
+  //           'astro',
+  //           'markdown',
+  //           'mdx',
+  //         ]);
+  //         disposeEmmet.css = emmetMonaco.emmetCSS(monaco, ['css', 'scss', 'less']);
+  //         disposeEmmet.jsx = emmetMonaco.emmetJSX(monaco, [
+  //           'javascript',
+  //           'typescript',
+  //           'jsx',
+  //           'tsx',
+  //         ]);
+  //         disposeEmmet.disabled = false;
+  //       }
+  //     } else {
+  //       disposeEmmet.html?.();
+  //       disposeEmmet.css?.();
+  //       disposeEmmet.jsx?.();
+  //       disposeEmmet.disabled = true;
+  //     }
+  //   });
+  // };
 
   const onChangeLocal: MonacoOnChange = (
     value: string | undefined,
@@ -243,10 +319,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
       'javascript',
       npmPackageHoverProvider,
     );
-    monacoRef.current?.languages.registerHoverProvider(
-      'typescript',
-      npmPackageHoverProvider,
-    );
+    // monacoRef.current?.languages.registerHoverProvider(
+    //   'typescript',
+    //   npmPackageHoverProvider,
+    // );
   };
 
   // const formatCode = async () => {
@@ -281,11 +357,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
         />
 
         <MonacoEditor
-          path={editorData.id}
+          className="editor"
+          path={`${editorData.id}.${editorData.ext}`}
           value={editorData.content}
+          language={editorData.language}
           line={editorData.line}
           theme={'vs-dark'}
-          language={'typescript'}
           height={'100%'}
           width={'100%'}
           loading={<Loading isForEditor={true} />}
@@ -299,7 +376,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
             scrollBeyondLastLine: true,
             automaticLayout: true,
             tabSize: 2,
-
+            autoClosingBrackets: 'always',
             autoIndent: 'full',
             contextmenu: true,
             fixedOverflowWidgets: true,
@@ -316,6 +393,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
             readOnly: false,
             cursorStyle: 'line',
           }}
+          
           onChange={onChangeLocal}
           onMount={handleEditorDidMount}
           beforeMount={(monaco) => {
@@ -331,7 +409,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
             monaco.languages.typescript.javascriptDefaults.setEagerModelSync(
               true,
             );
-
             const compilerOptions = {
               allowJs: true,
               allowSyntheticDefaultImports: true,
@@ -341,7 +418,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
               target: monaco.languages.typescript.ScriptTarget.Latest,
               jsxFactory: 'React.createElement',
             };
-
             monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
               compilerOptions,
             );
