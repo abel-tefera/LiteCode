@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from "react";
-import "../../styles/structure.css";
+import React, { useRef, useEffect, useState } from 'react';
+import '../../styles/structure.css';
 
 import {
   type ItemType,
@@ -9,15 +9,15 @@ import {
   setResizeCollapsed,
   setSearchFocused,
   setSelected,
-} from "../../state/features/structure/structureSlice";
-import Folder from "./Folder";
-import useOutsideAlerter from "../../hooks/useOutsideAlerter";
+} from '../../state/features/structure/structureSlice';
+import Folder from './Folder';
+import useOutsideAlerter from '../../hooks/useOutsideAlerter';
 
-import MenuContext from "../menus/MenuContext";
-import CustomInput from "./widgets/CustomInput";
-import { createPortal } from "react-dom";
+import MenuContext from '../menus/MenuContext';
+import CustomInput from './widgets/CustomInput';
+import { createPortal } from 'react-dom';
 
-import Dialog from "../menus/Dialog";
+import Dialog from '../menus/Dialog';
 import {
   addNode,
   collapseOrExpand,
@@ -38,16 +38,22 @@ import {
   setParentItemId,
   getCurrentItems,
   search,
-} from "../../state/features/structure/structureSlice";
-import { usePrependPortal } from "../../hooks/usePrependPortal";
-import FileActions from "./widgets/FileActions";
-import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
-import { removeTabAsync } from "../../state/features/tabs/tabsSlice";
-import searchIcon from "../../../public/search-icon.svg";
-import fileExplorer from "../../../public/file-explorer.svg";
-import { Tooltip } from "react-tooltip";
-import downloadZip from "../../state/features/structure/utils/downloadZip";
-import { setActiveEditorAsync } from "../../state/features/editor/editorSlice";
+} from '../../state/features/structure/structureSlice';
+import { usePrependPortal } from '../../hooks/usePrependPortal';
+import FileActions from './widgets/FileActions';
+import { useTypedDispatch, useTypedSelector } from '../../state/hooks';
+import {
+  activeTabs,
+  removeTabAsync,
+} from '../../state/features/tabs/tabsSlice';
+import searchIcon from '../../../public/search-icon.svg';
+import fileExplorer from '../../../public/file-explorer.svg';
+import { Tooltip } from 'react-tooltip';
+import downloadZip from '../../state/features/structure/utils/downloadZip';
+import { setActiveEditorAsync } from '../../state/features/editor/editorSlice';
+import SearchInput from './search/SearchInput';
+import OpenEditors from './widgets/OpenEditors';
+import SearchContainer from './search/SearchContainer';
 
 const Structure: React.FC = () => {
   const fileSysRef = useRef<HTMLDivElement>(null);
@@ -67,15 +73,16 @@ const Structure: React.FC = () => {
   const allFileIds = useTypedSelector(fileIds);
   const allFolderIds = useTypedSelector(folderIds);
   const currentItems = useTypedSelector(getCurrentItems);
+  const tabs = useTypedSelector(activeTabs);
 
   const [showBlue, setShowBlue] = useState(true);
   const [showGray, setShowGray] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [showContext, setShowContext] = useState(false);
   const [selectedType, setSelectedType] = useState<
-    "file" | "folder" | "head" | ""
-  >("");
+    'file' | 'folder' | 'head' | ''
+  >('');
 
   const [points, setPoints] = useState({
     x: 0,
@@ -87,34 +94,34 @@ const Structure: React.FC = () => {
   const [showInput, setShowInput] = useState(false);
   const [inputPadding, setInputPadding] = useState(0);
 
-  const [inputType, setInputType] = useState<"file" | "folder" | "">("");
+  const [inputType, setInputType] = useState<'file' | 'folder' | ''>('');
   const [isRename, setIsRename] = useState(false);
 
   const [showDialog, setShowDialog] = useState(false);
 
   const actions = [
     {
-      title: "New File",
+      title: 'New File',
       handler: () => {
-        setInputType("file");
+        setInputType('file');
         createFileInput();
       },
-      disabled: selectedType === "file",
+      disabled: selectedType === 'file',
     },
     {
-      title: "New Folder",
+      title: 'New Folder',
       handler: () => {
-        setInputType("folder");
+        setInputType('folder');
         createFileInput();
       },
-      disabled: selectedType === "file",
+      disabled: selectedType === 'file',
     },
     {
-      type: "hr",
+      type: 'hr',
       handler: () => {},
     },
     {
-      title: "Cut",
+      title: 'Cut',
       handler: () => {
         dispatch(
           setToCopy({
@@ -124,10 +131,10 @@ const Structure: React.FC = () => {
           }),
         );
       },
-      disabled: selectedType === "head",
+      disabled: selectedType === 'head',
     },
     {
-      title: "Copy",
+      title: 'Copy',
       handler: () => {
         dispatch(
           setToCopy({
@@ -137,43 +144,43 @@ const Structure: React.FC = () => {
           }),
         );
       },
-      disabled: selectedType === "head",
+      disabled: selectedType === 'head',
     },
     {
-      title: "Paste",
+      title: 'Paste',
       handler: async () => {
         dispatch(copyNode());
         if (clipboardExists !== null && clipboardExists.isCut) {
           await dispatch(removeTabAsync());
-          await dispatch(setActiveEditorAsync({ id: "", line: 0 }));
+          await dispatch(setActiveEditorAsync({ id: '', line: 0 }));
         }
       },
-      disabled: selectedType === "file" || clipboardExists === null,
+      disabled: selectedType === 'file' || clipboardExists === null,
     },
     {
-      type: "hr",
+      type: 'hr',
       handler: () => {},
     },
     {
-      title: "Rename",
+      title: 'Rename',
       handler: () => {
         setInputType(
-          clickedRef.current?.getAttribute("typeof-item") as
-            | "file"
-            | "folder"
-            | "",
+          clickedRef.current?.getAttribute('typeof-item') as
+            | 'file'
+            | 'folder'
+            | '',
         );
         createFileInputForRename();
         setIsRename(true);
       },
-      disabled: selectedType === "head",
+      disabled: selectedType === 'head',
     },
     {
-      title: "Delete",
+      title: 'Delete',
       handler: () => {
         setShowDialog(true);
       },
-      disabled: selectedType === "head",
+      disabled: selectedType === 'head',
     },
   ];
 
@@ -185,16 +192,25 @@ const Structure: React.FC = () => {
     clickedRef.current = elem as HTMLElement;
   };
 
+  const searchFiles = (searchTermNew: string) => {
+    if (searchTermNew !== searchTerm) {
+      setSearchTerm(searchTermNew);
+    } else if (!isSearching && searchTerm.length > 0) {
+      dispatch(search(searchTerm));
+      setIsSearching(true);
+    }
+  };
+
   const fileActions = {
     newFile: () => {
-      setInputType("file");
+      setInputType('file');
       dispatch(setContextSelectedForFileAction());
       setClickedCurrent();
       createFileInput();
     },
 
     newFolder: () => {
-      setInputType("folder");
+      setInputType('folder');
       dispatch(setContextSelectedForFileAction());
       setClickedCurrent();
       createFileInput();
@@ -202,15 +218,6 @@ const Structure: React.FC = () => {
 
     download: () => {
       downloadZip();
-    },
-
-    searchFiles: (searchTermNew: string) => {
-      if (searchTermNew !== searchTerm) {
-        setSearchTerm(searchTermNew);
-      } else if (!isSearching && searchTerm.length > 0) {
-        dispatch(search(searchTerm));
-        setIsSearching(true);
-      }
     },
   };
 
@@ -226,7 +233,7 @@ const Structure: React.FC = () => {
     } else {
       if (isSearching) {
         setIsSearching(false);
-        dispatch(search(""));
+        dispatch(search(''));
       }
     }
   }, [searchTerm]);
@@ -246,7 +253,7 @@ const Structure: React.FC = () => {
       if (!isRename) {
         dispatch(
           collapseOrExpand({
-            item: { id: clickedRef.current.id, type: "folder" },
+            item: { id: clickedRef.current.id, type: 'folder' },
             collapse: false,
           }),
         );
@@ -254,11 +261,11 @@ const Structure: React.FC = () => {
 
       if (isRename) {
         appendTo.current = clickedRef.current.parentElement as HTMLElement;
-        clickedRef.current.classList.add("hide-input");
+        clickedRef.current.classList.add('hide-input');
         setInputPadding(0);
       } else {
         appendTo.current = structureRef.current?.querySelector(
-          "#ghost-input-" + clickedRef.current.id,
+          '#ghost-input-' + clickedRef.current.id,
         ) as HTMLElement;
         setInputPadding(1);
       }
@@ -269,11 +276,11 @@ const Structure: React.FC = () => {
     if (v === showInput) return;
     setShowInput(v);
     if (allFileIds.length === 0 && allFolderIds.length === 1) {
-      const welcome = document.getElementById("welcome") as HTMLElement;
-      if (v && !welcome.classList.contains("display-none-c")) {
-        welcome.classList.add("display-none-c");
-      } else if (!v && welcome.classList.contains("display-none-c")) {
-        welcome.classList.remove("display-none-c");
+      const welcome = document.getElementById('welcome') as HTMLElement;
+      if (v && !welcome.classList.contains('display-none-c')) {
+        welcome.classList.add('display-none-c');
+      } else if (!v && welcome.classList.contains('display-none-c')) {
+        welcome.classList.remove('display-none-c');
       }
     }
   };
@@ -285,7 +292,7 @@ const Structure: React.FC = () => {
   };
 
   const createFileInputForRename = () => {
-    dispatch(setParentItemId(""));
+    dispatch(setParentItemId(''));
     prependForPortal(true);
     showInputHandler(true);
   };
@@ -294,7 +301,7 @@ const Structure: React.FC = () => {
     if (!clickedRef.current) return;
     if (isRename || value === false) {
       showInputHandler(false);
-      clickedRef.current?.classList.remove("hide-input");
+      clickedRef.current?.classList.remove('hide-input');
       if (isRename && value !== false) {
         dispatch(renameNode({ value }));
       }
@@ -309,7 +316,7 @@ const Structure: React.FC = () => {
 
   useEffect(() => {
     if (isRename && !showInput) {
-      clickedRef.current?.classList.remove("hide-input");
+      clickedRef.current?.classList.remove('hide-input');
       setIsRename(false);
     }
   }, [isRename, showInput]);
@@ -319,20 +326,20 @@ const Structure: React.FC = () => {
     elem: HTMLElement,
   ) => {
     if (!fileSysRef.current || !elem) return;
-    const type = elem.getAttribute("typeof-item") as "file" | "folder" | "";
-    const parentId = elem.getAttribute("parent-id") as string;
+    const type = elem.getAttribute('typeof-item') as 'file' | 'folder' | '';
+    const parentId = elem.getAttribute('parent-id') as string;
 
     if (type === null || parentId === null) {
-      if (!elem.classList.contains("welcome")) {
+      if (!elem.classList.contains('welcome')) {
         return;
-      } else if (elem.classList.contains("file-sys-ref")) {
+      } else if (elem.classList.contains('file-sys-ref')) {
         clickedRef.current = elem;
       }
     }
 
     let item: HTMLElement | null = null;
 
-    if (!elem.classList.contains("file-sys-container")) {
+    if (!elem.classList.contains('file-sys-container')) {
       item = fileSysRef.current.querySelector(`#${parentId}`);
     } else {
       item = fileSysRef.current;
@@ -352,7 +359,7 @@ const Structure: React.FC = () => {
       });
     }
 
-    setSelectedType(parentId === "head" ? "head" : type);
+    setSelectedType(parentId === 'head' ? 'head' : type);
     setShowContext(true);
   };
   const contextHandler = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -360,8 +367,8 @@ const Structure: React.FC = () => {
     if (!fileSysRef.current) return;
     const elem = e.target as HTMLElement;
     handleContext({ clientY: e.clientY, clientX: e.clientX }, elem);
-    const parentId = elem.getAttribute("parent-id") as string;
-    const type = elem.getAttribute("typeof-item") as "file" | "folder" | "";
+    const parentId = elem.getAttribute('parent-id') as string;
+    const type = elem.getAttribute('typeof-item') as 'file' | 'folder' | '';
 
     dispatch(contextClick({ id: parentId, type, threeDot: false }));
   };
@@ -369,8 +376,8 @@ const Structure: React.FC = () => {
   useEffect(() => {
     if (!contextSelectedE) return;
     let elem: HTMLElement;
-    if (contextSelectedId === "head") {
-      elem = document.querySelector(".main-nav") as HTMLElement;
+    if (contextSelectedId === 'head') {
+      elem = document.querySelector('.main-nav') as HTMLElement;
     } else {
       elem = fileSysRef.current?.querySelector(`#${contextSelectedId}`)
         ?.childNodes[0] as HTMLElement;
@@ -382,7 +389,7 @@ const Structure: React.FC = () => {
   }, [contextSelectedE]);
 
   useOutsideAlerter(structureRef, () => {
-    if (selectedI !== "head") {
+    if (selectedI !== 'head') {
       setShowBlue(false);
       setShowGray(false);
     }
@@ -396,31 +403,40 @@ const Structure: React.FC = () => {
     <>
       {!isCollapsed ? (
         <div id="file-system" className="pr-2">
-          <FileActions
-            {...fileActions}
-            isSearching={isSearching && allFileIds.length > 0}
-          />
+          <SearchInput searchFiles={searchFiles} />
+
+          {!isSearching && tabs.length > 0 && <OpenEditors />}
+          <div className="mb-2 flex flex-col items-start pl-2">
+            {isSearching && allFileIds.length > 0 ? (
+              <div className="custom-scrollbar-3 h-[70vh] w-full overflow-y-auto">
+                <SearchContainer />
+              </div>
+            ) : (
+              <FileActions {...fileActions} />
+            )}
+          </div>
 
           {!isSearching && (
             <div
               id="structure-container"
-              parent-id={"head"}
-              typeof-item={"folder"}
+              parent-id={'head'}
+              typeof-item={'folder'}
               className="file-sys-container custom-scrollbar-2 pl-1"
               ref={fileSysRef}
-              onClick={e => {
-                dispatch(setSelected({ id: "head", type: "folder" }));
+              onClick={(e) => {
+                dispatch(setSelected({ id: 'head', type: 'folder' }));
               }}
-              onContextMenu={e => {
+              onContextMenu={(e) => {
                 contextHandler(e);
               }}
               // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
             >
               <div
-                parent-id={"head"}
-                typeof-item={"folder"}
+                parent-id={'head'}
+                typeof-item={'folder'}
                 ref={structureRef}
-                className="content flex items-center">
+                className="content flex items-center"
+              >
                 <Folder
                   data={structureData}
                   showBlue={showBlue}
@@ -432,13 +448,15 @@ const Structure: React.FC = () => {
                 {allFileIds.length === 0 && allFolderIds.length === 1 && (
                   <div
                     id="welcome"
-                    parent-id={"head"}
-                    typeof-item={"folder"}
-                    className="flex h-[40vh] items-center px-4 mx-auto">
+                    parent-id={'head'}
+                    typeof-item={'folder'}
+                    className="mx-auto flex h-[40vh] items-center px-4"
+                  >
                     <span
-                      parent-id={"head"}
-                      typeof-item={"folder"}
-                      className="text-base text-center break-words p-3 rounded-lg border select-none">
+                      parent-id={'head'}
+                      typeof-item={'folder'}
+                      className="select-none break-words rounded-lg border p-3 text-center text-base"
+                    >
                       Start developing with LiteCode...
                     </span>
                   </div>
@@ -458,11 +476,11 @@ const Structure: React.FC = () => {
                 action={async () => {
                   dispatch(removeNode({ id: null, type: null }));
                   await dispatch(removeTabAsync());
-                  await dispatch(setActiveEditorAsync({ id: "", line: 0 }));
+                  await dispatch(setActiveEditorAsync({ id: '', line: 0 }));
                   setShowDialog(false);
                 }}
               />,
-              document.getElementById("root") as HTMLElement,
+              document.getElementById('root') as HTMLElement,
             )}
 
           {showContext &&
@@ -474,16 +492,16 @@ const Structure: React.FC = () => {
                 setShowContext={setShowContext}
                 actions={actions}
               />,
-              document.getElementById("file-system") as HTMLElement,
+              document.getElementById('file-system') as HTMLElement,
             )}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-start w-20 h-full select-none px-2">
+        <div className="flex h-full w-20 select-none flex-col items-center justify-start px-2">
           <Tooltip
             place="right-end"
             className="z-50"
             id="search"
-            style={{ backgroundColor: "rgb(60 60 60)" }}
+            style={{ backgroundColor: 'rgb(60 60 60)' }}
           />
 
           <button
@@ -492,13 +510,14 @@ const Structure: React.FC = () => {
               dispatch(setSearchFocused(true));
             }}
             type="button"
-            className="mb-3">
+            className="mb-3"
+          >
             <img
               alt="search"
               data-tooltip-id="search"
-              data-tooltip-content={"Search"}
+              data-tooltip-content={'Search'}
               src={searchIcon.src}
-              className="w-14 h-14 hover:bg-dark-hover rounded-md p-2"
+              className="h-14 w-14 rounded-md p-2 hover:bg-dark-hover"
             />
           </button>
           <hr className="w-5/6 border-t border-t-zinc-500" />
@@ -506,7 +525,7 @@ const Structure: React.FC = () => {
             place="right-start"
             className="z-50"
             id="file-explorer"
-            style={{ backgroundColor: "rgb(60 60 60)" }}
+            style={{ backgroundColor: 'rgb(60 60 60)' }}
           />
 
           <button
@@ -517,13 +536,14 @@ const Structure: React.FC = () => {
               setIsSearching(false);
             }}
             type="button"
-            className="my-3">
+            className="my-3"
+          >
             <img
               alt="file explorer"
               data-tooltip-id="file-explorer"
-              data-tooltip-content={"File Explorer"}
+              data-tooltip-content={'File Explorer'}
               src={fileExplorer.src}
-              className="w-14 h-14 hover:bg-dark-hover rounded-md p-2"
+              className="h-14 w-14 rounded-md p-2 hover:bg-dark-hover"
             />
           </button>
         </div>
@@ -533,7 +553,7 @@ const Structure: React.FC = () => {
           closeCallback={() => {
             showInputHandler(false);
           }}
-          submit={value => {
+          submit={(value) => {
             inputSubmit(value);
           }}
           padding={inputPadding}
@@ -543,7 +563,7 @@ const Structure: React.FC = () => {
             rename: isRename
               ? {
                   wholeName:
-                    thisItem.type === "file"
+                    thisItem.type === 'file'
                       ? `${thisItem.name}.${thisItem.extension}`
                       : thisItem.name,
                 }
@@ -551,12 +571,12 @@ const Structure: React.FC = () => {
           }}
           container={fileSysRef.current}
           existingItems={(() => {
-            const items = currentItems.map(item => {
+            const items = currentItems.map((item) => {
               return {
                 id: item.id,
                 type: item.type,
                 wholeName:
-                  item.type === "file"
+                  item.type === 'file'
                     ? `${item.name}.${item.extension}`
                     : item.name,
               };

@@ -63,11 +63,11 @@ body {
   visibility: hidden;
 }
 
-.tab-close-button {
+.show-on-hover {
   opacity: 0;
 }
 
-.tab-item:hover .tab-close-button {
+.hover-show:hover .show-on-hover {
   opacity: 1;
 }
 

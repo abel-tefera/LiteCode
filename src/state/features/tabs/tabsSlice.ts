@@ -86,6 +86,11 @@ export const tabsSlice = createSlice({
         state.selectionStack = newSelectedStack;
       }
     },
+    closeAllTabs: (state) => {
+      state.open = [];
+      state.selected = '';
+      state.selectionStack = [];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -133,7 +138,7 @@ export const tabsSlice = createSlice({
   },
 });
 
-export const { closeTab, selectTab } = tabsSlice.actions;
+export const { closeTab, selectTab, closeAllTabs } = tabsSlice.actions;
 
 export default tabsSlice.reducer;
 

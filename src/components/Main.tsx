@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import Resizable from "./resizable/Resizable";
-import Structure from "./file-structure/Structure";
-import Tabs from "./menus/Tabs";
-import logo from "../../public/logo-2.png";
-import CodeCell from "./editors/CodeCell";
-import { useTypedDispatch, useTypedSelector } from "../state/hooks";
-import { setEditorWidthAdjusted } from "../state/features/editor/editorSlice";
-import throttle from "../utils/throttle";
-import { activeTabs } from "../state/features/tabs/tabsSlice";
-import Contact from "./branding/Contact";
+import React, { useEffect, useState } from 'react';
+import Resizable from './resizable/Resizable';
+import Structure from './file-structure/Structure';
+import Tabs from './menus/Tabs';
+import logo from '../../public/logo-2.png';
+import CodeCell from './editors/CodeCell';
+import { useTypedDispatch, useTypedSelector } from '../state/hooks';
+import { setEditorWidthAdjusted } from '../state/features/editor/editorSlice';
+import throttle from '../utils/throttle';
+import { activeTabs } from '../state/features/tabs/tabsSlice';
+import Contact from './branding/Contact';
 // import ProjectActions from "./menus/ProjectActions";
-import SmallScreenDisclaimer from "./branding/SmallScreenDisclaimer";
-import Reception from "./branding/Reception";
+import SmallScreenDisclaimer from './branding/SmallScreenDisclaimer';
+import Reception from './branding/Reception';
 // import { activeTabs } from "../state/features/structure/structureSlice";
 
 const Main: React.FC = () => {
@@ -32,8 +32,8 @@ const Main: React.FC = () => {
 
   useEffect(() => {
     const userAgent = navigator.userAgent;
-    const isMobile = userAgent.includes("Mobile");
-    const isTablet = userAgent.includes("Tablet");
+    const isMobile = userAgent.includes('Mobile');
+    const isTablet = userAgent.includes('Tablet');
     const isComputer = !isMobile && !isTablet;
 
     if (!isComputer) {
@@ -42,24 +42,24 @@ const Main: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex h-full w-full flex-col">
       {!isSmallScreen ? (
-        <div className="flex flex-col h-full w-full">
-          <div className="flex h-fit items-center px-4 pt-2 w-full">
-            <div className="flex flex-row w-fit">
+        <div className="flex h-full w-full flex-col">
+          <div className="flex h-fit w-full items-center px-4 pt-2">
+            <div className="flex w-fit flex-row">
               <img
                 src={logo.src}
                 alt="Logo"
-                className="w-[7.5rem] select-none border pt-6 pb-8 border-transparent"
+                className="w-[7.5rem] select-none border border-transparent pb-8 pt-6"
               />
               {tabs.length > 0 && (
-                <div className="select-none border-r border-slate-400 ml-4 self-center h-8 mr-2 mb-2">
+                <div className="mb-2 ml-4 mr-2 h-8 select-none self-center border-r border-slate-400">
                   &nbsp;
                 </div>
               )}
             </div>
 
-            <div className="w-10/12 flex ml-3">
+            <div className="ml-3 flex w-10/12">
               <div className="w-10/12">
                 <Tabs />
               </div>
@@ -68,7 +68,7 @@ const Main: React.FC = () => {
               </div> */}
             </div>
           </div>
-          <div className="flex flex-row w-full h-full">
+          <div className="flex h-full w-full flex-row">
             <Resizable
               minRatio={0.15}
               maxRatio={0.3}
@@ -79,8 +79,9 @@ const Main: React.FC = () => {
               }}
               resizeStopCall={(width: number) => {
                 setWidthAdjusted(window.innerWidth * 0.15 - width);
-              }}>
-              <div className="h-full flex flex-col">
+              }}
+            >
+              <div className="flex h-full flex-col">
                 <Structure />
                 {/* <Brand /> */}
               </div>
