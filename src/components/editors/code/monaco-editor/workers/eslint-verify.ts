@@ -13,9 +13,9 @@ const ESLintVerify = (code: any, version: any) => {
           endLineNumber: err.line,
           startColumn: err.column,
           endColumn: err.column,
-          message: `${err.message} (${err.ruleId})`,
-          severity: err.severity,
-          source: 'Lint',
+          message: `${err.message}.`,
+          severity: 3,
+          source: 'eslint',
         };
       },
     );
