@@ -91,7 +91,7 @@ body {
   position: relative;
 }
 
-.bg-vscode-overlay > * {
+.bg-vscode-overlay>* {
   z-index: 1;
 }
 
@@ -104,8 +104,12 @@ body {
   opacity: 0.6;
   width: 100%;
   height: 100%;
-  border-top-right-radius: 0.125rem /* 2px */;
-  border-bottom-right-radius: 0.125rem /* 2px */;
+  border-top-right-radius: 0.125rem
+    /* 2px */
+  ;
+  border-bottom-right-radius: 0.125rem
+    /* 2px */
+  ;
 }
 
 .dialog-cover::before {
@@ -186,4 +190,6 @@ body {
 /* iframe#webpack-dev-server-client-overlay {
     display: none !important
 } */
-
+.no-height {
+  height: 0 !important;
+}

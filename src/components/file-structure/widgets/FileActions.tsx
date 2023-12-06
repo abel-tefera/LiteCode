@@ -11,22 +11,28 @@ interface FileActionProps {
   newFile: () => void;
   newFolder: () => void;
   download: () => void;
+  collapseArea: () => void;
+  collapsed: boolean;
 }
 
 const FileActions: React.FC<FileActionProps> = ({
   newFile,
   newFolder,
   download,
+  collapseArea,
+  collapsed
 }) => {
   return (
-      <div className="mt-2 flex w-full select-none flex-row items-center">
+      <div onClick={collapseArea} className="flex w-full select-none flex-row items-center cursor-pointer">
         <img
           src={downArrowLogo.src}
-          className="mb-[6px] mr-2 h-3 w-3 -rotate-90 self-center"
+          className={`${
+            !collapsed ? 'rotate-[270deg]' : 'rotate-180'
+          } mr-2 h-3 w-3 self-center transition-transform`}
           alt="Down Arrow"
         />
         <span className="flex w-full flex-row justify-between">
-          <span className="text-white">Files</span>
+          <span className="text-white text-center">Files</span>
           <span className="flex items-center">
             <span className="text-white">
               <Tooltip
@@ -37,14 +43,16 @@ const FileActions: React.FC<FileActionProps> = ({
               <button
                 type="button"
                 onClick={(e) => {
+                  e.stopPropagation();
                   newFile();
                 }}
+                className='cursor-pointer rounded-sm hover:bg-dark-hover p-[2px] mr-[2px] '
               >
                 <img
                   data-tooltip-id="new-file"
                   data-tooltip-content={'New File'}
                   src={newFileIcon.src}
-                  className="mx-[2px] h-6 w-6 cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover"
+                  className="h-5 w-5"
                   alt="New File"
                 />
               </button>
@@ -58,14 +66,16 @@ const FileActions: React.FC<FileActionProps> = ({
               <button
                 type="button"
                 onClick={(e) => {
+                  e.stopPropagation();
                   newFolder();
                 }}
+                className='cursor-pointer rounded-sm hover:bg-dark-hover p-[2px] mx-[2px] '
               >
                 <img
                   data-tooltip-id="new-folder"
                   data-tooltip-content={'New Folder'}
                   src={newFolderIcon.src}
-                  className="mx-[2px] h-6 w-6 cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover"
+                  className="h-5 w-5"
                   alt="New Folder"
                 />
               </button>
@@ -79,14 +89,16 @@ const FileActions: React.FC<FileActionProps> = ({
               <button
                 type="button"
                 onClick={(e) => {
+                  e.stopPropagation();
                   download();
                 }}
+                className='cursor-pointer rounded-sm hover:bg-dark-hover p-[2px] ml-[2px] '
               >
                 <img
                   data-tooltip-id="download-project"
                   data-tooltip-content={'Download Project'}
                   src={downloadIcon.src}
-                  className="mx-[2px] h-6 w-6 cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover"
+                  className="h-5 w-5"
                   alt="Download Project"
                 />
               </button>

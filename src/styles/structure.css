@@ -3,13 +3,15 @@
   flex-direction: column;
 
   /* width: 100%; */
-  overflow-x: scroll;
-
+  overflow: auto;
+  height: 100vh;
   /* text-wrap: nowrap; */
-  max-height: calc(50vh + 18px);
-  min-height: calc(50vh + 18px);
 
   /* background-color: orange; */
+}
+
+.left-wrapper {
+  height: 70vh;
 }
 
 .folder-container {
@@ -84,20 +86,8 @@
 }
 
 @media screen and (min-width: 768px) {
-  .file-sys-container {
-    /* max-width: 205px; */
-    max-height: calc(55vh + 18px);
-    min-height: calc(55vh + 18px);
-  }
 
   .measurable {
     width: 200px;
-  }
-}
-
-@media screen and (min-width: 1024px) {
-  .file-sys-container {
-    max-height: calc(60vh + 18px);
-    min-height: calc(55vh + 18px);
   }
 }

@@ -59,6 +59,7 @@ const Structure: React.FC = () => {
   const fileSysRef = useRef<HTMLDivElement>(null);
   const structureRef = useRef<HTMLDivElement>(null);
   const clickedRef = useRef<HTMLElement>();
+  const [structureCollapsed, setStructureCollapsed] = useState(false);
 
   const dispatch = useTypedDispatch();
   const isCollapsed = useTypedSelector(isResizeCollapsed);
@@ -74,6 +75,8 @@ const Structure: React.FC = () => {
   const allFolderIds = useTypedSelector(folderIds);
   const currentItems = useTypedSelector(getCurrentItems);
   const tabs = useTypedSelector(activeTabs);
+
+  const [openEditorCollapsed, setOpenEditorCollapsed] = useState(false);
 
   const [showBlue, setShowBlue] = useState(true);
   const [showGray, setShowGray] = useState(true);
@@ -219,6 +222,15 @@ const Structure: React.FC = () => {
     download: () => {
       downloadZip();
     },
+    collapseArea: () => {
+      if (!fileSysRef.current) return;
+      if (structureCollapsed) {
+        fileSysRef.current.classList.remove('no-height');
+      } else {
+        fileSysRef.current.classList.add('no-height');
+      }
+      setStructureCollapsed(!structureCollapsed);
+    },
   };
 
   useEffect(() => {
@@ -286,6 +298,10 @@ const Structure: React.FC = () => {
   };
 
   const createFileInput = () => {
+    if (!fileSysRef.current) return;
+    if (structureCollapsed) {
+      fileSysRef.current.classList.remove('no-height');
+    }
     dispatch(setParentItemId(contextSelectedId));
     prependForPortal(false);
     showInputHandler(true);
@@ -405,66 +421,74 @@ const Structure: React.FC = () => {
         <div id="file-system" className="pr-2">
           <SearchInput searchFiles={searchFiles} />
 
-          {!isSearching && tabs.length > 0 && <OpenEditors />}
-          <div className="mb-2 flex flex-col items-start pl-2">
-            {isSearching && allFileIds.length > 0 ? (
-              <div className="custom-scrollbar-3 h-[70vh] w-full overflow-y-auto">
-                <SearchContainer />
-              </div>
-            ) : (
-              <FileActions {...fileActions} />
+          <div className="left-wrapper flex w-full flex-col justify-start">
+            {!isSearching && tabs.length > 0 && (
+              <OpenEditors
+                collapsed={openEditorCollapsed}
+                setCollapseArea={setOpenEditorCollapsed}
+                structureCollapsed={structureCollapsed}
+              />
             )}
-          </div>
-
-          {!isSearching && (
-            <div
-              id="structure-container"
-              parent-id={'head'}
-              typeof-item={'folder'}
-              className="file-sys-container custom-scrollbar-2 pl-1"
-              ref={fileSysRef}
-              onClick={(e) => {
-                dispatch(setSelected({ id: 'head', type: 'folder' }));
-              }}
-              onContextMenu={(e) => {
-                contextHandler(e);
-              }}
-              // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
-            >
+            <div className="my-2 flex flex-col items-start pl-2">
+              {isSearching && allFileIds.length > 0 ? (
+                <div className="custom-scrollbar-3 h-[70vh] w-full overflow-y-auto">
+                  <SearchContainer />
+                </div>
+              ) : (
+                <FileActions {...fileActions} collapsed={structureCollapsed} />
+              )}
+            </div>
+            {!isSearching && (
               <div
+                id="structure-container"
                 parent-id={'head'}
                 typeof-item={'folder'}
-                ref={structureRef}
-                className="content flex items-center"
+                className={`file-sys-container custom-scrollbar-2 pl-1 transition-[height] ${
+                  structureCollapsed ? 'no-height' : ''
+                }`}
+                ref={fileSysRef}
+                onClick={(e) => {
+                  dispatch(setSelected({ id: 'head', type: 'folder' }));
+                }}
+                onContextMenu={(e) => {
+                  contextHandler(e);
+                }}
+                // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
               >
-                <Folder
-                  data={structureData}
-                  showBlue={showBlue}
-                  setShowBlue={setShowBlue}
-                  showGray={showGray}
-                  setShowGray={setShowGray}
-                />
+                <div
+                  parent-id={'head'}
+                  typeof-item={'folder'}
+                  ref={structureRef}
+                  className="content flex items-center"
+                >
+                  <Folder
+                    data={structureData}
+                    showBlue={showBlue}
+                    setShowBlue={setShowBlue}
+                    showGray={showGray}
+                    setShowGray={setShowGray}
+                  />
 
-                {allFileIds.length === 0 && allFolderIds.length === 1 && (
-                  <div
-                    id="welcome"
-                    parent-id={'head'}
-                    typeof-item={'folder'}
-                    className="mx-auto flex h-[40vh] items-center px-4"
-                  >
-                    <span
+                  {allFileIds.length === 0 && allFolderIds.length === 1 && (
+                    <div
+                      id="welcome"
                       parent-id={'head'}
                       typeof-item={'folder'}
-                      className="select-none break-words rounded-lg border p-3 text-center text-base"
+                      className="mx-auto flex h-[40vh] items-center px-4"
                     >
-                      Start developing with LiteCode...
-                    </span>
-                  </div>
-                )}
+                      <span
+                        parent-id={'head'}
+                        typeof-item={'folder'}
+                        className="select-none break-words rounded-lg border p-3 text-center text-base"
+                      >
+                        Start developing with LiteCode...
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-
+            )}
+          </div>
           {showDialog &&
             createPortal(
               <Dialog

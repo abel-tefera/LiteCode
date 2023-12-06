@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   activeTabs,
   closeAllTabs,
@@ -16,17 +16,29 @@ import ItemTitle from './ItemTitle';
 import { setSelected } from '../../../state/features/structure/structureSlice';
 import { setActiveEditorAsync } from '../../../state/features/editor/editorSlice';
 
-const OpenEditors = () => {
+interface OpenEditorsProps {
+  collapsed: boolean;
+  structureCollapsed: boolean;
+  setCollapseArea: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const OpenEditors: React.FC<OpenEditorsProps> = ({ collapsed, structureCollapsed, setCollapseArea }) => {
   const dispatch = useTypedDispatch();
   const tabs = useTypedSelector(activeTabs);
+  const tabsArea = useRef<HTMLDivElement>(null);
   const selected = useTypedSelector(selectedTab);
 
   return (
-    <div className="my-2 flex flex-col items-startselect-none">
-      <div className="mt-2 mb-3 pl-2 flex w-full select-none flex-row items-center">
+    <div className="my-2 flex select-none flex-col items-start">
+      <div
+        onClick={(e) => setCollapseArea(!collapsed)}
+        className="mb-3 mt-2 flex w-full cursor-pointer select-none flex-row items-center pl-2"
+      >
         <img
           src={downArrowLogo.src}
-          className="mr-2 h-3 w-3 -rotate-90 self-center"
+          className={`${
+            !collapsed ? 'rotate-[270deg]' : 'rotate-180'
+          } mr-2 h-3 w-3 self-center transition-transform`}
           alt="Down Arrow"
         />
         <span className="flex w-full flex-row justify-between">
@@ -43,77 +55,88 @@ const OpenEditors = () => {
                 // TODO: Close all Editors
                 dispatch(closeAllTabs());
               }}
+              className="mx-[2px] cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover "
             >
               <img
                 data-tooltip-id="close-all"
                 data-tooltip-content={'Close All Editors'}
                 src={closeAllIcon.src}
-                className="mx-[2px] h-6 w-6 cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover"
+                className="h-5 w-5"
                 alt="Close All Editors"
               />
             </button>
           </span>
         </span>
       </div>
-      {tabs.map((tab) => (
-        <div key={`open-editor-${tab.id}`} className="flex w-full flex-col px-1">
+      <div
+        ref={tabsArea}
+        className={`custom-scrollbar-2 w-full overflow-y-auto transition-[height] ${
+          collapsed ? 'no-height' : ''
+        } ${structureCollapsed ? 'max-h-[50vh]' : 'max-h-[25vh]'}`}
+      >
+        {tabs.map((tab) => (
           <div
-            className={`hover-show flex w-full flex-row justify-between rounded-sm transition-colors hover:cursor-pointer ${
-              selected === tab.id
-                ? 'bg-slate-700 hover:bg-slate-600'
-                : 'hover:bg-dark-hover'
-            }`}
+            key={`open-editor-${tab.id}`}
+            className="flex w-full flex-col px-1"
           >
-            <span className="flex items-center text-white">
-              {/* <Tooltip
+            <div
+              className={`hover-show flex w-full flex-row justify-between rounded-sm transition-colors hover:cursor-pointer ${
+                selected === tab.id
+                  ? 'bg-slate-700 hover:bg-slate-600'
+                  : 'hover:bg-dark-hover'
+              }`}
+            >
+              <span className="flex items-center text-white">
+                {/* <Tooltip
                 className="z-50"
                 id="close-editor"
                 style={{ backgroundColor: 'rgb(60 60 60)' }}
               /> */}
-              <div
-                className={`flex h-full items-center px-1 hover:bg-slate-500`}
-              >
-                <button
-                  type="button"
-                  className="show-on-hover mx-auto transition-opacity"
-                  onClick={(e) => {
-                    // TODO: Close Editor
-                    dispatch(closeTab(tab.id));
-                    dispatch(setActiveEditorAsync({ id: '', line: 0 }));
-                  }}
+                <div
+                  className={`flex h-full items-center px-1 hover:bg-slate-500`}
                 >
-                  <img
-                    //   data-tooltip-id="close-editor"
-                    //   data-tooltip-content={'Close Editor'}
-                    src={closeIcon.src}
-                    className="h-5 w-5 cursor-pointer rounded-sm"
-                    alt="Right Arrow"
-                  />
-                </button>
+                  <button
+                    type="button"
+                    className="show-on-hover mx-auto transition-opacity"
+                    onClick={(e) => {
+                      // TODO: Close Editor
+                      dispatch(closeTab(tab.id));
+                      dispatch(setActiveEditorAsync({ id: '', line: 0 }));
+                    }}
+                  >
+                    <img
+                      //   data-tooltip-id="close-editor"
+                      //   data-tooltip-content={'Close Editor'}
+                      src={closeIcon.src}
+                      className="h-5 w-5 cursor-pointer rounded-sm"
+                      alt="Right Arrow"
+                    />
+                  </button>
+                </div>
+              </span>
+              <div className="w-full cursor-pointer">
+                <ItemTitle
+                  item={{
+                    ...tab,
+                    name: tab.wholeName.substring(
+                      0,
+                      tab.wholeName.lastIndexOf('.'),
+                    ),
+                    type: 'file',
+                  }}
+                  onClickE={(e) => {
+                    // TODO: Open Editor
+                    e.stopPropagation();
+                    dispatch(setSelected({ id: tab.id, type: 'file' }));
+                    dispatch(setActiveTabAsync(tab.id));
+                    dispatch(setActiveEditorAsync({ id: tab.id, line: 0 }));
+                  }}
+                />
               </div>
-            </span>
-            <div className="w-full cursor-pointer">
-              <ItemTitle
-                item={{
-                  ...tab,
-                  name: tab.wholeName.substring(
-                    0,
-                    tab.wholeName.lastIndexOf('.') + 1,
-                  ),
-                  type: 'file',
-                }}
-                onClickE={(e) => {
-                  // TODO: Open Editor
-                  e.stopPropagation();
-                  dispatch(setSelected({ id: tab.id, type: 'file' }));
-                  dispatch(setActiveTabAsync(tab.id));
-                  dispatch(setActiveEditorAsync({ id: tab.id, line: 0 }));
-                }}
-              />
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };
