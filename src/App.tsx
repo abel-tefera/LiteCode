@@ -7,7 +7,7 @@ import { PersistGate } from "redux-persist/integration/react";
 const App: React.FC = () => {
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}></PersistGate>
+      <PersistGate loading={<div>Loading Persistor...</div>} persistor={persistor}></PersistGate>
       <div className="App bg-dark-bg text-white font-roboto flex flex-row">
         <div className="flex flex-col w-full h-screen">
           <Main />

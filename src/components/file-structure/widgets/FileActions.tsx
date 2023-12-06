@@ -28,7 +28,7 @@ const FileActions: React.FC<FileActionProps> = ({
           src={downArrowLogo.src}
           className={`${
             !collapsed ? 'rotate-[270deg]' : 'rotate-180'
-          } mr-2 h-3 w-3 self-center transition-transform`}
+          } mr-2 mb-1 h-3 w-3 self-center transition-transform`}
           alt="Down Arrow"
         />
         <span className="flex w-full flex-row justify-between">

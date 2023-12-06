@@ -1,8 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   activeTabs,
   closeAllTabs,
   closeTab,
+  selectTab,
   selectedTab,
   setActiveTabAsync,
 } from '../../../state/features/tabs/tabsSlice';
@@ -19,10 +20,15 @@ import { setActiveEditorAsync } from '../../../state/features/editor/editorSlice
 interface OpenEditorsProps {
   collapsed: boolean;
   structureCollapsed: boolean;
-  setCollapseArea: React.Dispatch<React.SetStateAction<boolean>>;
+  setCollapseArea: () => void;
 }
 
-const OpenEditors: React.FC<OpenEditorsProps> = ({ collapsed, structureCollapsed, setCollapseArea }) => {
+const OpenEditors: React.FC<OpenEditorsProps> = ({
+  collapsed,
+  structureCollapsed,
+  setCollapseArea,
+}) => {
+
   const dispatch = useTypedDispatch();
   const tabs = useTypedSelector(activeTabs);
   const tabsArea = useRef<HTMLDivElement>(null);
@@ -31,7 +37,7 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({ collapsed, structureCollapsed
   return (
     <div className="my-2 flex select-none flex-col items-start">
       <div
-        onClick={(e) => setCollapseArea(!collapsed)}
+        onClick={setCollapseArea}
         className="mb-3 mt-2 flex w-full cursor-pointer select-none flex-row items-center pl-2"
       >
         <img
@@ -53,9 +59,10 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({ collapsed, structureCollapsed
               type="button"
               onClick={(e) => {
                 // TODO: Close all Editors
+                e.stopPropagation();
                 dispatch(closeAllTabs());
               }}
-              className="mx-[2px] cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover "
+              className="cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover "
             >
               <img
                 data-tooltip-id="close-all"
@@ -70,8 +77,8 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({ collapsed, structureCollapsed
       </div>
       <div
         ref={tabsArea}
-        className={`custom-scrollbar-2 w-full overflow-y-auto transition-[height] ${
-          collapsed ? 'no-height' : ''
+        className={`custom-scrollbar-2 w-full overflow-y-auto transition-[height] duration-300 ease-out ${
+          collapsed ? 'no-height' : 'h-full'
         } ${structureCollapsed ? 'max-h-[50vh]' : 'max-h-[25vh]'}`}
       >
         {tabs.map((tab) => (
@@ -93,7 +100,7 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({ collapsed, structureCollapsed
                 style={{ backgroundColor: 'rgb(60 60 60)' }}
               /> */}
                 <div
-                  className={`flex h-full items-center px-1 hover:bg-slate-500`}
+                  className={`flex h-full items-center rounded-sm px-1 hover:bg-slate-500`}
                 >
                   <button
                     type="button"
@@ -108,7 +115,7 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({ collapsed, structureCollapsed
                       //   data-tooltip-id="close-editor"
                       //   data-tooltip-content={'Close Editor'}
                       src={closeIcon.src}
-                      className="h-5 w-5 cursor-pointer rounded-sm"
+                      className="h-5 w-5 cursor-pointer"
                       alt="Right Arrow"
                     />
                   </button>
@@ -127,9 +134,11 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({ collapsed, structureCollapsed
                   onClickE={(e) => {
                     // TODO: Open Editor
                     e.stopPropagation();
-                    dispatch(setSelected({ id: tab.id, type: 'file' }));
-                    dispatch(setActiveTabAsync(tab.id));
-                    dispatch(setActiveEditorAsync({ id: tab.id, line: 0 }));
+                    // dispatch(setSelected({ id: tab.id, type: 'file' }));
+                    if (selected !== tab.id) {
+                      dispatch(selectTab(tab.id));
+                      dispatch(setActiveEditorAsync({ id: tab.id, line: 0 }));
+                    }
                   }}
                 />
               </div>

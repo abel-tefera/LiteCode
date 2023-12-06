@@ -301,6 +301,7 @@ const Structure: React.FC = () => {
     if (!fileSysRef.current) return;
     if (structureCollapsed) {
       fileSysRef.current.classList.remove('no-height');
+      setStructureCollapsed(false);
     }
     dispatch(setParentItemId(contextSelectedId));
     prependForPortal(false);
@@ -425,7 +426,9 @@ const Structure: React.FC = () => {
             {!isSearching && tabs.length > 0 && (
               <OpenEditors
                 collapsed={openEditorCollapsed}
-                setCollapseArea={setOpenEditorCollapsed}
+                setCollapseArea={() => {
+                  setOpenEditorCollapsed(!openEditorCollapsed)
+                }}
                 structureCollapsed={structureCollapsed}
               />
             )}
@@ -443,7 +446,7 @@ const Structure: React.FC = () => {
                 id="structure-container"
                 parent-id={'head'}
                 typeof-item={'folder'}
-                className={`file-sys-container custom-scrollbar-2 pl-1 transition-[height] ${
+                className={`file-sys-container custom-scrollbar-2 pl-1 transition-[height] duration-300 ease-out ${
                   structureCollapsed ? 'no-height' : ''
                 }`}
                 ref={fileSysRef}

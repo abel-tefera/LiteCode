@@ -4,12 +4,13 @@ import miniStructureReducer from "./features/structure/miniStructureSlice";
 import editorReducer from "./features/editor/editorSlice";
 import tabsReducer from "./features/tabs/tabsSlice";
 import bundlerReducer from "./features/bundler/bundlerSlice";
-import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
+// import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 // import { listenerMiddleware } from "./middleware/sendNormalized";
 import { persistStore, persistReducer } from "redux-persist";
+import storage from "./customStorage";
 
 const persistConfig = {
-  key: "root",
+  key: "project",
   storage,
   whitelist: ["structure", "editor", "tabs"],
 };
