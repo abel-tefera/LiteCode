@@ -31,7 +31,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ editorObj }) => {
       <div
         id={"breadcrumbs"}
         ref={breadcrumbsRef}
-        className="flex flex-col select-none w-full">
+        className="select-none w-full">
         <div className="flex items-center justify-start m-2">
           {editorObj.path.map((path, i) => (
             <div

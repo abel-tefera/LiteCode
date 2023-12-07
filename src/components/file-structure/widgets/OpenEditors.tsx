@@ -28,11 +28,22 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
   structureCollapsed,
   setCollapseArea,
 }) => {
-
   const dispatch = useTypedDispatch();
   const tabs = useTypedSelector(activeTabs);
   const tabsArea = useRef<HTMLDivElement>(null);
   const selected = useTypedSelector(selectedTab);
+
+  useEffect(() => {
+    if (!tabsArea.current) return;
+    if (!collapsed) {
+      const timeout = setTimeout(() => {
+        tabsArea.current!.style.overflowY = 'auto';
+      }, 300);
+      return () => clearTimeout(timeout);
+    } else {
+      tabsArea.current.style.overflowY = 'hidden';
+    }
+  }, [collapsed]);
 
   return (
     <div className="my-2 flex select-none flex-col items-start">
@@ -77,7 +88,7 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
       </div>
       <div
         ref={tabsArea}
-        className={`custom-scrollbar-2 w-full overflow-y-auto transition-[height] duration-300 ease-out ${
+        className={`list-container custom-scrollbar-2 w-full transition-[height] duration-300 ease-out ${
           collapsed ? 'no-height' : 'h-full'
         } ${structureCollapsed ? 'max-h-[50vh]' : 'max-h-[25vh]'}`}
       >

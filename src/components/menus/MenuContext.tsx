@@ -54,7 +54,7 @@ const MenuContext: React.FC<MenuContextProps> = ({
                     setShowContext(false);
                   }
                 }}
-                className={`rounded-md px-7 py-1 ${
+                className={`rounded-md text-white px-7 py-1 ${
                   !action.disabled
                     ? "hover:bg-hover-blue cursor-pointer"
                     : "text-zinc-500"

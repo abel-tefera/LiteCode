@@ -234,6 +234,18 @@ const Structure: React.FC = () => {
   };
 
   useEffect(() => {
+    if (!fileSysRef.current) return;
+    if (!structureCollapsed) {
+      const timeout = setTimeout(() => {
+        fileSysRef.current!.style.overflowY = 'auto';
+      }, 300);
+      return () => clearTimeout(timeout);
+    } else {
+      fileSysRef.current.style.overflowY = 'hidden';
+    }
+  }, [structureCollapsed]);
+
+  useEffect(() => {
     if (searchTerm.length > 0) {
       const timer = setTimeout(() => {
         dispatch(search(searchTerm));
@@ -347,7 +359,10 @@ const Structure: React.FC = () => {
     const parentId = elem.getAttribute('parent-id') as string;
 
     if (type === null || parentId === null) {
-      if (!elem.classList.contains('welcome')) {
+      if (
+        !elem.classList.contains('welcome') &&
+        !elem.classList.contains('clickable-padding')
+      ) {
         return;
       } else if (elem.classList.contains('file-sys-ref')) {
         clickedRef.current = elem;
@@ -363,15 +378,14 @@ const Structure: React.FC = () => {
     }
 
     clickedRef.current = item as HTMLElement;
-
-    if (e.clientY > 335) {
+    if (e.clientY > window.innerHeight / 2) {
       setPoints({
-        x: e.clientY - 310,
+        x: e.clientY - 245,
         y: e.clientX,
       });
     } else {
       setPoints({
-        x: e.clientY - 70,
+        x: e.clientY,
         y: e.clientX,
       });
     }
@@ -427,7 +441,7 @@ const Structure: React.FC = () => {
               <OpenEditors
                 collapsed={openEditorCollapsed}
                 setCollapseArea={() => {
-                  setOpenEditorCollapsed(!openEditorCollapsed)
+                  setOpenEditorCollapsed(!openEditorCollapsed);
                 }}
                 structureCollapsed={structureCollapsed}
               />
@@ -446,7 +460,7 @@ const Structure: React.FC = () => {
                 id="structure-container"
                 parent-id={'head'}
                 typeof-item={'folder'}
-                className={`file-sys-container custom-scrollbar-2 pl-1 transition-[height] duration-300 ease-out ${
+                className={`flex flex-col h-screen custom-scrollbar-2 pl-1 transition-[height] duration-300 ease-out ${
                   structureCollapsed ? 'no-height' : ''
                 }`}
                 ref={fileSysRef}
@@ -489,6 +503,13 @@ const Structure: React.FC = () => {
                     </div>
                   )}
                 </div>
+                <div
+                  parent-id={'head'}
+                  typeof-item={'folder'}
+                  className="clickable-padding min-h-[2rem]"
+                >
+                  &nbsp;
+                </div>
               </div>
             )}
           </div>
@@ -519,7 +540,7 @@ const Structure: React.FC = () => {
                 setShowContext={setShowContext}
                 actions={actions}
               />,
-              document.getElementById('file-system') as HTMLElement,
+              document.getElementById('root') as HTMLElement,
             )}
         </div>
       ) : (
