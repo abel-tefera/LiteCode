@@ -51,7 +51,7 @@ const Folder: React.FC<FolderProps> = ({
             <div
               id={item.id}
               typeof-item={item.type}
-              className={`mr-1 transition-colors flex flex-row hover:cursor-pointer rounded-r-sm clickable hover:bg-dark-hover justify-between  ${
+              className={`border border-transparent mr-1 transition-colors flex flex-row hover:cursor-pointer rounded-r-sm clickable hover:bg-dark-hover justify-between  ${
                 selected === item.id && showBlue
                   ? "bg-vscode-overlay hover:bg-vscode-blue"
                   : contextSelected === item.id && showGray
