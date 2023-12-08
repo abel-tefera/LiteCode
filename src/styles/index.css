@@ -193,3 +193,7 @@ body {
 .no-height {
   height: 0 !important;
 }
+
+.hidden-scrollbar::-webkit-scrollbar {
+  width: 0 !important;
+}

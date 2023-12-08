@@ -1,15 +1,15 @@
-import React, { useState, useRef, useEffect } from "react";
-import useOutsideAlerter from "../../../hooks/useOutsideAlerter";
+import React, { useState, useRef, useEffect } from 'react';
+import useOutsideAlerter from '../../../hooks/useOutsideAlerter';
 import {
   type ValidExtensions,
   validExtensions,
-} from "../../../state/features/structure/structureSlice";
-import { getLogo, validate } from "../utils";
+} from '../../../state/features/structure/structureSlice';
+import { getLogo, validate } from '../utils';
 
-const newFileIcon = "new-file-logo";
-const errorIcon = "error-logo";
-const addFolderIcon = "closed-folder";
-const renameIcon = "rename-logo";
+const newFileIcon = 'new-file-logo';
+const errorIcon = 'error-logo';
+const addFolderIcon = 'closed-folder';
+const renameIcon = 'rename-logo';
 
 interface CustomInputProps {
   closeCallback: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,7 +17,7 @@ interface CustomInputProps {
   padding: number;
   show: boolean | undefined;
   item: {
-    type: "file" | "folder" | "";
+    type: 'file' | 'folder' | '';
     rename:
       | {
           wholeName?: string;
@@ -38,47 +38,56 @@ const CustomInput: React.FC<CustomInputProps> = ({
   existingItems,
 }) => {
   const [value, setValue] = useState(
-    item.rename?.wholeName ? item.rename.wholeName : ""
+    item.rename?.wholeName ? item.rename.wholeName : '',
   );
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
   // const [extension, setExtension] = useState("");
   const originalLogo = item.rename
     ? renameIcon
-    : item.type === "file"
-    ? newFileIcon
-    : addFolderIcon;
+    : item.type === 'file'
+      ? newFileIcon
+      : addFolderIcon;
   const [logo, setLogo] = useState(originalLogo);
 
-  const [position, setPosition] = useState<"top" | "bottom">("bottom");
+  const [position, setPosition] = useState<'top' | 'bottom'>('bottom');
+
+  useEffect(() => {}, []);
 
   const direction = (
-    container: HTMLDivElement | null
-  ): "top" | "bottom" | "" => {
-    if (!container) return "";
-    if (!containerRef.current) return "";
+    container: HTMLDivElement | null,
+  ): 'top' | 'bottom' | '' => {
+    if (!container) return '';
+    if (!containerRef.current) return '';
     const containerTop = container.offsetTop;
     const containerScrollTop = container.scrollTop;
-
+    const actualHeight = container.offsetHeight;
     const elementTop = containerRef.current.offsetTop;
     const elementRelativeTop = elementTop - containerTop;
 
     if (
       !(
-        elementRelativeTop - containerScrollTop < 393 &&
+        elementRelativeTop - containerScrollTop <
+        actualHeight &&
         containerScrollTop < elementRelativeTop
       )
     ) {
-      return "";
-    } else if (elementRelativeTop - containerScrollTop < 196) {
-      return "bottom";
-    } else if (containerScrollTop - 196 < elementRelativeTop) {
-      return "top";
+      return '';
+    } else if (
+      elementRelativeTop - containerScrollTop <
+      actualHeight / 2
+    ) {
+      return 'bottom';
+    } else if (
+      containerScrollTop - actualHeight / 2 <
+      elementRelativeTop
+    ) {
+      return 'top';
     } else {
-      return "";
+      return '';
     }
   };
 
@@ -88,32 +97,32 @@ const CustomInput: React.FC<CustomInputProps> = ({
     ext?: ValidExtensions;
   }) => {
     if (res.error) {
-      if (res.errorMessage !== "") {
+      if (res.errorMessage !== '') {
         setError(true);
         setLogo(errorIcon);
         setErrorMessage(res.errorMessage);
       } else {
         setError(true);
         setLogo(originalLogo);
-        setErrorMessage("");
+        setErrorMessage('');
       }
     } else {
       setError(false);
-      if (item.type === "file") {
+      if (item.type === 'file') {
         setLogo(getLogo(res.ext!));
       } else {
         setLogo(originalLogo);
       }
-      setErrorMessage("");
+      setErrorMessage('');
     }
   };
 
   useEffect(() => {
-    if (!errorRef.current || !error || errorMessage === "" || !container) {
+    if (!errorRef.current || !error || errorMessage === '' || !container) {
       return;
     }
     const changeDirection = direction(container);
-    if (changeDirection !== "" && changeDirection !== position) {
+    if (changeDirection !== '' && changeDirection !== position) {
       setPosition(changeDirection);
     }
   }, [error, errorMessage, container, position]);
@@ -130,7 +139,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     setTimeout(() => {
       inputRef.current?.focus();
       if (item.rename) {
-        const idx = item.rename.wholeName?.lastIndexOf(".");
+        const idx = item.rename.wholeName?.lastIndexOf('.');
         inputRef.current?.select();
         if (idx !== undefined && idx !== -1) {
           inputRef.current?.setSelectionRange(0, idx);
@@ -145,29 +154,27 @@ const CustomInput: React.FC<CustomInputProps> = ({
       item,
       value,
       existingItems,
-      validExtensions
+      validExtensions,
     );
     setValidationResult(res);
   }, [value]);
 
   return (
     <div
-      className={`py-[0.32rem] ${show ? "block" : "hidden"} ${
-        padding === 0 ? "pl-[13px]" : "pl-[26px]"
+      className={`py-[0.32rem] ${show ? 'block' : 'hidden'} ${
+        padding === 0 ? 'pl-[13px]' : 'pl-[26px]'
       }`}
       ref={containerRef}
-      style={{ wordWrap: "break-word" }}
+      style={{ wordWrap: 'break-word' }}
     >
       <div className="flex flex-row">
-        <span className={`span-logo ${logo} w-4`}>
-          &nbsp;
-        </span>
-        <div className="flex mx-2 relative flex-col w-[80%] max-w-[10rem]">
+        <span className={`span-logo ${logo} w-4`}>&nbsp;</span>
+        <div className="relative mx-2 flex w-[80%] max-w-[10rem] flex-col">
           <input
-            className={`text-white outline-none rounded-none border border-monaco-color outline-0 w-full bg-monaco-color ${
-              error && errorMessage !== ""
-                ? "focus:border-red-500"
-                : "focus:border-cyan-500"
+            className={`w-full rounded-none border border-monaco-color bg-monaco-color text-white outline-none outline-0 ${
+              error && errorMessage !== ''
+                ? 'focus:border-red-500'
+                : 'focus:border-cyan-500'
             }`}
             value={value}
             autoFocus
@@ -175,14 +182,14 @@ const CustomInput: React.FC<CustomInputProps> = ({
               setValue(e.target.value);
             }}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === 'Enter') {
                 if (!error && value.trim().length > 0) {
                   submit(value);
                 } else if (value.trim().length === 0) {
                   setError(true);
                   setLogo(errorIcon);
                   setErrorMessage(
-                    `The ${item.type} name cannot be empty. Please enter a valid name.`
+                    `The ${item.type} name cannot be empty. Please enter a valid name.`,
                   );
                 } else {
                   const res = validate(
@@ -190,22 +197,22 @@ const CustomInput: React.FC<CustomInputProps> = ({
                     item,
                     value,
                     existingItems,
-                    validExtensions
+                    validExtensions,
                   );
                   setValidationResult(res);
                 }
-              } else if (e.key === "Escape") {
+              } else if (e.key === 'Escape') {
                 submit(false);
               }
             }}
             ref={inputRef}
           />
 
-          {error && errorMessage !== "" && (
+          {error && errorMessage !== '' && (
             <div
               ref={errorRef}
-              className={`w-fit z-10 select-none absolute flex items-start p-1 border border-red-500 bg-red-900 text-sm text-white ${
-                position !== "top" ? "top-7" : "bottom-7"
+              className={`absolute z-10 flex w-fit select-none items-start border border-red-500 bg-red-900 p-1 text-sm text-white ${
+                position !== 'top' ? 'top-7' : 'bottom-7'
               }`}
             >
               {errorMessage}

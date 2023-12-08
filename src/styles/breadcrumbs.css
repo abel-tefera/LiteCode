@@ -9,7 +9,3 @@
   visibility: visible;
   transition-property: all;
 }
-
-.custom-scrollbar-4::-webkit-scrollbar {
-  width: 0;
-}

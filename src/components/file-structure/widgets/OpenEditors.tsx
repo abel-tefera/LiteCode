@@ -16,6 +16,7 @@ import downArrowLogo from '../../../../public/left-arrow.svg';
 import ItemTitle from './ItemTitle';
 import { setSelected } from '../../../state/features/structure/structureSlice';
 import { setActiveEditorAsync } from '../../../state/features/editor/editorSlice';
+import useOutsideAlerter from '../../../hooks/useOutsideAlerter';
 
 interface OpenEditorsProps {
   collapsed: boolean;
@@ -33,64 +34,106 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
   const tabsArea = useRef<HTMLDivElement>(null);
   const selected = useTypedSelector(selectedTab);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useOutsideAlerter(containerRef, () => {
+    containerRef.current?.classList.remove('border-vscode-blue');
+  });
+
   useEffect(() => {
     if (!tabsArea.current) return;
     if (!collapsed) {
       const timeout = setTimeout(() => {
-        tabsArea.current!.style.overflowY = 'auto';
+        tabsArea.current!.classList.remove('hidden-scrollbar');
       }, 300);
       return () => clearTimeout(timeout);
     } else {
-      tabsArea.current.style.overflowY = 'hidden';
+      tabsArea.current!.classList.add('hidden-scrollbar');
     }
   }, [collapsed]);
 
+  const getHeight = () => {
+    let height = tabs.length * 6.08170515097691;
+    if (!structureCollapsed) {
+      if (tabs.length > 4) {
+        height = 25;
+      }
+    } else {
+      if (height > 50) {
+        height = 50;
+      }
+    }
+    return height;
+  };
+
+  useEffect(() => {
+    if (!tabsArea.current) return;
+    tabsArea.current.style.height = `${getHeight()}vh`;
+    tabsArea.current.scrollTop = tabsArea.current.scrollHeight;
+  }, [tabs.length]);
+
+  useEffect(() => {
+    if (!tabsArea.current) return;
+    tabsArea.current.style.height = `${getHeight()}vh`;
+  }, [structureCollapsed]);
+
   return (
     <div className="my-2 flex select-none flex-col items-start">
-      <div
-        onClick={setCollapseArea}
-        className="mb-3 mt-2 flex w-full cursor-pointer select-none flex-row items-center pl-2"
-      >
-        <img
-          src={downArrowLogo.src}
-          className={`${
-            !collapsed ? 'rotate-[270deg]' : 'rotate-180'
-          } mr-2 h-3 w-3 self-center transition-transform`}
-          alt="Down Arrow"
-        />
-        <span className="flex w-full flex-row justify-between">
-          <span className="flex self-center text-white">Open Editors</span>
-          <span className="flex self-center text-white">
-            <Tooltip
-              className="z-50"
-              id="close-all"
-              style={{ backgroundColor: 'rgb(60 60 60)' }}
-            />
-            <button
-              type="button"
-              onClick={(e) => {
-                // TODO: Close all Editors
-                e.stopPropagation();
-                dispatch(closeAllTabs());
-              }}
-              className="cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover "
-            >
-              <img
-                data-tooltip-id="close-all"
-                data-tooltip-content={'Close All Editors'}
-                src={closeAllIcon.src}
-                className="h-5 w-5"
-                alt="Close All Editors"
+      <div className="pl-2 w-full">
+        <div
+          ref={containerRef}
+          onClick={() => {
+            containerRef.current?.classList.add('border-vscode-blue');
+            setCollapseArea();
+          }}
+          className="transition-[border-color] mb-3 mt-2 flex w-full cursor-pointer select-none flex-row items-center border border-transparent p-1"
+        >
+          <img
+            src={downArrowLogo.src}
+            className={`${
+              !collapsed ? 'rotate-[270deg]' : 'rotate-180'
+            } mr-2 h-3 w-3 self-center transition-transform`}
+            alt="Down Arrow"
+          />
+          <span className="flex w-full flex-row justify-between">
+            <span className="flex self-center text-white">Open Editors</span>
+            <span className="flex self-center text-white">
+              <Tooltip
+                className="z-50"
+                id="close-all"
+                style={{ backgroundColor: 'rgb(60 60 60)' }}
               />
-            </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  // TODO: Close all Editors
+                  e.stopPropagation();
+                  dispatch(closeAllTabs());
+                }}
+                className="cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover "
+              >
+                <img
+                  data-tooltip-id="close-all"
+                  data-tooltip-content={'Close All Editors'}
+                  src={closeAllIcon.src}
+                  className="h-5 w-5"
+                  alt="Close All Editors"
+                />
+              </button>
+            </span>
           </span>
-        </span>
+        </div>
       </div>
+
       <div
         ref={tabsArea}
         className={`list-container custom-scrollbar-2 w-full transition-[height] duration-300 ease-out ${
-          collapsed ? 'no-height' : 'h-full'
-        } ${structureCollapsed ? 'max-h-[50vh]' : 'max-h-[25vh]'}`}
+          collapsed ? 'no-height' : ''
+        } ${
+          tabs.length > 4
+            ? 'overflow-y-auto'
+            : 'hidden-scrollbar overflow-y-hidden'
+        } `}
       >
         {tabs.map((tab) => (
           <div

@@ -58,6 +58,10 @@
   position: absolute;
 }
 
+.visibility-hidden {
+  visibility: hidden;
+}
+
 .span-text {
   display: flex;
   flex-direction: row;
@@ -81,8 +85,7 @@
 }
 
 .not-seen {
-  position: absolute;
-  visibility: hidden;
+  opacity: 0;
 }
 
 @media screen and (min-width: 768px) {

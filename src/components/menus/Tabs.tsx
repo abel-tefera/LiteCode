@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Tab from "./Tab";
 
 import { useTypedDispatch, useTypedSelector } from "../../state/hooks";
@@ -15,6 +15,7 @@ const Tabs = () => {
   const dispatch = useTypedDispatch();
   const tabs = useTypedSelector(activeTabs);
   const selected = useTypedSelector(selectedTab);
+  const tabsArea = useRef<HTMLDivElement>(null);
 
   const onSelect = (id: string) => {
     // alert(`Tab ${i} selected`);
@@ -29,10 +30,16 @@ const Tabs = () => {
     await dispatch(setActiveEditorAsync({ id: "", line: 0 }));
   };
 
+  useEffect(() => {
+    if (!tabsArea.current) return;
+    tabsArea.current.scrollLeft = tabsArea.current.scrollWidth;
+
+  }, [tabs.length])
+
   return (
     <div className="flex flex-row w-full">
       <div className={"file-tabs w-full py-1"}>
-        <div className="flex flex-row items-center w-full overflow-x-scroll custom-scrollbar">
+        <div ref={tabsArea} className="flex flex-row items-center w-full overflow-x-scroll custom-scrollbar">
           {tabs.map((item, i) => (
             <Tab
               key={item.id}

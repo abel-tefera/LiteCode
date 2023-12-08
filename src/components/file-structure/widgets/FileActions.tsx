@@ -5,7 +5,7 @@ import newFolderIcon from '../../../../public/new-folder.svg';
 import downloadIcon from '../../../../public/download.svg';
 
 import { Tooltip } from 'react-tooltip';
-import SearchContainer from '../search/SearchContainer';
+import useOutsideAlerter from '../../../hooks/useOutsideAlerter';
 
 interface FileActionProps {
   newFile: () => void;
@@ -20,92 +20,105 @@ const FileActions: React.FC<FileActionProps> = ({
   newFolder,
   download,
   collapseArea,
-  collapsed
+  collapsed,
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useOutsideAlerter(containerRef, () => {
+    containerRef.current?.classList.remove('border-vscode-blue');
+  });
+
   return (
-      <div onClick={collapseArea} className="flex w-full select-none flex-row items-center cursor-pointer">
-        <img
-          src={downArrowLogo.src}
-          className={`${
-            !collapsed ? 'rotate-[270deg]' : 'rotate-180'
-          } mr-2 mb-1 h-3 w-3 self-center transition-transform`}
-          alt="Down Arrow"
-        />
-        <span className="flex w-full flex-row justify-between">
-          <span className="text-white text-center">Files</span>
-          <span className="flex items-center">
-            <span className="text-white">
-              <Tooltip
-                className="z-50"
-                id="new-file"
-                style={{ backgroundColor: 'rgb(60 60 60)' }}
+    <div
+      ref={containerRef}
+      onClick={() => {
+        containerRef.current?.classList.add('border-vscode-blue');
+        collapseArea();
+      }}
+      className="flex transition-[border-color] w-full cursor-pointer select-none flex-row items-center border border-transparent px-1 pt-1"
+    >
+      <img
+        src={downArrowLogo.src}
+        className={`${
+          !collapsed ? 'rotate-[270deg]' : 'rotate-180'
+        } mb-1 mr-2 h-3 w-3 self-center transition-transform`}
+        alt="Down Arrow"
+      />
+      <span className="flex w-full flex-row justify-between">
+        <span className="text-center text-white">Files</span>
+        <span className="flex items-center">
+          <span className="text-white">
+            <Tooltip
+              className="z-50"
+              id="new-file"
+              style={{ backgroundColor: 'rgb(60 60 60)' }}
+            />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                newFile();
+              }}
+              className="mr-[2px] cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover "
+            >
+              <img
+                data-tooltip-id="new-file"
+                data-tooltip-content={'New File'}
+                src={newFileIcon.src}
+                className="h-5 w-5"
+                alt="New File"
               />
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  newFile();
-                }}
-                className='cursor-pointer rounded-sm hover:bg-dark-hover p-[2px] mr-[2px] '
-              >
-                <img
-                  data-tooltip-id="new-file"
-                  data-tooltip-content={'New File'}
-                  src={newFileIcon.src}
-                  className="h-5 w-5"
-                  alt="New File"
-                />
-              </button>
-            </span>
-            <span className="text-white">
-              <Tooltip
-                className="z-50"
-                id="new-folder"
-                style={{ backgroundColor: 'rgb(60 60 60)' }}
+            </button>
+          </span>
+          <span className="text-white">
+            <Tooltip
+              className="z-50"
+              id="new-folder"
+              style={{ backgroundColor: 'rgb(60 60 60)' }}
+            />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                newFolder();
+              }}
+              className="mx-[2px] cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover "
+            >
+              <img
+                data-tooltip-id="new-folder"
+                data-tooltip-content={'New Folder'}
+                src={newFolderIcon.src}
+                className="h-5 w-5"
+                alt="New Folder"
               />
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  newFolder();
-                }}
-                className='cursor-pointer rounded-sm hover:bg-dark-hover p-[2px] mx-[2px] '
-              >
-                <img
-                  data-tooltip-id="new-folder"
-                  data-tooltip-content={'New Folder'}
-                  src={newFolderIcon.src}
-                  className="h-5 w-5"
-                  alt="New Folder"
-                />
-              </button>
-            </span>
-            <span className="text-white">
-              <Tooltip
-                className="z-50"
-                id="download-project"
-                style={{ backgroundColor: 'rgb(60 60 60)' }}
+            </button>
+          </span>
+          <span className="text-white">
+            <Tooltip
+              className="z-50"
+              id="download-project"
+              style={{ backgroundColor: 'rgb(60 60 60)' }}
+            />
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                download();
+              }}
+              className="ml-[2px] cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover "
+            >
+              <img
+                data-tooltip-id="download-project"
+                data-tooltip-content={'Download Project'}
+                src={downloadIcon.src}
+                className="h-5 w-5"
+                alt="Download Project"
               />
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  download();
-                }}
-                className='cursor-pointer rounded-sm hover:bg-dark-hover p-[2px] ml-[2px] '
-              >
-                <img
-                  data-tooltip-id="download-project"
-                  data-tooltip-content={'Download Project'}
-                  src={downloadIcon.src}
-                  className="h-5 w-5"
-                  alt="Download Project"
-                />
-              </button>
-            </span>
+            </button>
           </span>
         </span>
-      </div>
+      </span>
+    </div>
   );
 };
 
