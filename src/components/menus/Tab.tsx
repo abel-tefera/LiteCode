@@ -29,6 +29,7 @@ const Tab: React.FC<TabProps> = ({
 
   return (
     <div
+      id={`tab-${id}`}
       onClick={() => {
         if (!selected) onSelect(id);
       }}

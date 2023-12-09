@@ -1,8 +1,8 @@
-import { store } from "../../../store";
-import { type Directory } from "../structureSlice";
-import { dfsCbOnEach } from "./traversal";
-import JSZip from "jszip";
-import { saveAs } from "file-saver";
+import { store } from '../../../store';
+import { type Directory } from '../structureSlice';
+import { dfsCbOnEach } from './traversal';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 const downloadZip = () => {
   const state = store.getState();
@@ -10,6 +10,13 @@ const downloadZip = () => {
   const {
     structure: { normalized, initialFolder },
   } = state;
+  if (
+    normalized.files.allIds.length === 0 &&
+    normalized.folders.allIds.length === 1
+  ) {
+    alert("There is nothing to download, you haven't created any files yet.");
+    return;
+  }
   const folderMap = {
     [initialFolder.id]: zip,
   };
@@ -19,7 +26,7 @@ const downloadZip = () => {
       const item = normalized[`${node.type}s`].byId[node.id];
       const parentId = parentIds[parentIds.length - 1];
       const currentFolder = folderMap[parentId];
-      if (item.type === "file") {
+      if (item.type === 'file') {
         currentFolder.file(`${item.name}.${item.extension}`, item.content);
       } else {
         const folder = currentFolder.folder(item.name) as JSZip;
@@ -31,10 +38,10 @@ const downloadZip = () => {
   );
   zip
     .generateAsync({
-      type: "blob",
+      type: 'blob',
     })
-    .then(content => {
-      saveAs(content, "LiteCode_Project.zip");
+    .then((content) => {
+      saveAs(content, 'LiteCode_Project.zip');
     });
 };
 

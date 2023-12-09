@@ -144,6 +144,23 @@ export default tabsSlice.reducer;
 
 export const selectedTab = (state: RootState) => state.tabs.selected;
 
+export const shouldTabsScroll = createSelector(
+  (state: RootState) => state.tabs.selectionStack,
+  (state: RootState) => state.tabs.selected,
+  (state: RootState) => state.tabs.open,
+  (selectionStack: string[], selected: string, openTabs: Tab[]) => {
+    const lastSelected = selectionStack[selectionStack.length - 1];
+    const lastSelectedIndex = openTabs.findIndex(
+      ({ id }) => id === lastSelected,
+    );
+    const selectedIndex = openTabs.findIndex(({ id }) => id === selected);
+    if (Math.abs(lastSelectedIndex - selectedIndex) > 3) {
+      return true;
+    }
+    return false;
+  },
+);
+
 export const activeTabs = createSelector(
   (state: RootState) => state.structure.normalized,
   (state: RootState) => state.tabs.open,

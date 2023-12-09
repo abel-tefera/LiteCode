@@ -33,6 +33,8 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
   const tabs = useTypedSelector(activeTabs);
   const tabsArea = useRef<HTMLDivElement>(null);
   const selected = useTypedSelector(selectedTab);
+  const tabHeight = 34.24;
+  const tabsRatio = Math.floor(window.innerHeight / (tabHeight + 16) / 2) - 1;
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -52,41 +54,44 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
     }
   }, [collapsed]);
 
-  const getHeight = () => {
-    let height = tabs.length * 6.08170515097691;
+  const getHeight = (noRestriction?: true) => {
+    let height = tabs.length * tabHeight;
+    if (noRestriction) {
+      return height + 16;
+    }
     if (!structureCollapsed) {
-      if (tabs.length > 4) {
-        height = 25;
+      if (tabs.length > tabsRatio) {
+        height = window.innerHeight * 0.25;
       }
     } else {
-      if (height > 50) {
-        height = 50;
+      if (height > window.innerHeight * 0.5) {
+        height = window.innerHeight * 0.5;
       }
     }
-    return height;
+    return height + 16;
   };
 
   useEffect(() => {
     if (!tabsArea.current) return;
-    tabsArea.current.style.height = `${getHeight()}vh`;
+    tabsArea.current.style.height = `${getHeight()}px`;
     tabsArea.current.scrollTop = tabsArea.current.scrollHeight;
   }, [tabs.length]);
 
   useEffect(() => {
     if (!tabsArea.current) return;
-    tabsArea.current.style.height = `${getHeight()}vh`;
+    tabsArea.current.style.height = `${getHeight()}px`;
   }, [structureCollapsed]);
 
   return (
-    <div className="my-2 flex select-none flex-col items-start">
-      <div className="pl-2 w-full">
+    <div className="mt-2 flex select-none flex-col items-start">
+      <div className="w-full pl-2">
         <div
           ref={containerRef}
           onClick={() => {
             containerRef.current?.classList.add('border-vscode-blue');
             setCollapseArea();
           }}
-          className="transition-[border-color] mb-3 mt-2 flex w-full cursor-pointer select-none flex-row items-center border border-transparent p-1"
+          className="flex w-full cursor-pointer select-none flex-row items-center border border-transparent p-1 transition-[border-color]"
         >
           <img
             src={downArrowLogo.src}
@@ -110,7 +115,7 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
                   e.stopPropagation();
                   dispatch(closeAllTabs());
                 }}
-                className="cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover "
+                className="cursor-pointer rounded-r-sm p-[2px] hover:bg-dark-hover "
               >
                 <img
                   data-tooltip-id="close-all"
@@ -130,75 +135,82 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
         className={`list-container custom-scrollbar-2 w-full transition-[height] duration-300 ease-out ${
           collapsed ? 'no-height' : ''
         } ${
-          tabs.length > 4
+          tabs.length > tabsRatio
             ? 'overflow-y-auto'
             : 'hidden-scrollbar overflow-y-hidden'
         } `}
       >
-        {tabs.map((tab) => (
-          <div
-            key={`open-editor-${tab.id}`}
-            className="flex w-full flex-col px-1"
-          >
+        <div
+          style={{
+            minHeight: tabs.length > tabsRatio ? `${getHeight(true)}px` : 'auto',
+          }}
+          className={`flex h-full w-full flex-col justify-center`}
+        >
+          {tabs.map((tab) => (
             <div
-              className={`hover-show flex w-full flex-row justify-between rounded-sm transition-colors hover:cursor-pointer ${
-                selected === tab.id
-                  ? 'bg-slate-700 hover:bg-slate-600'
-                  : 'hover:bg-dark-hover'
-              }`}
+              key={`open-editor-${tab.id}`}
+              className="flex w-full flex-col px-1"
             >
-              <span className="flex items-center text-white">
-                {/* <Tooltip
+              <div
+                className={`hover-show flex w-full flex-row justify-between rounded-sm transition-colors hover:cursor-pointer ${
+                  selected === tab.id
+                    ? 'bg-slate-700 hover:bg-slate-600'
+                    : 'hover:bg-dark-hover'
+                }`}
+              >
+                <span className="flex items-center text-white">
+                  {/* <Tooltip
                 className="z-50"
                 id="close-editor"
                 style={{ backgroundColor: 'rgb(60 60 60)' }}
               /> */}
-                <div
-                  className={`flex h-full items-center rounded-sm px-1 hover:bg-slate-500`}
-                >
-                  <button
-                    type="button"
-                    className="show-on-hover mx-auto transition-opacity"
-                    onClick={(e) => {
-                      // TODO: Close Editor
-                      dispatch(closeTab(tab.id));
-                      dispatch(setActiveEditorAsync({ id: '', line: 0 }));
-                    }}
+                  <div
+                    className={`flex h-full items-center rounded-l-sm px-1 hover:bg-slate-500`}
                   >
-                    <img
-                      //   data-tooltip-id="close-editor"
-                      //   data-tooltip-content={'Close Editor'}
-                      src={closeIcon.src}
-                      className="h-5 w-5 cursor-pointer"
-                      alt="Right Arrow"
-                    />
-                  </button>
+                    <button
+                      type="button"
+                      className="show-on-hover mx-auto transition-opacity"
+                      onClick={(e) => {
+                        // TODO: Close Editor
+                        dispatch(closeTab(tab.id));
+                        dispatch(setActiveEditorAsync({ id: '', line: 0 }));
+                      }}
+                    >
+                      <img
+                        //   data-tooltip-id="close-editor"
+                        //   data-tooltip-content={'Close Editor'}
+                        src={closeIcon.src}
+                        className="h-5 w-5 cursor-pointer"
+                        alt="Right Arrow"
+                      />
+                    </button>
+                  </div>
+                </span>
+                <div className="w-full cursor-pointer">
+                  <ItemTitle
+                    item={{
+                      ...tab,
+                      name: tab.wholeName.substring(
+                        0,
+                        tab.wholeName.lastIndexOf('.'),
+                      ),
+                      type: 'file',
+                    }}
+                    onClickE={(e) => {
+                      // TODO: Open Editor
+                      e.stopPropagation();
+                      // dispatch(setSelected({ id: tab.id, type: 'file' }));
+                      if (selected !== tab.id) {
+                        dispatch(selectTab(tab.id));
+                        dispatch(setActiveEditorAsync({ id: tab.id, line: 0 }));
+                      }
+                    }}
+                  />
                 </div>
-              </span>
-              <div className="w-full cursor-pointer">
-                <ItemTitle
-                  item={{
-                    ...tab,
-                    name: tab.wholeName.substring(
-                      0,
-                      tab.wholeName.lastIndexOf('.'),
-                    ),
-                    type: 'file',
-                  }}
-                  onClickE={(e) => {
-                    // TODO: Open Editor
-                    e.stopPropagation();
-                    // dispatch(setSelected({ id: tab.id, type: 'file' }));
-                    if (selected !== tab.id) {
-                      dispatch(selectTab(tab.id));
-                      dispatch(setActiveEditorAsync({ id: tab.id, line: 0 }));
-                    }
-                  }}
-                />
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

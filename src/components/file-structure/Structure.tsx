@@ -94,6 +94,9 @@ const Structure: React.FC<PropsWithChildren> = () => {
     y: 0,
   });
 
+  const tabHeight = 34.24;
+  const tabsRatio = Math.floor(window.innerHeight / (tabHeight + 16) / 2) - 1;
+
   const appendTo = useRef<HTMLElement | null>(null);
 
   const [showInput, setShowInput] = useState(false);
@@ -190,10 +193,12 @@ const Structure: React.FC<PropsWithChildren> = () => {
   ];
 
   const setClickedCurrent = () => {
+    console.log("NEW ID", selectedI)
     let elem = fileSysRef.current?.querySelector(`#${selectedI}`);
     if (!elem) {
       elem = fileSysRef.current;
     }
+    console.log("CLICKED ELEM", elem)
     clickedRef.current = elem as HTMLElement;
   };
 
@@ -209,7 +214,10 @@ const Structure: React.FC<PropsWithChildren> = () => {
   const fileActions = {
     newFile: () => {
       setInputType('file');
+      console.log("BEFIRE CONTEXT SELETED", contextSelectedId, selectedI)
+
       dispatch(setContextSelectedForFileAction());
+      console.log("AFTER CONTEXT SELETED", contextSelectedId, selectedI)
       setClickedCurrent();
       createFileInput();
     },
@@ -276,7 +284,10 @@ const Structure: React.FC<PropsWithChildren> = () => {
     if (!clickedRef.current) {
       return;
     }
-    if (clickedRef.current === fileSysRef.current || (clickedRef.current.id.includes('file') && !isRename)) {
+    if (
+      clickedRef.current === fileSysRef.current ||
+      (clickedRef.current.id.includes('file') && !isRename)
+    ) {
       appendTo.current = fileSysRef.current as HTMLElement;
 
       setInputPadding(0);
@@ -320,9 +331,9 @@ const Structure: React.FC<PropsWithChildren> = () => {
     if (!fileExplorerContainerRef.current || !fileSysRef.current) return;
     if (structureCollapsed) {
       fileSysRef.current.classList.remove('no-height');
-
       setStructureCollapsed(false);
     }
+    console.log("CONTEXT SELECTED", contextSelectedId);
     dispatch(setParentItemId(contextSelectedId));
     prependForPortal(false);
     showInputHandler(true);
@@ -434,38 +445,47 @@ const Structure: React.FC<PropsWithChildren> = () => {
     }
   });
 
+  useOutsideAlerter(fileSysRef, () => {
+    if (!fileSysRef.current) return;
+
+    fileSysRef.current.classList.add('border-transparent');
+    fileSysRef.current?.classList.remove('border-vscode-blue');
+  });
+
   useEffect(() => {
+    console.log("SELECTED I", selectedI);
+    if (!fileSysRef.current) return;
+    if (selectedI !== 'head') {
+      fileSysRef.current.classList.add('border-transparent');
+      fileSysRef.current?.classList.remove('border-vscode-blue');
+    }
     setShowBlue(true);
   }, [selectedI]);
 
   const getHeight = () => {
-    let height = 0;
+    let height;
     if (!openEditorCollapsed) {
-      height = 25;
-      if (tabs.length < 4) {
-        height = 50 - tabs.length * 6.08170515097691;
+      height = window.innerHeight * 0.3;
+      if (tabs.length < tabsRatio) {
+        height = window.innerHeight * 0.5 - tabs.length * tabHeight + 16;
       }
     } else {
-      height = 50;
+      height = window.innerHeight * 0.55;
     }
     if (tabs.length === 0) {
-      height = 65;
+      height = window.innerHeight * 0.6;
     }
-    return height;
-  }
+    return height - 16;
+  };
 
   useEffect(() => {
     if (!fileSysRef.current) return;
-    fileSysRef.current.style.maxHeight = `${getHeight()}vh`;
-    fileSysRef.current.style.height = `${getHeight()}vh`;
+    fileSysRef.current.style.height = `${getHeight()}px`;
   }, [tabs.length]);
 
   useEffect(() => {
     if (!fileSysRef.current) return;
-    if (openEditorCollapsed) {
-      fileSysRef.current.style.maxHeight = `65vh`;
-    }
-    fileSysRef.current.style.height = `${getHeight()}vh`;
+    fileSysRef.current.style.height = `${getHeight()}px`;
   }, [openEditorCollapsed]);
 
   return (
@@ -488,7 +508,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
               ref={fileExplorerContainerRef}
               className={`flex w-full flex-col transition-[transform] duration-300 ease-out`}
             >
-              <div className="my-2 flex flex-col items-start pl-2">
+              <div className="flex flex-col items-start pb-2 pl-2">
                 {isSearching && allFileIds.length > 0 ? (
                   <div className="custom-scrollbar-3 h-[70vh] w-full overflow-y-auto">
                     <SearchContainer />
@@ -505,11 +525,15 @@ const Structure: React.FC<PropsWithChildren> = () => {
                   id="structure-container"
                   parent-id={'head'}
                   typeof-item={'folder'}
-                  className={`custom-scrollbar-2 hidden-scrollbar flex flex-col overflow-y-auto pl-1 transition-[height] duration-300 ease-out  ${
+                  style={{ maxHeight: `${getHeight()}px` }}
+                  className={`custom-scrollbar-2 hidden-scrollbar flex flex-col overflow-y-auto border border-transparent py-1 pl-1 transition-[height] duration-300 ease-out  ${
                     structureCollapsed ? 'no-height' : ''
                   }`}
                   ref={fileSysRef}
                   onClick={(e) => {
+                    if (!fileSysRef.current) return;
+                    fileSysRef.current.classList.remove('border-transparent');
+                    fileSysRef.current.classList.add('border-vscode-blue');
                     dispatch(setSelected({ id: 'head', type: 'folder' }));
                   }}
                   onContextMenu={(e) => {
@@ -543,7 +567,36 @@ const Structure: React.FC<PropsWithChildren> = () => {
                           typeof-item={'folder'}
                           className="select-none break-words rounded-lg border p-3 text-center text-base"
                         >
-                          Start developing with LiteCode...
+                          <div
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex flex-col justify-center"
+                          >
+                            <div className="flex items-center">
+                              Start developing with LiteCode...
+                            </div>
+                            <div className="my-2 flex w-full flex-col items-center justify-between text-sm">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  fileActions.newFile();
+                                }}
+                                className="my-1 w-full rounded-lg bg-vscode-blue px-1 py-2 opacity-[0.75] transition-[opacity] hover:opacity-[1]"
+                              >
+                                <span className="text-white">New File</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  fileActions.newFolder();
+                                }}
+                                className="my-1 w-full rounded-lg bg-vscode-blue px-1 py-2 opacity-[0.75] transition-[color] hover:opacity-[1]"
+                              >
+                                <span className="text-white">New Folder</span>
+                              </button>
+                            </div>
+                          </div>
                         </span>
                       </div>
                     )}
