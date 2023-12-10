@@ -25,6 +25,10 @@ const FileActions: React.FC<FileActionProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useOutsideAlerter(containerRef, () => {
+    // collapseArea(true);
+    const hr = document.querySelector('.left-wrapper-hr');
+    hr?.classList.add('border-t-slate-600');
+    hr?.classList.remove('border-t-transparent');
     containerRef.current?.classList.remove('border-vscode-blue');
   });
 
@@ -32,10 +36,13 @@ const FileActions: React.FC<FileActionProps> = ({
     <div
       ref={containerRef}
       onClick={() => {
+        const hr = document.querySelector('.left-wrapper-hr');
+        hr?.classList.remove('border-t-slate-600');
+        hr?.classList.add('border-t-transparent');
         containerRef.current?.classList.add('border-vscode-blue');
         collapseArea();
       }}
-      className="flex transition-[border-color] w-full cursor-pointer select-none flex-row items-center border border-transparent px-1 pt-1"
+      className="flex w-full cursor-pointer select-none flex-row items-center border border-transparent px-1 pt-1 transition-[border-color]"
     >
       <img
         src={downArrowLogo.src}

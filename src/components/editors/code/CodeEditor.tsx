@@ -347,7 +347,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
       >
         Format
       </button> */}
-      <div className="flex h-full flex-col items-center justify-start rounded-lg bg-monaco-vs">
+      <div className="flex h-full flex-col items-center justify-start rounded-lg bg-monaco-vs overflow-x-clip">
         <Breadcrumbs
           editorObj={{
             id: editorData.id,

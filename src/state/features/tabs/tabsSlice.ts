@@ -9,10 +9,12 @@ import {
   type Normalized,
   type ValidExtensions,
 } from '../structure/structureSlice';
+import { getPaths } from '../editor/utils/pathUtil';
 
 export interface Tab {
   id: string;
   extension: ValidExtensions;
+  path: string;
 }
 
 interface TabSlice {
@@ -41,7 +43,9 @@ export const setActiveTabAsync = createAsyncThunk(
   async (id: string, { getState }) => {
     const state = getState() as RootState;
     const normalized = state.structure.normalized;
-    return { id, normalized };
+    const [_, actualPath] = getPaths(normalized.files.byId[id], normalized);
+
+    return { id, normalized, actualPath };
   },
 );
 
@@ -116,13 +120,14 @@ export const tabsSlice = createSlice({
       .addCase(setActiveTabAsync.fulfilled, (state, action) => {
         const normalized = action.payload.normalized;
         const tabId = action.payload.id;
+        const actualPath = action.payload.actualPath;
 
         const item = normalized.files.byId[tabId];
 
         if (state.open.filter(({ id }) => id === item.id).length === 0) {
           state.open = [
             ...state.open,
-            { id: item.id, extension: item.extension },
+            { id: item.id, extension: item.extension, path: actualPath.join(" / ")},
           ];
         }
         if (

@@ -2,8 +2,8 @@ import React from "react";
 
 const Contact: React.FC = () => {
   return (
-    <div className="ml-2 text-base">
-      <div className={"flex items-center select-none"}>
+    <div className="ml-2 text-base z-10">
+      <div className={"flex items-center select-none "}>
         Developed by&nbsp;
         <a
           href="https://www.abeltb.xyz/"

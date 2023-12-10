@@ -10,7 +10,7 @@ import {
 import { useTypedDispatch, useTypedSelector } from '../../../state/hooks';
 import { Tooltip } from 'react-tooltip';
 import closeAllIcon from '../../../../public/close-all.svg';
-import closeIcon from '../../../../public/close-tab.svg';
+import closeIcon from '../../../../public/cross.svg';
 import downArrowLogo from '../../../../public/left-arrow.svg';
 
 import ItemTitle from './ItemTitle';
@@ -115,7 +115,7 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
                   e.stopPropagation();
                   dispatch(closeAllTabs());
                 }}
-                className="cursor-pointer rounded-r-sm p-[2px] hover:bg-dark-hover "
+                className="cursor-pointer rounded-sm p-[2px] hover:bg-dark-hover "
               >
                 <img
                   data-tooltip-id="close-all"
@@ -132,8 +132,8 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
 
       <div
         ref={tabsArea}
-        className={`list-container custom-scrollbar-2 w-full transition-[height] duration-300 ease-out ${
-          collapsed ? 'no-height' : ''
+        className={`list-container custom-scrollbar-2 relative w-full overflow-x-clip pr-[6px] transition-[height] duration-300 ease-out ${
+          collapsed || tabs.length === 0 ? 'no-height' : ''
         } ${
           tabs.length > tabsRatio
             ? 'overflow-y-auto'
@@ -142,34 +142,39 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
       >
         <div
           style={{
-            minHeight: tabs.length > tabsRatio ? `${getHeight(true)}px` : 'auto',
+            minHeight:
+              tabs.length > tabsRatio ? `${getHeight(true)}px` : 'auto',
           }}
-          className={`flex h-full w-full flex-col justify-center`}
+          className={`absolute flex h-full w-full flex-col justify-center pl-4 `}
         >
           {tabs.map((tab) => (
             <div
+              onClick={() => {
+                if (selected !== tab.id) {
+                  dispatch(selectTab(tab.id));
+                  dispatch(setActiveEditorAsync({ id: tab.id, line: 0 }));
+                }
+              }}
               key={`open-editor-${tab.id}`}
-              className="flex w-full flex-col px-1"
+              className={`hover-show flex w-full flex-col rounded-sm transition-colors  hover:cursor-pointer  ${
+                selected === tab.id
+                  ? 'bg-slate-700 hover:bg-slate-600'
+                  : 'hover:bg-dark-hover'
+              }`}
             >
-              <div
-                className={`hover-show flex w-full flex-row justify-between rounded-sm transition-colors hover:cursor-pointer ${
-                  selected === tab.id
-                    ? 'bg-slate-700 hover:bg-slate-600'
-                    : 'hover:bg-dark-hover'
-                }`}
-              >
-                <span className="flex items-center text-white">
+              <div className={`flex w-fit flex-row justify-between`}>
+                <span className="flex min-w-[2rem] items-center text-white">
                   {/* <Tooltip
                 className="z-50"
                 id="close-editor"
                 style={{ backgroundColor: 'rgb(60 60 60)' }}
               /> */}
                   <div
-                    className={`flex h-full items-center rounded-l-sm px-1 hover:bg-slate-500`}
+                    className={`flex h-full items-center rounded-l-sm hover:bg-slate-500`}
                   >
                     <button
                       type="button"
-                      className="show-on-hover mx-auto transition-opacity"
+                      className="show-on-hover mx-auto h-full transition-opacity p-1"
                       onClick={(e) => {
                         // TODO: Close Editor
                         dispatch(closeTab(tab.id));
@@ -186,7 +191,7 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
                     </button>
                   </div>
                 </span>
-                <div className="w-full cursor-pointer">
+                <div className="ml-[-8px] w-fit cursor-pointer">
                   <ItemTitle
                     item={{
                       ...tab,
@@ -198,14 +203,15 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
                     }}
                     onClickE={(e) => {
                       // TODO: Open Editor
-                      e.stopPropagation();
+                      // e.stopPropagation();
                       // dispatch(setSelected({ id: tab.id, type: 'file' }));
-                      if (selected !== tab.id) {
-                        dispatch(selectTab(tab.id));
-                        dispatch(setActiveEditorAsync({ id: tab.id, line: 0 }));
-                      }
                     }}
                   />
+                </div>
+                <div className="flex w-fit justify-start self-center">
+                  <span className="whitespace-nowrap text-sm text-gray-400">
+                    {tab.path}
+                  </span>
                 </div>
               </div>
             </div>

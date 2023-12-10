@@ -112,6 +112,10 @@ body {
   ;
 }
 
+.new-btns.bg-vscode-overlay::before {
+  border-radius: 0.5rem;
+}
+
 .dialog-cover::before {
   position: absolute;
   top: 0;
@@ -133,7 +137,7 @@ body {
 }
 
 .span-logo-width {
-  width: 1rem;
+  min-width: 1rem;
 }
 
 .custom-scrollbar::-webkit-scrollbar-button:vertical:start:increment,

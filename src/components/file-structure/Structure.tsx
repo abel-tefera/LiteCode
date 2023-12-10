@@ -57,6 +57,7 @@ import SearchContainer from './search/SearchContainer';
 
 const Structure: React.FC<PropsWithChildren> = () => {
   const fileSysRef = useRef<HTMLDivElement>(null);
+  const fileSysContainerRef = useRef<HTMLDivElement>(null);
   const fileExplorerContainerRef = useRef<HTMLDivElement>(null);
 
   const structureRef = useRef<HTMLDivElement>(null);
@@ -93,6 +94,8 @@ const Structure: React.FC<PropsWithChildren> = () => {
     x: 0,
     y: 0,
   });
+
+  const hrRef = useRef<HTMLHRElement>(null);
 
   const tabHeight = 34.24;
   const tabsRatio = Math.floor(window.innerHeight / (tabHeight + 16) / 2) - 1;
@@ -193,12 +196,12 @@ const Structure: React.FC<PropsWithChildren> = () => {
   ];
 
   const setClickedCurrent = () => {
-    console.log("NEW ID", selectedI)
+    console.log('NEW ID', selectedI);
     let elem = fileSysRef.current?.querySelector(`#${selectedI}`);
     if (!elem) {
       elem = fileSysRef.current;
     }
-    console.log("CLICKED ELEM", elem)
+    console.log('CLICKED ELEM', elem);
     clickedRef.current = elem as HTMLElement;
   };
 
@@ -214,10 +217,10 @@ const Structure: React.FC<PropsWithChildren> = () => {
   const fileActions = {
     newFile: () => {
       setInputType('file');
-      console.log("BEFIRE CONTEXT SELETED", contextSelectedId, selectedI)
+      console.log('BEFIRE CONTEXT SELETED', contextSelectedId, selectedI);
 
       dispatch(setContextSelectedForFileAction());
-      console.log("AFTER CONTEXT SELETED", contextSelectedId, selectedI)
+      console.log('AFTER CONTEXT SELETED', contextSelectedId, selectedI);
       setClickedCurrent();
       createFileInput();
     },
@@ -234,11 +237,15 @@ const Structure: React.FC<PropsWithChildren> = () => {
     },
     collapseArea: () => {
       if (!fileExplorerContainerRef.current || !fileSysRef.current) return;
+
       if (structureCollapsed) {
         fileSysRef.current.classList.remove('no-height');
       } else {
         fileSysRef.current.classList.add('no-height');
       }
+
+      hrRef.current?.classList.add('border-t-transparent');
+      hrRef.current?.classList.remove('border-t-slate-600');
       setStructureCollapsed(!structureCollapsed);
     },
   };
@@ -333,7 +340,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
       fileSysRef.current.classList.remove('no-height');
       setStructureCollapsed(false);
     }
-    console.log("CONTEXT SELECTED", contextSelectedId);
+    console.log('CONTEXT SELECTED', contextSelectedId);
     dispatch(setParentItemId(contextSelectedId));
     prependForPortal(false);
     showInputHandler(true);
@@ -376,7 +383,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
     if (!fileSysRef.current || !elem) return;
     const type = elem.getAttribute('typeof-item') as 'file' | 'folder' | '';
     const parentId = elem.getAttribute('parent-id') as string;
-
+    console.log('HEHE', elem);
     if (type === null || parentId === null) {
       if (
         !elem.classList.contains('welcome') &&
@@ -408,6 +415,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
         y: e.clientX,
       });
     }
+    console.log('HEHE 22', clickedRef.current);
 
     setSelectedType(parentId === 'head' ? 'head' : type);
     setShowContext(true);
@@ -445,7 +453,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
     }
   });
 
-  useOutsideAlerter(fileSysRef, () => {
+  useOutsideAlerter(fileSysContainerRef, () => {
     if (!fileSysRef.current) return;
 
     fileSysRef.current.classList.add('border-transparent');
@@ -453,7 +461,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
   });
 
   useEffect(() => {
-    console.log("SELECTED I", selectedI);
+    console.log('SELECTED I', selectedI);
     if (!fileSysRef.current) return;
     if (selectedI !== 'head') {
       fileSysRef.current.classList.add('border-transparent');
@@ -495,15 +503,35 @@ const Structure: React.FC<PropsWithChildren> = () => {
           <SearchInput searchFiles={searchFiles} />
 
           <div className="left-wrapper flex w-full flex-col justify-start">
-            {!isSearching && tabs.length > 0 && (
+            {!isSearching && (
               <OpenEditors
                 collapsed={openEditorCollapsed}
                 setCollapseArea={() => {
+                  if (openEditorCollapsed && tabs.length > 0) {
+                    hrRef.current?.classList.remove('border-t-transparent');
+                    hrRef.current?.classList.add('border-t-slate-600');
+                  } else {
+                    hrRef.current?.classList.add('border-t-transparent');
+                    hrRef.current?.classList.remove('border-t-slate-600');
+                  }
                   setOpenEditorCollapsed(!openEditorCollapsed);
                 }}
                 structureCollapsed={structureCollapsed}
               />
             )}
+            {!openEditorCollapsed && tabs.length > 0 && (
+              <span className="my-[1px] flex w-full justify-center pl-2">
+                <hr
+                  ref={hrRef}
+                  className={`left-wrapper-hr w-full border-t ${
+                    openEditorCollapsed || tabs.length === 0
+                      ? 'border-t-transparent'
+                      : 'border-t-slate-600'
+                  }`}
+                />
+              </span>
+            )}
+
             <div
               ref={fileExplorerContainerRef}
               className={`flex w-full flex-col transition-[transform] duration-300 ease-out`}
@@ -522,84 +550,132 @@ const Structure: React.FC<PropsWithChildren> = () => {
               </div>
               {!isSearching && (
                 <div
-                  id="structure-container"
-                  parent-id={'head'}
-                  typeof-item={'folder'}
-                  style={{ maxHeight: `${getHeight()}px` }}
-                  className={`custom-scrollbar-2 hidden-scrollbar flex flex-col overflow-y-auto border border-transparent py-1 pl-1 transition-[height] duration-300 ease-out  ${
-                    structureCollapsed ? 'no-height' : ''
-                  }`}
-                  ref={fileSysRef}
-                  onClick={(e) => {
-                    if (!fileSysRef.current) return;
-                    fileSysRef.current.classList.remove('border-transparent');
-                    fileSysRef.current.classList.add('border-vscode-blue');
-                    dispatch(setSelected({ id: 'head', type: 'folder' }));
-                  }}
+                  ref={fileSysContainerRef}
                   onContextMenu={(e) => {
+                    setShowBlue(false);
+                    setShowGray(true);
                     contextHandler(e);
                   }}
-                  // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
+                  parent-id={'head'}
+                  typeof-item={'folder'}
+                  onClick={(e) => {
+                    if (!fileSysRef.current) return;
+                    if (allFileIds.length > 0 || allFolderIds.length > 1) {
+                      fileSysRef.current.classList.remove('border-transparent');
+                      fileSysRef.current.classList.add('border-vscode-blue');
+                    }
+                    dispatch(setSelected({ id: 'head', type: 'folder' }));
+                  }}
+                  className="flex h-full w-full flex-col"
                 >
                   <div
+                    id="structure-container"
                     parent-id={'head'}
                     typeof-item={'folder'}
-                    ref={structureRef}
-                    className="content flex items-center"
-                  >
-                    <Folder
-                      data={structureData}
-                      showBlue={showBlue}
-                      setShowBlue={setShowBlue}
-                      showGray={showGray}
-                      setShowGray={setShowGray}
-                    />
+                    style={{ maxHeight: `${getHeight()}px` }}
+                    className={`custom-scrollbar-2 hidden-scrollbar flex h-full flex-col overflow-y-auto border border-transparent py-1 pl-1 transition-[height] duration-300 ease-out  ${
+                      structureCollapsed ? 'no-height' : ''
+                    }`}
+                    ref={fileSysRef}
 
-                    {allFileIds.length === 0 && allFolderIds.length === 1 && (
-                      <div
-                        id="welcome"
-                        parent-id={'head'}
-                        typeof-item={'folder'}
-                        className="mx-auto flex h-[40vh] items-center px-4"
-                      >
-                        <span
+                    // onClick={(e) => fileStructureClickHandler(e, fileSysRef)}
+                  >
+                    <div
+                      parent-id={'head'}
+                      typeof-item={'folder'}
+                      ref={structureRef}
+                      className="content flex items-center"
+                    >
+                      <Folder
+                        data={structureData}
+                        showBlue={showBlue}
+                        setShowBlue={setShowBlue}
+                        showGray={showGray}
+                        setShowGray={setShowGray}
+                      />
+
+                      {allFileIds.length === 0 && allFolderIds.length === 1 && (
+                        <div
+                          id="welcome"
                           parent-id={'head'}
                           typeof-item={'folder'}
-                          className="select-none break-words rounded-lg border p-3 text-center text-base"
+                          onClick={(e) => e.stopPropagation()}
+                          onContextMenu={(e) => {
+                            contextHandler(e);
+                          }}
+                          className="mx-auto flex h-[40vh] items-center pl-3 pr-4"
                         >
                           <div
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex flex-col justify-center"
+                            parent-id={'head'}
+                            typeof-item={'folder'}
+                            className="select-none break-words rounded-lg border p-3 text-center text-base"
                           >
-                            <div className="flex items-center">
-                              Start developing with LiteCode...
-                            </div>
-                            <div className="my-2 flex w-full flex-col items-center justify-between text-sm">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  fileActions.newFile();
-                                }}
-                                className="my-1 w-full rounded-lg bg-vscode-blue px-1 py-2 opacity-[0.75] transition-[opacity] hover:opacity-[1]"
+                            <div
+                              parent-id={'head'}
+                              typeof-item={'folder'}
+                              className="flex flex-col justify-center"
+                            >
+                              <div
+                                parent-id={'head'}
+                                typeof-item={'folder'}
+                                className="flex items-center"
                               >
-                                <span className="text-white">New File</span>
-                              </button>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  fileActions.newFolder();
-                                }}
-                                className="my-1 w-full rounded-lg bg-vscode-blue px-1 py-2 opacity-[0.75] transition-[color] hover:opacity-[1]"
+                                Start developing with LiteCode...
+                              </div>
+                              <div
+                                parent-id={'head'}
+                                typeof-item={'folder'}
+                                className="my-2 flex w-full flex-col items-center justify-between text-sm"
                               >
-                                <span className="text-white">New Folder</span>
-                              </button>
+                                <button
+                                  parent-id={'head'}
+                                  typeof-item={'folder'}
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    fileActions.newFile();
+                                  }}
+                                  className="new-btns bg-vscode-overlay my-1 w-full rounded-lg px-1 py-2 transition-colors hover:bg-vscode-blue"
+                                >
+                                  <span
+                                    parent-id={'head'}
+                                    typeof-item={'folder'}
+                                    className="relative text-white"
+                                  >
+                                    New File
+                                  </span>
+                                </button>
+                                <button
+                                  parent-id={'head'}
+                                  typeof-item={'folder'}
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    fileActions.newFolder();
+                                  }}
+                                  className="new-btns bg-vscode-overlay my-1 w-full rounded-lg  px-1 py-2 transition-colors hover:bg-vscode-blue"
+                                >
+                                  <span
+                                    parent-id={'head'}
+                                    typeof-item={'folder'}
+                                    className="relative text-white"
+                                  >
+                                    New Folder
+                                  </span>
+                                </button>
+                              </div>
                             </div>
                           </div>
-                        </span>
-                      </div>
-                    )}
+                        </div>
+                      )}
+                    </div>
+                    <div
+                      parent-id={'head'}
+                      typeof-item={'folder'}
+                      className="clickable-padding min-h-[2rem] select-none"
+                    >
+                      &nbsp;
+                    </div>
                   </div>
                   <div
                     parent-id={'head'}
