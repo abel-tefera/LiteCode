@@ -217,7 +217,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
     newFile: () => {
       setInputType('file');
 
-      const parentId = findParent();
+      const parentId = findParent(selectedI, allFileIds, structureData);
       dispatch(setContextSelectedForFileAction(parentId));
       setClickedCurrent(parentId);
       createFileInput(parentId);
@@ -225,7 +225,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
 
     newFolder: () => {
       setInputType('folder');
-      const parentId = findParent();
+      const parentId = findParent(selectedI, allFileIds, structureData);
       dispatch(setContextSelectedForFileAction(parentId));
       setClickedCurrent(parentId);
       createFileInput(parentId);
@@ -334,7 +334,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
   };
 
   const createFileInput = (parentId: string = contextSelectedId) => {
-    if (!fileExplorerContainerRef.current || !fileSysRef.current) return;
+    if (!fileSysRef.current) return;
     if (structureCollapsed) {
       fileSysRef.current.classList.remove('no-height');
       setStructureCollapsed(false);
@@ -582,7 +582,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
                       className="content flex items-center"
                     >
                       <Folder
-                        data={structureData}
+                        data={structureData.subFoldersAndFiles}
                         showBlue={showBlue}
                         setShowBlue={setShowBlue}
                         showGray={showGray}

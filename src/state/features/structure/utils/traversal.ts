@@ -1,4 +1,3 @@
-import { store } from '../../../store';
 import { type Directory, type FileInFolder } from '../structureSlice';
 
 const bfsNodeAction = (
@@ -66,20 +65,20 @@ const dfsCbOnEach = (
 };
 
 const findParent = (
-  selectedItem: string = store.getState().structure.selected,
-  allFileIds: string[] = store.getState().structure.normalized.files.allIds,
+  selectedItem: string,
+  allFileIds: string[],
+  initialSet: Directory
 ) => {
   if (allFileIds.includes(selectedItem)) {
     let parentId = '';
     dfsNodeAction(
-      store.getState().structure.initialFolder
-        .subFoldersAndFiles as Directory[],
+      initialSet.subFoldersAndFiles as Directory[],
       selectedItem,
       (_, parents) => {
         const parent = parents[parents.length - 1];
         parentId = parent.id;
       },
-      [store.getState().structure.initialFolder],
+      [initialSet],
     );
     return parentId;
   } else if (selectedItem.includes('folder')) {

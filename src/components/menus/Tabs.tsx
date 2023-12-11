@@ -20,7 +20,6 @@ const Tabs = () => {
   const shouldScroll = useTypedSelector(shouldTabsScroll);
 
   const onSelect = (id: string) => {
-    // alert(`Tab ${i} selected`);
     if (selected !== id) {
       dispatch(selectTab(id));
       dispatch(setActiveEditorAsync({ id, line: 0 }));

@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { bfsNodeAction, dfsCbOnEach, dfsNodeAction } from './utils/traversal';
 import { findSortable } from './utils/sorting';
 import getTree from './utils/getTree';
-import { createSearchParamsBailoutProxy } from 'next/dist/client/components/searchparams-bailout-proxy';
 
 // type NestedRecord<T extends any[]>
 //     = T extends [any, ...infer R]
@@ -1009,7 +1008,7 @@ export const structureSlice = createSlice({
 });
 
 export const getInitialSet = (state: RootState) =>
-  state.structure.initialFolder.subFoldersAndFiles;
+  state.structure.initialFolder;
 
 export const contextSelectedEvent = (state: RootState) =>
   state.structure.contextSelected?.e;

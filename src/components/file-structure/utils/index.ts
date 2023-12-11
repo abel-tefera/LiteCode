@@ -118,6 +118,18 @@ const validateFile = (
       // setLogo(getLogo(ext));
       // setError(false);
       // setErrorMessage("");
+    } else if (isValid && isLns && validFiles.some((e) => e.startsWith(ext))) {
+      if (preValidate) {
+        return {
+          error: true,
+          errorMessage:
+            'This file type is not supported. Please choose a different file extension.',
+        };
+      }
+      return {
+        error: true,
+        errorMessage: '',
+      };
     } else if (ext !== '' || !isValid) {
       // setError(true);
       // setLogo(errorIcon);
