@@ -809,41 +809,14 @@ export const structureSlice = createSlice({
         state.selected = action.payload.id;
       }
     },
-    setContextSelectedForFileAction: (state) => {
-      const selectedItem = state.selected;
-      console.log('IN THE FUNCTION', selectedItem);
-      if (state.normalized.files.allIds.includes(selectedItem)) {
-        let parentId = '';
-        dfsNodeAction(
-          state.initialFolder.subFoldersAndFiles as Directory[],
-          selectedItem,
-          (_, parents) => {
-            const parent = parents[parents.length - 1];
-            parentId = parent.id;
-          },
-          [state.initialFolder],
-        );
-        console.log("HERE'S MY PARENT", parentId);
-        state.contextSelected = {
-          id: parentId,
-          type: 'folder',
-          e: false,
-        };
-      } else if (selectedItem.includes('folder')) {
-        state.contextSelected = {
-          id: state.selected,
-          type: 'folder',
-          e: false,
-        };
-      } else {
-        state.contextSelected = {
-          id: 'head',
-          type: 'folder',
-          e: false,
-        };
-      }
-      state.selected = state.contextSelected.id;
-      console.log('IN THE END SELECTED', state.contextSelected, state.selected);
+    setContextSelectedForFileAction: (state, action: PayloadAction<string>) => {
+      state.contextSelected = {
+        id: action.payload,
+        type: 'folder',
+        e: false,
+      };
+      // state.selected = action.payload;
+
     },
 
     contextClick: (
@@ -859,7 +832,6 @@ export const structureSlice = createSlice({
           | false;
       }>,
     ) => {
-      console.log('CONTEXT CLICK FUNCTION');
       const { id, type, threeDot } = action.payload;
       // Don't run this if the user clicks on the same item
       // if (id === state.contextSelected.id) return;
@@ -925,7 +897,6 @@ export const structureSlice = createSlice({
       state.toCopy = newCopy;
     },
     setParentItemId: (state, action: PayloadAction<string>) => {
-      console.log('SETTING PARENT ITEM ID', action.payload);
       if (action.payload !== '') {
         if (action.payload.includes('file')) {
           let parentId = '';
@@ -933,7 +904,6 @@ export const structureSlice = createSlice({
             state.initialFolder.subFoldersAndFiles as Directory[],
             action.payload,
             (_, parents) => {
-              console.log('PAIR RENTS', parents);
               const parent = parents[parents.length - 1];
               parentId = parent.id;
             },

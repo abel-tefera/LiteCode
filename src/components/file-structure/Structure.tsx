@@ -54,6 +54,7 @@ import { setActiveEditorAsync } from '../../state/features/editor/editorSlice';
 import SearchInput from './search/SearchInput';
 import OpenEditors from './widgets/OpenEditors';
 import SearchContainer from './search/SearchContainer';
+import { findParent } from '../../state/features/structure/utils/traversal';
 
 const Structure: React.FC<PropsWithChildren> = () => {
   const fileSysRef = useRef<HTMLDivElement>(null);
@@ -195,13 +196,11 @@ const Structure: React.FC<PropsWithChildren> = () => {
     },
   ];
 
-  const setClickedCurrent = () => {
-    console.log('NEW ID', selectedI);
-    let elem = fileSysRef.current?.querySelector(`#${selectedI}`);
+  const setClickedCurrent = (selectedItem: string = selectedI) => {
+    let elem = fileSysRef.current?.querySelector(`#${selectedItem}`);
     if (!elem) {
       elem = fileSysRef.current;
     }
-    console.log('CLICKED ELEM', elem);
     clickedRef.current = elem as HTMLElement;
   };
 
@@ -217,19 +216,19 @@ const Structure: React.FC<PropsWithChildren> = () => {
   const fileActions = {
     newFile: () => {
       setInputType('file');
-      console.log('BEFIRE CONTEXT SELETED', contextSelectedId, selectedI);
 
-      dispatch(setContextSelectedForFileAction());
-      console.log('AFTER CONTEXT SELETED', contextSelectedId, selectedI);
-      setClickedCurrent();
-      createFileInput();
+      const parentId = findParent();
+      dispatch(setContextSelectedForFileAction(parentId));
+      setClickedCurrent(parentId);
+      createFileInput(parentId);
     },
 
     newFolder: () => {
       setInputType('folder');
-      dispatch(setContextSelectedForFileAction());
-      setClickedCurrent();
-      createFileInput();
+      const parentId = findParent();
+      dispatch(setContextSelectedForFileAction(parentId));
+      setClickedCurrent(parentId);
+      createFileInput(parentId);
     },
 
     download: () => {
@@ -334,14 +333,13 @@ const Structure: React.FC<PropsWithChildren> = () => {
     }
   };
 
-  const createFileInput = () => {
+  const createFileInput = (parentId: string = contextSelectedId) => {
     if (!fileExplorerContainerRef.current || !fileSysRef.current) return;
     if (structureCollapsed) {
       fileSysRef.current.classList.remove('no-height');
       setStructureCollapsed(false);
     }
-    console.log('CONTEXT SELECTED', contextSelectedId);
-    dispatch(setParentItemId(contextSelectedId));
+    dispatch(setParentItemId(parentId));
     prependForPortal(false);
     showInputHandler(true);
   };
@@ -383,7 +381,6 @@ const Structure: React.FC<PropsWithChildren> = () => {
     if (!fileSysRef.current || !elem) return;
     const type = elem.getAttribute('typeof-item') as 'file' | 'folder' | '';
     const parentId = elem.getAttribute('parent-id') as string;
-    console.log('HEHE', elem);
     if (type === null || parentId === null) {
       if (
         !elem.classList.contains('welcome') &&
@@ -415,7 +412,6 @@ const Structure: React.FC<PropsWithChildren> = () => {
         y: e.clientX,
       });
     }
-    console.log('HEHE 22', clickedRef.current);
 
     setSelectedType(parentId === 'head' ? 'head' : type);
     setShowContext(true);
@@ -461,7 +457,6 @@ const Structure: React.FC<PropsWithChildren> = () => {
   });
 
   useEffect(() => {
-    console.log('SELECTED I', selectedI);
     if (!fileSysRef.current) return;
     if (selectedI !== 'head') {
       fileSysRef.current.classList.add('border-transparent');
