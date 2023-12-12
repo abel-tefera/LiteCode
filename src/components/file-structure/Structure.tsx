@@ -244,7 +244,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
       }
 
       hrRef.current?.classList.add('border-t-transparent');
-      hrRef.current?.classList.remove('border-t-slate-600');
+      hrRef.current?.classList.remove('border-t-zinc-600');
       setStructureCollapsed(!structureCollapsed);
     },
   };
@@ -504,10 +504,10 @@ const Structure: React.FC<PropsWithChildren> = () => {
                 setCollapseArea={() => {
                   if (openEditorCollapsed && tabs.length > 0) {
                     hrRef.current?.classList.remove('border-t-transparent');
-                    hrRef.current?.classList.add('border-t-slate-600');
+                    hrRef.current?.classList.add('border-t-zinc-600');
                   } else {
                     hrRef.current?.classList.add('border-t-transparent');
-                    hrRef.current?.classList.remove('border-t-slate-600');
+                    hrRef.current?.classList.remove('border-t-zinc-600');
                   }
                   setOpenEditorCollapsed(!openEditorCollapsed);
                 }}
@@ -521,7 +521,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
                   className={`left-wrapper-hr w-full border-t ${
                     openEditorCollapsed || tabs.length === 0
                       ? 'border-t-transparent'
-                      : 'border-t-slate-600'
+                      : 'border-t-zinc-600'
                   }`}
                 />
               </span>
