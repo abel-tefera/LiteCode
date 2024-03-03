@@ -7,12 +7,13 @@ export default function Loading() {
 
   return (
     <div className="flex h-screen w-full items-center">
-      <div className="flex h-full w-full items-center justify-start pl-96">
+      <div className="flex h-full w-full items-center justify-center">
         <div className="flex h-full items-center">
-          <PacmanLoader
+          {/* <PacmanLoader
             color={'#50FF6C'}
             size={120}
-          />
+          /> */}
+          <p className='text-white'>Initializing App...</p>
         </div>
       </div>
     </div>
