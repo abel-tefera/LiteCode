@@ -319,10 +319,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
       'javascript',
       npmPackageHoverProvider,
     );
-    // monacoRef.current?.languages.registerHoverProvider(
-    //   'typescript',
-    //   npmPackageHoverProvider,
-    // );
+    monacoRef.current?.languages.registerHoverProvider(
+      'typescript',
+      npmPackageHoverProvider,
+    );
   };
 
   // const formatCode = async () => {
@@ -414,9 +414,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
               allowSyntheticDefaultImports: true,
               allowNonTsExtensions: true,
               alwaysStrict: true,
-              jsx: 2,
+              jsx: monaco.languages.typescript.JsxEmit.React,
               target: monaco.languages.typescript.ScriptTarget.Latest,
               jsxFactory: 'React.createElement',
+              reactNamespace: 'React',
             };
             monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
               compilerOptions,

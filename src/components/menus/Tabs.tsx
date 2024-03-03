@@ -50,7 +50,7 @@ const Tabs = () => {
       <div className={'file-tabs w-full py-1'}>
         <div
           ref={tabsArea}
-          className="custom-scrollbar flex w-full flex-row items-center overflow-x-scroll"
+          className="custom-scrollbar flex w-full flex-row items-center overflow-x-auto"
         >
           {tabs.map((item, i) => (
             <Tab
