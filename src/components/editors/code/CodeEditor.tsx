@@ -189,14 +189,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
       highlighter();
 
       editor.onDidChangeModelContent(() => {
-        // content change, highlight
-        console.log('CONTENT CHANGE');
         highlighter();
       });
 
       editor.onDidChangeModelOptions(() => {
-        // model change, highlight
-        console.log('MODEL CHANGE');
         highlighter();
       });
 

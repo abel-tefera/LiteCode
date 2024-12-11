@@ -9,7 +9,7 @@
     "@vercel/postgres": "^0.5.0",
     "axios": "^1.6.0",
     "babel-eslint": "^10.1.0",
-    "esbuild-wasm": "^0.19.5",
+    "esbuild-wasm": "0.19.5",
     "eslint-linter-browserify": "^8.54.0",
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
