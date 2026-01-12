@@ -147,7 +147,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
           async provideDocumentFormattingEdits(model, options, token) {
             const text = await prettier.format(model.getValue(), {
               parser: 'babel',
-              plugins: [parserBabel, prettierPluginEstree],
+              plugins: [parserBabel, prettierPluginEstree as any],
               useTabs: false,
               semi: true,
               singleQuote: true,

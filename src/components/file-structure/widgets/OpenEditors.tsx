@@ -1,18 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   activeTabs,
   closeAllTabs,
   closeTab,
   selectTab,
   selectedTab,
-  setActiveTabAsync,
 } from '../../../state/features/tabs/tabsSlice';
 import { useTypedDispatch, useTypedSelector } from '../../../state/hooks';
 import { Tooltip } from 'react-tooltip';
-import closeAllIcon from '../../../../public/close-all.svg';
-import closeIcon from '../../../../public/cross.svg';
-import downArrowLogo from '../../../../public/left-arrow.svg';
-
 import ItemTitle from './ItemTitle';
 import { setSelected } from '../../../state/features/structure/structureSlice';
 import { setActiveEditorAsync } from '../../../state/features/editor/editorSlice';
@@ -24,11 +19,11 @@ interface OpenEditorsProps {
   setCollapseArea: () => void;
 }
 
-const OpenEditors: React.FC<OpenEditorsProps> = ({
+const OpenEditors = ({
   collapsed,
   structureCollapsed,
   setCollapseArea,
-}) => {
+}: OpenEditorsProps) => {
   const dispatch = useTypedDispatch();
   const tabs = useTypedSelector(activeTabs);
   const tabsArea = useRef<HTMLDivElement>(null);
@@ -94,7 +89,7 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
           className="flex w-full cursor-pointer select-none flex-row items-center border border-transparent p-1 transition-[border-color]"
         >
           <img
-            src={downArrowLogo.src}
+            src="/left-arrow.svg"
             className={`${
               !collapsed ? 'rotate-[270deg]' : 'rotate-180'
             } mr-2 h-3 w-3 self-center transition-transform`}
@@ -120,7 +115,7 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
                 <img
                   data-tooltip-id="close-all"
                   data-tooltip-content={'Close All Editors'}
-                  src={closeAllIcon.src}
+                  src="/close-all.svg"
                   className="h-5 w-5"
                   alt="Close All Editors"
                 />
@@ -182,11 +177,9 @@ const OpenEditors: React.FC<OpenEditorsProps> = ({
                       }}
                     >
                       <img
-                        //   data-tooltip-id="close-editor"
-                        //   data-tooltip-content={'Close Editor'}
-                        src={closeIcon.src}
+                        src="/cross.svg"
                         className="h-5 w-5 cursor-pointer"
-                        alt="Right Arrow"
+                        alt="Close"
                       />
                     </button>
                   </div>

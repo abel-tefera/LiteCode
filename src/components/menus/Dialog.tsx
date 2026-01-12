@@ -1,7 +1,5 @@
-import React, { useRef } from "react";
-import useOutsideAlerter from "../../hooks/useOutsideAlerter";
-import deleteLogo from "../../../public/delete.svg";
-import cross from "../../../public/cross.svg";
+import { useRef } from 'react';
+import useOutsideAlerter from '../../hooks/useOutsideAlerter';
 
 interface DialogProps {
   title: string;
@@ -11,13 +9,7 @@ interface DialogProps {
   action: () => void;
 }
 
-const Dialog: React.FC<DialogProps> = ({
-  title,
-  content,
-  actionText,
-  close,
-  action,
-}) => {
+const Dialog = ({ title, content, actionText, close, action }: DialogProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   useOutsideAlerter(dialogRef, () => {
     close(false);
@@ -26,12 +18,13 @@ const Dialog: React.FC<DialogProps> = ({
     <div className="backdrop-brightness-50 absolute top-0 z-50 flex w-full h-full justify-center items-start pt-6 select-none">
       <div
         ref={dialogRef}
-        className="dialog-content bg-dark-hover border border-slate-600 shadow-sm p-4 rounded-lg flex flex-col my-2 h-fit w-96">
+        className="dialog-content bg-dark-hover border border-slate-600 shadow-sm p-4 rounded-lg flex flex-col my-2 h-fit w-96"
+      >
         <div className="flex flex-row justify-between">
           <span className="text-white text-2xl font-semibold">{title}</span>
           <span className="self-start">
             <img
-              src={cross.src}
+              src="/cross.svg"
               onClick={() => {
                 close(false);
               }}
@@ -49,7 +42,8 @@ const Dialog: React.FC<DialogProps> = ({
               onClick={() => {
                 close(false);
               }}
-              className="text-sm text-white px-2 py-1 rounded-lg bg-slate-600 hover:bg-slate-500 transition-colors">
+              className="text-sm text-white px-2 py-1 rounded-lg bg-slate-600 hover:bg-slate-500 transition-colors"
+            >
               Cancel
             </button>
             <button
@@ -57,12 +51,9 @@ const Dialog: React.FC<DialogProps> = ({
               onClick={() => {
                 action();
               }}
-              className="text-sm bg-red-700 hover:bg-red-500 text-white px-2 py-1 rounded-lg transition-colors flex flex-row items-center">
-              <img
-                alt={"delete"}
-                src={deleteLogo.src}
-                className="w-4 h-4 mr-1"
-              />
+              className="text-sm bg-red-700 hover:bg-red-500 text-white px-2 py-1 rounded-lg transition-colors flex flex-row items-center"
+            >
+              <img alt={'delete'} src="/delete.svg" className="w-4 h-4 mr-1" />
               {actionText}
             </button>
           </div>

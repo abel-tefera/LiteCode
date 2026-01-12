@@ -1,19 +1,20 @@
-import React, {useEffect} from "react";
-import { Provider } from "react-redux";
-import { persistor, store } from "./state/store";
-import Main from "./components/Main";
-import { PersistGate } from "redux-persist/integration/react";
+import { Provider } from 'react-redux';
+import { persistor, store } from './state/store';
+import Main from './components/Main';
+import { PersistGate } from 'redux-persist/integration/react';
 
-const App: React.FC = () => {
+const App = () => {
   return (
     <Provider store={store}>
-      <PersistGate loading={<div>Loading Persistor...</div>} persistor={persistor}></PersistGate>
-      <div className="App bg-dark-bg text-white font-roboto flex flex-row">
-        <div className="flex flex-col w-full h-screen">
-          <Main />
+      <PersistGate loading={<div>Loading Persistor...</div>} persistor={persistor}>
+        <div className="App bg-dark-bg text-white font-roboto flex flex-row">
+          <div className="flex flex-col w-full h-screen">
+            <Main />
+          </div>
         </div>
-      </div>
+      </PersistGate>
     </Provider>
   );
 };
+
 export default App;

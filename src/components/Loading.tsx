@@ -1,10 +1,6 @@
-'use-client';
-
-// Importing loader
 import PacmanLoader from 'react-spinners/PacmanLoader';
 
-export default function Loading() {
-
+const Loading = () => {
   return (
     <div className="flex h-screen w-full items-center">
       <div className="flex h-full w-full items-center justify-center">
@@ -13,9 +9,11 @@ export default function Loading() {
             color={'#50FF6C'}
             size={120}
           /> */}
-          <p className='text-white'>Initializing App...</p>
+          <p className="text-white">Initializing App...</p>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Loading;

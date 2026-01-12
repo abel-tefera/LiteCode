@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Resizable from './resizable/Resizable';
 import Structure from './file-structure/Structure';
 import Tabs from './menus/Tabs';
-import logo from '../../public/logo-2.png';
 import CodeCell from './editors/CodeCell';
 import { useTypedDispatch, useTypedSelector } from '../state/hooks';
 import { setEditorWidthAdjusted } from '../state/features/editor/editorSlice';
@@ -48,7 +47,7 @@ const Main: React.FC = () => {
           <div className="flex h-fit w-full items-center px-4 pt-2">
             <div className="flex w-fit flex-row">
               <img
-                src={logo.src}
+                src="/logo-2.png"
                 alt="Logo"
                 className="w-[7.5rem] select-none border border-transparent pb-8 pt-6"
               />

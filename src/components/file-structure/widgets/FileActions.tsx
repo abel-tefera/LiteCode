@@ -1,9 +1,4 @@
-import React, { PropsWithChildren, useState, useRef, useEffect } from 'react';
-import downArrowLogo from '../../../../public/left-arrow.svg';
-import newFileIcon from '../../../../public/new-file.svg';
-import newFolderIcon from '../../../../public/new-folder.svg';
-import downloadIcon from '../../../../public/download.svg';
-
+import { useRef } from 'react';
 import { Tooltip } from 'react-tooltip';
 import useOutsideAlerter from '../../../hooks/useOutsideAlerter';
 
@@ -15,13 +10,13 @@ interface FileActionProps {
   collapsed: boolean;
 }
 
-const FileActions: React.FC<FileActionProps> = ({
+const FileActions = ({
   newFile,
   newFolder,
   download,
   collapseArea,
   collapsed,
-}) => {
+}: FileActionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useOutsideAlerter(containerRef, () => {
@@ -45,7 +40,7 @@ const FileActions: React.FC<FileActionProps> = ({
       className="flex w-full cursor-pointer select-none flex-row items-center border border-transparent px-1 pt-1 transition-[border-color]"
     >
       <img
-        src={downArrowLogo.src}
+        src="/left-arrow.svg"
         className={`${
           !collapsed ? 'rotate-[270deg]' : 'rotate-180'
         } mb-1 mr-2 h-3 w-3 self-center transition-transform`}
@@ -71,7 +66,7 @@ const FileActions: React.FC<FileActionProps> = ({
               <img
                 data-tooltip-id="new-file"
                 data-tooltip-content={'New File'}
-                src={newFileIcon.src}
+                src="/new-file.svg"
                 className="h-5 w-5"
                 alt="New File"
               />
@@ -94,7 +89,7 @@ const FileActions: React.FC<FileActionProps> = ({
               <img
                 data-tooltip-id="new-folder"
                 data-tooltip-content={'New Folder'}
-                src={newFolderIcon.src}
+                src="/new-folder.svg"
                 className="h-5 w-5"
                 alt="New Folder"
               />
@@ -117,7 +112,7 @@ const FileActions: React.FC<FileActionProps> = ({
               <img
                 data-tooltip-id="download-project"
                 data-tooltip-content={'Download Project'}
-                src={downloadIcon.src}
+                src="/download.svg"
                 className="h-5 w-5"
                 alt="Download Project"
               />

@@ -46,8 +46,6 @@ import {
   activeTabs,
   removeTabAsync,
 } from '../../state/features/tabs/tabsSlice';
-import searchIcon from '../../../public/search-icon.svg';
-import fileExplorer from '../../../public/file-explorer.svg';
 import { Tooltip } from 'react-tooltip';
 import downloadZip from '../../state/features/structure/utils/downloadZip';
 import { setActiveEditorAsync } from '../../state/features/editor/editorSlice';
@@ -62,7 +60,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
   const fileExplorerContainerRef = useRef<HTMLDivElement>(null);
 
   const structureRef = useRef<HTMLDivElement>(null);
-  const clickedRef = useRef<HTMLElement>();
+  const clickedRef = useRef<HTMLElement | null>(null);
   const [structureCollapsed, setStructureCollapsed] = useState(false);
 
   const dispatch = useTypedDispatch();
@@ -734,7 +732,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
               alt="search"
               data-tooltip-id="search"
               data-tooltip-content={'Search'}
-              src={searchIcon.src}
+              src="/search-icon.svg"
               className="h-14 w-14 rounded-md p-2 hover:bg-dark-hover"
             />
           </button>
@@ -760,7 +758,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
               alt="file explorer"
               data-tooltip-id="file-explorer"
               data-tooltip-content={'File Explorer'}
-              src={fileExplorer.src}
+              src="/file-explorer.svg"
               className="h-14 w-14 rounded-md p-2 hover:bg-dark-hover"
             />
           </button>
@@ -775,7 +773,7 @@ const Structure: React.FC<PropsWithChildren> = () => {
             inputSubmit(value);
           }}
           padding={inputPadding}
-          show={clickedRef.current && showInput}
+          show={!!clickedRef.current && showInput}
           item={{
             type: inputType,
             rename: isRename
