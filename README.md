@@ -23,4 +23,4 @@ LiteCode is built using the following technologies:
 
 [The Dev - Abel Tefera](https://abeltb.xyz/) – abeltefera16@gmail.com
 
-*Abel Tefera, developer at [Topia](https://topia.io)*
+*Abel Tefera - person on Earth*
