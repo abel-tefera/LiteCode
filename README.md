@@ -1,6 +1,6 @@
 # LiteCode
 
-A free, online IDE — Coming Soon
+A free, online IDE — [Try it out](https://abel-tefera.github.io)
 
 ## Description
 
