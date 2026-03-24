@@ -1,27 +1,6 @@
-<br />
-<br />
+# LiteCode
 
-<p align="center">
-  <a href="https://litecode.abeltb.xyz/">
-    <img src="./src/assets/logo.png" alt="easybase logo black" width="200">
-  </a>
-</p>
-
-<br />
-
-<h3 align="center">
-  <b>
-    <a href="https://litecode.abeltb.xyz/">
-      A free, online IDE - Try it out
-    </a>
-  </b>
-</h3>
-
-<br />
-
-![LiteCode Screenshot 1](/screenshots/litecode-1.png?raw=true "LiteCode")
-
-<br />
+A free, online IDE — [Try it out](https://litecode.abeltb.xyz/)
 
 ## Description
 
@@ -29,13 +8,16 @@ LiteCode is a lightweight yet powerful IDE that runs inside your browser. You ca
 
 But that's not all. LiteCode comes with its own virtual file system. You can create as many files, folders or directories as you like and download them to go as a zip file. It's built to support React apps of any size.
 
-LiteCode is built using React, TypeScript, Redux, TailwindCSS, Monaco Editor and ESBuild.
+## Tech Stack
 
-## Screenshots
+LiteCode is built using the following technologies:
 
-![LiteCode Screenshot 2](/screenshots/litecode-2.png?raw=true "LiteCode")
-
-![LiteCode Screenshot 3](/screenshots/litecode-3.png?raw=true "LiteCode")
+- **React** — UI framework
+- **TypeScript** — Type-safe JavaScript
+- **Redux** — State management
+- **TailwindCSS** — Styling
+- **Monaco Editor** — Code editor
+- **ESBuild** — Fast transpilation and bundling
 
 ## Contact
 
