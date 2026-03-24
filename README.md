@@ -1,6 +1,6 @@
 # LiteCode
 
-A free, online IDE — [Try it out](https://litecode.abeltb.xyz/)
+A free, online IDE — Coming Soon
 
 ## Description
 
