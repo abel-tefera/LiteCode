@@ -1,6 +1,6 @@
 # LiteCode
 
-A free, online IDE — [Try it out](https://litecode.abeltb.xyz/)
+A free, online IDE — [Try it out](https://abel-tefera.github.io)
 
 ## Description
 
@@ -22,3 +22,5 @@ LiteCode is built using the following technologies:
 ## Contact
 
 [The Dev - Abel Tefera](https://abeltb.xyz/) – abeltefera16@gmail.com
+
+*Abel Tefera - person on Earth*
