@@ -24,3 +24,8 @@ LiteCode is built using the following technologies:
 [The Dev - Abel Tefera](https://abeltb.xyz/) – abeltefera16@gmail.com
 
 *Abel Tefera - person on Earth*
+
+## Info
+
+- **Date:** March 25, 2026
+- **IP Address:** 172.20.0.2
