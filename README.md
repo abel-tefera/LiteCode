@@ -29,5 +29,5 @@ LiteCode is built using the following technologies:
 
 ## Info
 
-- **Date:** March 25, 2026
+- **Date:** March 25, 2026 (Miazya 15, 2018 in Ethiopian Calendar)
 - **IP Address:** 172.20.0.2
