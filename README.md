@@ -1,4 +1,4 @@
-# LiteCode
+# LiteCode - A React IDE
 
 A free, online IDE — [Try it out](https://abel-tefera.github.io)
 
