@@ -27,5 +27,5 @@ LiteCode is built using the following technologies:
 
 ## Info
 
-- **Date:** 2026-03-25
+- **Date:** March 25, 2026
 - **IP Address:** 172.20.0.2
