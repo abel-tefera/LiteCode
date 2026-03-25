@@ -81,9 +81,11 @@ export const editorSlice = createSlice({
         let language;
         switch (file.extension) {
           case "js":
+          case "jsx":
             language = "javascript";
             break;
           case "ts":
+          case "tsx":
             language = "typescript";
             break;
           case "css":
