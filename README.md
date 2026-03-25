@@ -30,4 +30,7 @@ LiteCode is built using the following technologies:
 ## Info
 
 - **Date:** March 25, 2026
-- **IP Address:** 172.20.0.2
+
+---
+
+Hail Hydra 🐙

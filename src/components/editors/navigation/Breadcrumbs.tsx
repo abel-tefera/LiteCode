@@ -36,10 +36,10 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ editorObj }) => {
           {editorObj.path.map((path, i) => (
             <div
               id={`${editorObj.path
-                .map(path => path.replace(/[\.|\s]+/g, "-"))
+                .map(path => path.replace(/[.\s]+/g, "-"))
                 .join("")}-${i}`}
               key={`${editorObj.path
-                .map(path => path.replace(/[\.|\s]+/g, "-"))
+                .map(path => path.replace(/[.\s]+/g, "-"))
                 .join("")}-${i}`}>
               <div className={"text-base text-zinc-300 flex flex-row"}>
                 {i === editorObj.path.length - 1 && (
@@ -71,7 +71,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ editorObj }) => {
         <>
           {(() => {
             const id = `${editorObj.path
-              .map(path => path.replace(/[\.|\s]+/g, "-"))
+              .map(path => path.replace(/[.\s]+/g, "-"))
               .join("")}-${clickedIndex}`;
 
             const element = breadcrumbsRef.current.querySelector(

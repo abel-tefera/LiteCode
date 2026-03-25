@@ -29,7 +29,6 @@ const Resizable: React.FC<ResizableProps> = ({
   haveWidthAdjusted,
   resizeStopCall,
 }) => {
-  let resizableProps: ResizableBoxProps;
   const dispatch = useTypedDispatch();
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
@@ -72,7 +71,7 @@ const Resizable: React.FC<ResizableProps> = ({
   }, []);
 
   // if (direction === "horizontal") {
-  resizableProps = {
+  const resizableProps: ResizableBoxProps = {
     axis: "x",
     className: `${haveWidthAdjusted && "rezisable"}`,
     width: resizableWidth,
@@ -88,7 +87,7 @@ const Resizable: React.FC<ResizableProps> = ({
       if (
         !haveWidthAdjusted &&
         data.size.width === window.innerWidth * minRatio &&
-        // @ts-expect-error
+        // @ts-expect-error event is MouseEvent at runtime despite UIEvent type
         e.clientX <= 80
       ) {
         // setResizableWidth(40);
