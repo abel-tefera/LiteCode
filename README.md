@@ -30,7 +30,6 @@ LiteCode is built using the following technologies:
 ## Info
 
 - **Date:** March 26, 2026
-- **Last Updated:** March 26, 2026 at 10:30 AM UTC
 
 ---
 
