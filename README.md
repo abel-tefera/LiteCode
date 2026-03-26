@@ -1,5 +1,7 @@
 # LiteCode - A React IDE - Hi there, feller!
 
+*Welcome to the world of browser based IDEs*
+
 A free, online IDE
 
 *The React IDE you've always wanted*
