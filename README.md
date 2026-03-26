@@ -35,5 +35,3 @@ LiteCode is built using the following technologies:
 ---
 
 Made with ❤️ in 🇪🇹
-
-Hail Hydra 🐙
